@@ -1,0 +1,12 @@
+local_settings.py
+*.swp
+.vagrant
+*.pyc
+/*.sql
+package.box
+*~
+*.log
+*.sqlite3
+*.db
+infoworks/media/
+infoworks/static/
