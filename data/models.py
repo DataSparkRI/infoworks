@@ -99,6 +99,9 @@ class School(models.Model):
     school_code = models.CharField(max_length=100,unique=True)
     school_name = models.CharField(max_length=100)
     school_type = models.CharField(max_length=100)
+    grade_type = models.CharField(max_length=100)
+    principal = models.CharField(max_length=100, blank=True)
+    
     activate = models.BooleanField(default=True)
     website = models.URLField(blank=True)
     slug = models.SlugField(unique=True,db_index=True)
@@ -108,6 +111,10 @@ class School(models.Model):
     zip = models.CharField(max_length=100, blank=True)
     phone = models.CharField(max_length=100, blank=True)
     description = models.TextField(blank=True)
+    
+    elementary_school = models.BooleanField(default=False)
+    middle_school = models.BooleanField(default=False)
+    high_school = models.BooleanField(default=False)
     
     grade_pk = models.BooleanField(default=False)
     grade_k = models.BooleanField(default=False)
