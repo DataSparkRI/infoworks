@@ -173,7 +173,7 @@ class SchoolIndicator(models.Model):
         return super(SchoolIndicator, self).save(*args, **kwargs)
     
     def __unicode__(self):
-        return "%s - %s - %s"% (self.school_indicator_set, self.title, self.school_year)
+        return "%s - %s"% (self.school_indicator_set, self.title)
 
 class SchoolIndicatorDataSet(models.Model):
     school_indicator = models.ForeignKey(SchoolIndicator, blank=True, null=True)

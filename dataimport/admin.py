@@ -1,5 +1,5 @@
 from django.contrib import admin
-from dataimport.models import DistrictFile, DistrictField, SchoolFile, SchoolField
+from dataimport.models import DistrictFile, DistrictField, SchoolFile, SchoolField, IndicatorFile, IndicatorField
 from data.models import District, School
 import csv
 from django.contrib import messages
@@ -54,7 +54,7 @@ def import_or_update_district_information(modeladmin, request, queryset):
                 
                 if district_name_index != None:
                     district.district_name = row[district_name_index]
-                    district.slug = row[district_name_index].lower()
+                district.slug = row[district_code_index].lower()
                 if address_index != None:
                     district.street = row[address_index]
                 if city_index != None:
@@ -133,7 +133,7 @@ def import_or_update_school_information(modeladmin, request, queryset):
                     )
                 if school_code_index != None:    
                     school.school_name = row[school_name_index]
-                    school.slug = row[school_name_index].lower()
+                school.slug = row[school_code_index].lower()
                 if school_type_index != None:
                     school.school_type = row[school_type_index]
                 if address_index != None:
@@ -193,3 +193,11 @@ class SchoolFileAdmin(admin.ModelAdmin):
     inlines = [SchoolFieldInline]
     actions = [import_or_update_school_information]
 admin.site.register(SchoolFile, SchoolFileAdmin)
+
+class IndicatorFieldInline(admin.TabularInline):
+    model = IndicatorField
+
+class IndicatorFileAdmin(admin.ModelAdmin):
+    inlines = [IndicatorFieldInline]
+    
+admin.site.register(IndicatorFile, IndicatorFileAdmin)

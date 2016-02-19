@@ -1,9 +1,18 @@
 from django.contrib import admin
 from data.models import DistrictIndicatorDataSet, SchoolIndicatorDataSet, IndicatorTitle, District, DistrictIndicatorSet, DistrictIndicator, School, SchoolIndicatorSet, SchoolIndicator, SchoolNumberOfStudentAndTeacher, DistrictNumberOfStudentAndTeacher
-
+from django.contrib import messages
 
 admin.site.register(IndicatorTitle)
 
+def write_default_district_indicator_set(modeladmin, request, queryset):
+    for q in queryset:
+        DistrictIndicatorSet.objects.get_or_create(title='Student Achievement' ,district=q, order=1)
+        DistrictIndicatorSet.objects.get_or_create(title='Teaching' ,district=q, order=2)
+        DistrictIndicatorSet.objects.get_or_create(title='Families and Communities' ,district=q, order=3)
+        DistrictIndicatorSet.objects.get_or_create(title='Safe and Supportive Schools' ,district=q, order=4)
+        DistrictIndicatorSet.objects.get_or_create(title='Funding and Resources' ,district=q, order=5)
+        DistrictIndicatorSet.objects.get_or_create(title='Other' ,district=q, order=6)
+    messages.add_message(request, messages.INFO, "Done")
 
 
 class DistrictNumberOfStudentAndTeacherInline(admin.TabularInline):
@@ -18,6 +27,7 @@ class DistrictIndicatorDataSetInline(admin.TabularInline):
 class DistrictAdmin(admin.ModelAdmin):
     list_display = ('district_name', 'activate','slug', 'indicator_modified')
     inlines = [DistrictNumberOfStudentAndTeacherInline, DistrictIndicatorSetInline]
+    actions = [write_default_district_indicator_set]
 admin.site.register(District, DistrictAdmin)
     
 class DistrictIndicatorSetAdmin(admin.ModelAdmin):
@@ -34,6 +44,17 @@ admin.site.register(DistrictIndicator, DistrictIndicatorAdmin)
 #class DistrictNumberOfStudentAndTeacherAdmin(admin.ModelAdmin):
 #    list_display = ('district', 'school_year','student', 'teacher', 'school')
 #admin.site.register(DistrictNumberOfStudentAndTeacher, DistrictNumberOfStudentAndTeacherAdmin)
+
+
+def write_default_school_indicator_set(modeladmin, request, queryset):
+    for q in queryset:
+        SchoolIndicatorSet.objects.get_or_create(title='Student Achievement' ,school=q, order=1)
+        SchoolIndicatorSet.objects.get_or_create(title='Teaching' ,school=q, order=2)
+        SchoolIndicatorSet.objects.get_or_create(title='Families and Communities' ,school=q, order=3)
+        SchoolIndicatorSet.objects.get_or_create(title='Safe and Supportive Schools' ,school=q, order=4)
+        SchoolIndicatorSet.objects.get_or_create(title='Funding and Resources' ,school=q, order=5)
+        SchoolIndicatorSet.objects.get_or_create(title='Other' ,school=q, order=6)
+    messages.add_message(request, messages.INFO, "Done")
 
 
 class SchoolNumberOfStudentAndTeacherInline(admin.TabularInline):
@@ -55,6 +76,7 @@ class SchoolIndicatorDataSetInline(admin.TabularInline):
 class SchoolAdmin(admin.ModelAdmin):
     list_display = ('district','school_name', 'activate','slug', 'indicator_modified')
     inlines = [SchoolNumberOfStudentAndTeacherInline, SchoolIndicatorSetInline]
+    actions = [write_default_school_indicator_set]
 admin.site.register(School, SchoolAdmin)
 
 class SchoolIndicatorSetAdmin(admin.ModelAdmin):

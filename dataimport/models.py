@@ -104,3 +104,55 @@ class SchoolFile(models.Model):
     
     def __unicode__(self):
         return "%s"% self.school_year
+        
+        
+class IndicatorField(models.Model):
+    indicator_file = models.ForeignKey('IndicatorFile')
+    name = models.CharField(max_length=50, blank=True)
+    match_option = models.CharField(max_length=30, blank=True, null=True,
+                   help_text='(required) [low_grade and high_grade only accept PK, K, and 1 - 12] [grade_type only accept "Emh"]',
+                   choices=(('DISTRICT_CODE', 'district_code'),
+                            ('SCHOOL_CODE', 'school_code'),
+                            ('SCHOOL_NAME', 'school_name'),
+                            ('SCHOOL_TYPE', 'school_type'),
+                            ('GRADE_TYPE', 'grade_type'),
+                            ('ADDRESS', 'address'),
+                            ('CITY', 'city'),
+                            ('STATE', 'state'),
+                            ('ZIP','zip'),
+                            ('PHONE','phone'),
+                            ('WEB_SITE','web_site'),
+                            ('LOW_GRADE', 'low_grade'),
+                            ('HIGH_GRADE','high_grade')
+                            )
+    )
+    def save(self, *args, **kwargs):
+        if self.name != '':
+            super(IndicatorField, self).save(*args, **kwargs)
+    
+    def __unicode__(self):
+        return "%s - %s"%(self.name, self.match_option)
+
+class IndicatorFile(models.Model):
+    school_year = models.CharField(max_length=100)
+    file = models.FileField(upload_to="Indicator_Information", blank=True, null=True)
+    
+    def save(self, *args, **kwargs):
+
+        super(IndicatorFile, self).save(*args, **kwargs)
+        if IndicatorField.objects.filter(indicator_file=self).count() == 0:
+            try:
+                f = open(self.file.path, 'rb')
+                reader = csv.reader(f)
+                headers = reader.next()
+                for i in headers:
+                    try:
+                       IndicatorField.objects.get_or_create(indicator_file=self, name=i)
+                    except:
+                       pass
+            except:
+                pass
+    
+    
+    def __unicode__(self):
+        return "%s"% self.school_year
