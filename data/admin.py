@@ -53,8 +53,7 @@ class SchoolIndicatorDataSetInline(admin.TabularInline):
     model = SchoolIndicatorDataSet
 
 class SchoolAdmin(admin.ModelAdmin):
-    list_display = ('school_name', 'activate','slug', 'indicator_modified','grade_pk','grade_k','grade_1','grade_2','grade_3','grade_4','grade_5','grade_6','grade_7','grade_8','grade_9','grade_10','grade_11','grade_12')
-    list_editable = ('grade_pk','grade_k','grade_1','grade_2','grade_3','grade_4','grade_5','grade_6','grade_7','grade_8','grade_9','grade_10','grade_11','grade_12')
+    list_display = ('district','school_name', 'activate','slug', 'indicator_modified')
     inlines = [SchoolNumberOfStudentAndTeacherInline, SchoolIndicatorSetInline]
 admin.site.register(School, SchoolAdmin)
 
