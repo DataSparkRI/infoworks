@@ -1,6 +1,7 @@
 from django.contrib import admin
-from dataimport.models import DistrictFile, DistrictField, SchoolFile, SchoolField, IndicatorFile, IndicatorField
+from dataimport.models import DimensionFor, DistrictFile, DistrictField, SchoolFile, SchoolField, IndicatorFile, IndicatorField, DimensionName
 from data.models import District, School
+from dataimport.actions.ImportIndicator import import_indicator
 import csv
 from django.contrib import messages
 # Register your models here.
@@ -199,5 +200,8 @@ class IndicatorFieldInline(admin.TabularInline):
 
 class IndicatorFileAdmin(admin.ModelAdmin):
     inlines = [IndicatorFieldInline]
-    
+    actions = [import_indicator]
 admin.site.register(IndicatorFile, IndicatorFileAdmin)
+
+admin.site.register(DimensionName)
+admin.site.register(DimensionFor)

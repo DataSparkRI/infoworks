@@ -1,5 +1,5 @@
 from django.contrib import admin
-from data.models import DistrictIndicatorDataSet, SchoolIndicatorDataSet, IndicatorTitle, District, DistrictIndicatorSet, DistrictIndicator, School, SchoolIndicatorSet, SchoolIndicator, SchoolNumberOfStudentAndTeacher, DistrictNumberOfStudentAndTeacher
+from data.models import SchoolYear, DistrictIndicatorDataSet, SchoolIndicatorDataSet, IndicatorTitle, District, DistrictIndicatorSet, DistrictIndicator, School, SchoolIndicatorSet, SchoolIndicator, SchoolNumberOfStudentAndTeacher, DistrictNumberOfStudentAndTeacher
 from django.contrib import messages
 
 admin.site.register(IndicatorTitle)
@@ -89,7 +89,7 @@ class SchoolIndicatorAdmin(admin.ModelAdmin):
     raw_id_fields = ('school_indicator_set',)
     inlines = [SchoolIndicatorDataSetInline]
 admin.site.register(SchoolIndicator, SchoolIndicatorAdmin)
-
+admin.site.register(SchoolYear)
 #class SchoolNumberOfStudentAndTeacherAdmin(admin.ModelAdmin):
 #    list_display = ('school', 'school_year','student', 'teacher')
 #admin.site.register(SchoolNumberOfStudentAndTeacher, SchoolNumberOfStudentAndTeacherAdmin)

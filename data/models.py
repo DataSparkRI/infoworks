@@ -5,8 +5,8 @@ from django.utils import timezone
 
 
 DATA_TYPE_CHOICES = (
-    ('numeric', 'numeric'),
-    ('string', 'string'),
+    ('NUMERIC', 'numeric'),
+    ('STRING', 'string'),
 )
 
 # Create your models here.
@@ -15,6 +15,10 @@ class IndicatorTitle(models.Model):
     def __unicode__(self):
         return "%s"% self.title
 
+class SchoolYear(models.Model):
+    school_year = models.CharField(max_length=100)
+    def __unicode__(self):
+        return "%s"% self.school_year
 
 class District(models.Model):
     district_name = models.CharField(max_length=100)
@@ -37,7 +41,7 @@ class District(models.Model):
 class DistrictNumberOfStudentAndTeacher(models.Model):
     district = models.ForeignKey(District)
     activate = models.BooleanField(default=False)
-    school_year = models.CharField(max_length=100,blank=False)
+    school_year = models.ForeignKey(SchoolYear)
     student = models.IntegerField(null=True)
     teacher = models.IntegerField(null=True)
     school = models.IntegerField(null=True)
@@ -76,7 +80,7 @@ class DistrictIndicator(models.Model):
 
 class DistrictIndicatorDataSet(models.Model):
     district_indicator = models.ForeignKey(DistrictIndicator, blank=True, null=True)
-    shcool_year = models.CharField(max_length=100,blank=False)
+    school_year = models.ForeignKey(SchoolYear)
     csv_file = models.FileField(upload_to="District_Indicator_Data", blank=True, null=True)
     import_file = models.BooleanField(default=False) #If True start import file, then mark False after
     
@@ -89,6 +93,7 @@ class DistrictIndicatorData(models.Model):
     dimension_y = models.CharField(max_length=100, blank=True)
     key_value = models.CharField(max_length=100, db_index=True)
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
+    import_job =  models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
     
     def __unicode__(self):
         return "%s - %s: %s"%(self.dimension_y, self.dimension_x, self.key_value)
@@ -130,7 +135,7 @@ class School(models.Model):
     grade_10 = models.BooleanField(default=False)
     grade_11 = models.BooleanField(default=False)
     grade_12 = models.BooleanField(default=False)
-    indicator_modified    = models.DateTimeField(blank=True, null=True)
+    indicator_modified = models.DateTimeField(blank=True, null=True)
     
     def __unicode__(self):
         return "%s School"% self.school_name
@@ -138,7 +143,7 @@ class School(models.Model):
 class SchoolNumberOfStudentAndTeacher(models.Model):
     school = models.ForeignKey(School)
     activate = models.BooleanField(default=False)
-    school_year = models.CharField(max_length=100,blank=False)
+    school_year = models.ForeignKey(SchoolYear)
     student = models.IntegerField(null=True)
     teacher = models.IntegerField(null=True)
 
@@ -177,7 +182,7 @@ class SchoolIndicator(models.Model):
 
 class SchoolIndicatorDataSet(models.Model):
     school_indicator = models.ForeignKey(SchoolIndicator, blank=True, null=True)
-    shcool_year = models.CharField(max_length=100,blank=False)
+    school_year = models.ForeignKey(SchoolYear)
     csv_file = models.FileField(upload_to="School_Indicator_Data", blank=True, null=True)
     import_file = models.BooleanField(default=False) #If True start import file, then mark False after
     
@@ -190,6 +195,7 @@ class SchoolIndicatorData(models.Model):
     dimension_y = models.CharField(max_length=100, blank=True)
     key_value = models.CharField(max_length=100, db_index=True)
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
+    import_job =  models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
     
     def __unicode__(self):
         return "%s - %s: %s"%(self.dimension_y, self.dimension_x, self.key_value)
