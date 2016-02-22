@@ -36,7 +36,7 @@ class District(models.Model):
     indicator_modified    = models.DateTimeField(blank=True, null=True)
     
     def __unicode__(self):
-        return "%s District"% self.district_name
+        return "%s (District)"% self.district_name
 
 class DistrictNumberOfStudentAndTeacher(models.Model):
     district = models.ForeignKey(District)
@@ -60,6 +60,7 @@ class DistrictIndicatorSet(models.Model):
 class DistrictIndicator(models.Model):
     district_indicator_set = models.ForeignKey(DistrictIndicatorSet, blank=True, null=True)
     title = models.ForeignKey(IndicatorTitle)
+    order = models.IntegerField(default=0)
     short_title = models.CharField(max_length=100,blank=True)
     description = models.TextField(blank=True)
     data_indeicator = models.BooleanField(default=True)
@@ -97,7 +98,6 @@ class DistrictIndicatorData(models.Model):
     
     def __unicode__(self):
         return "%s - %s: %s"%(self.dimension_y, self.dimension_x, self.key_value)
-
 
 class School(models.Model):
     district = models.ForeignKey(District, blank=True, null=True)
@@ -138,7 +138,7 @@ class School(models.Model):
     indicator_modified = models.DateTimeField(blank=True, null=True)
     
     def __unicode__(self):
-        return "%s School"% self.school_name
+        return "%s (School)"% self.school_name
         
 class SchoolNumberOfStudentAndTeacher(models.Model):
     school = models.ForeignKey(School)
@@ -162,6 +162,7 @@ class SchoolIndicatorSet(models.Model):
 class SchoolIndicator(models.Model):
     school_indicator_set = models.ForeignKey(SchoolIndicatorSet, blank=True, null=True)
     title = models.ForeignKey(IndicatorTitle)
+    order = models.IntegerField(default=0)
     short_title = models.CharField(max_length=100,blank=True)
     description = models.TextField(blank=True)
     data_indeicator = models.BooleanField(default=True)

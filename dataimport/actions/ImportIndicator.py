@@ -34,7 +34,6 @@ def get_index(headers, dimension):
     for x in dimension:
         index.update({get_index_or_none(headers, x.name):
                         {'name':x.match_option, 'data_type':x.data_type, 'dimension_name':x.dimension_name}})
-                        
     return index
 
 def import_indicator(modeladmin, request, queryset):

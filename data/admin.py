@@ -24,6 +24,9 @@ class DistrictIndicatorSetInline(admin.TabularInline):
 class DistrictIndicatorDataSetInline(admin.TabularInline):
     model = DistrictIndicatorDataSet
 
+class DistrictIndicatorInline(admin.TabularInline):
+    model = DistrictIndicator
+
 class DistrictAdmin(admin.ModelAdmin):
     list_display = ('district_name', 'activate','slug', 'indicator_modified')
     inlines = [DistrictNumberOfStudentAndTeacherInline, DistrictIndicatorSetInline]
@@ -33,6 +36,7 @@ admin.site.register(District, DistrictAdmin)
 class DistrictIndicatorSetAdmin(admin.ModelAdmin):
     list_display = ('district', 'title')
     search_fields = ['district__district_name','title']
+    inlines = [DistrictIndicatorInline]
 admin.site.register(DistrictIndicatorSet, DistrictIndicatorSetAdmin)
 
 class DistrictIndicatorAdmin(admin.ModelAdmin):
@@ -73,6 +77,9 @@ class SchoolIndicatorSetInline(admin.TabularInline):
 class SchoolIndicatorDataSetInline(admin.TabularInline):
     model = SchoolIndicatorDataSet
 
+class SchoolIndicatorInline(admin.TabularInline):
+    model = SchoolIndicator
+
 class SchoolAdmin(admin.ModelAdmin):
     list_display = ('district','school_name', 'activate','slug', 'indicator_modified')
     inlines = [SchoolNumberOfStudentAndTeacherInline, SchoolIndicatorSetInline]
@@ -82,6 +89,7 @@ admin.site.register(School, SchoolAdmin)
 class SchoolIndicatorSetAdmin(admin.ModelAdmin):
     list_display = ('school', 'title')
     search_fields = ['school__school_name','title']
+    inlines = [SchoolIndicatorInline]
 admin.site.register(SchoolIndicatorSet, SchoolIndicatorSetAdmin)
 
 class SchoolIndicatorAdmin(admin.ModelAdmin):
