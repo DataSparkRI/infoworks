@@ -111,14 +111,14 @@ def import_indicator(modeladmin, request, queryset):
                                                             data_type = value["data_type"],
                                                             import_job = q
                             )
-                            if created:
-                                SchoolIndicatorData.objects.get_or_create(school_indicator_dataset=school_indicator_dataset,
-                                                            dimension_x = "School Year",
-                                                            dimension_y = value["dimension_name"].name,
-                                                            key_value = q.school_year.school_year,
-                                                            data_type = "STRING",
-                                                            import_job = q
-                                )
+                            #if created:
+                            #    SchoolIndicatorData.objects.get_or_create(school_indicator_dataset=school_indicator_dataset,
+                            #                                dimension_x = "School Year",
+                            #                                dimension_y = value["dimension_name"].name,
+                            #                                key_value = q.school_year.school_year,
+                            #                                data_type = "STRING",
+                            #                                import_job = q
+                            #    )
 
 
     messages.add_message(request, messages.INFO, "Done")

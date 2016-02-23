@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'data',
     'dataimport',
+    'api_infowork',
 ]
 
 MIDDLEWARE_CLASSES = [
