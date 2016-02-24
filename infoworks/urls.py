@@ -21,5 +21,6 @@ from infoworks import settings
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/',include('api_infowork.urls')),
+    url(r'^',include('front_page.urls'))
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,65 @@
+<!doctype html>
+<html data-ng-app="myApp">
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+    <script type="text/javascript">
+    var myApp = angular.module('myApp',[]).config(function($interpolateProvider) {
+        $interpolateProvider.startSymbol('{[{');
+        $interpolateProvider.endSymbol('}]}');
+    });
+      
+
+    myApp.controller('tableCtrl', ['$scope', '$http', function($scope, $http) {
+        $scope.search = "1";
+        $scope.empty = function(value) {
+          if (angular.equals({}, value)) {
+            return true;
+          } else {
+            return false;
+          }
+        };
+        
+        $scope.$watch('search', function() {
+            console.log($scope.search);
+            $http({method: 'GET', url: '/api/?indicator_type=school&indicator_id='+$scope.search+'&school_year=2015-2016'}).
+            success(function(data, status, headers, config) {
+                $scope.data = data;
+                console.log(data);
+            }).
+            error(function(data, status, headers, config) {});
+        });
+        
+    }]);
+    
+    </script>
+  </head>
+  <body>
+  
+  <div data-ng-controller="tableCtrl">
+      <div class="input-group search-bar">
+          indicator id: <input type="text" ng-model="search" ng-model-options="{ debounce: 800 }" placeholder="Enter indicator id" />
+      </div>
+      
+      <h3>Indicator Name: {[{ data.indicator_name }]}  
+      <br>District Name: {[{ data.district_name }]}
+      <br>School Year: {[{data.school_year}]}
+      </h3>
+    
+    <table border="1" style="width:100%">
+      <tr data-ng-if="data.indicator_data.length > 1">
+          <td></td>
+          <td data-ng-repeat="row in data.indicator_data[0].data">{[{row.dimension_x}]}</td>
+      </tr>
+        
+      <tr data-ng-repeat="indicator in data.indicator_data">
+        <td>{[{indicator.dimension_y}]}</td>
+        <td data-ng-repeat="row in indicator.data">{[{row.value}]}</td>
+      </tr>
+    </table>
+    
+  </div>
+
+
+  </body>
+
+</html>
