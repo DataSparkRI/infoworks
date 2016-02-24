@@ -7,8 +7,8 @@ from django.core import serializers
 from django.db.models import Count
 
 '''
-indicator_type=school&indicator_id=2&school_year=2014-2015
-indicator_type=school&school_code=1104&indicator_title=SAT Exams (High School)&school_year=2014-2015
+https://infoworks-yangxu.c9users.io/api/?indicator_type=school&indicator_id=2&school_year=2015-2016
+https://infoworks-yangxu.c9users.io/api/?indicator_type=school&school_code=1104&indicator_title=SAT Exams (High School)&school_year=2014-2015
 
 {"indicator_type":"District",
 "district_code":"1",

@@ -8,5 +8,5 @@ package.box
 *.log
 *.sqlite3
 *.db
-infoworks/media/
-infoworks/static/
+media/
+static/
