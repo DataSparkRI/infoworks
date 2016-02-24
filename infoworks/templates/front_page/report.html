@@ -66,13 +66,13 @@
 	                    <span class="icon-bar"></span>
 	                    <span class="icon-bar"></span>
 	                  </button>
-	                  <a class="navbar-brand" href="#"><img src="{% static "images/logo.png" %}" alt=""></a>
 	                </div>
 
 	                <!-- Collect the nav links, forms, and other content for toggling -->
 	                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 	                  <ul class="nav navbar-nav navbar-right">
 	                    <li><a href="#HOME">Home</a></li>
+	                    {% for i in school_indicator_set %}<li><a href="#{{i.order}}">{{i.title}}</a></li>{% endfor %}
 	                    <li><a href="#SERVICE">Services</a></li>
 	                    <li><a href="#ABOUT">About</a></li>
 	                    <li><a href="#TESTIMONIAL">Testimonial</a></li>
@@ -87,7 +87,7 @@
 	                <div class="row">
 	                    <div class="col-md-12 text-center">
 	                        <div class="home_text wow fadeInUp animated">
-	                            <h2>it’s abdullah noman</h2>
+	                            <h2>{{school.school_name}}</h2>
 	                            <p>a user interface and user experience specialist</p>
 	                            <img src="{% static "images/shape.png" %}" alt="">                        
 	                        </div>

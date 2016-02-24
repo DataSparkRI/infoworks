@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'data',
     'dataimport',
     'api_infowork',
+    'front_page',
 ]
 
 MIDDLEWARE_CLASSES = [

@@ -49,16 +49,8 @@ class DistrictNumberOfStudentAndTeacher(models.Model):
     def __unicode__(self):
         return "%s - [ %s students and %s teachers]"% (self.school_year, self.student, self.teacher)
 
-class DistrictIndicatorSet(models.Model):
-    district = models.ForeignKey(District)
-    title = models.CharField(max_length=100,blank=False)
-    order = models.IntegerField(default=1)
-
-    def __unicode__(self):
-        return "%s - %s"% (self.district.district_name, self.title)
-        
 class DistrictIndicator(models.Model):
-    district_indicator_set = models.ForeignKey(DistrictIndicatorSet, blank=True, null=True)
+    district_indicator_set = models.ForeignKey('DistrictIndicatorSet', blank=True, null=True)
     title = models.ForeignKey(IndicatorTitle)
     order = models.IntegerField(default=0)
     short_title = models.CharField(max_length=100,blank=True)
@@ -78,6 +70,20 @@ class DistrictIndicator(models.Model):
         
     def __unicode__(self):
         return "%s - %s"% (self.district_indicator_set, self.title)
+
+class DistrictIndicatorSet(models.Model):
+    district = models.ForeignKey(District)
+    title = models.CharField(max_length=100,blank=False)
+    order = models.IntegerField(default=1)
+
+    @property
+    def indicators(self):
+        return DistrictIndicator.objects.filter(district_indicator_set=self)
+        
+    def __unicode__(self):
+        return "%s - %s"% (self.district.district_name, self.title)
+        
+
 
 class DistrictIndicatorDataSet(models.Model):
     district_indicator = models.ForeignKey(DistrictIndicator, blank=True, null=True)
@@ -150,17 +156,9 @@ class SchoolNumberOfStudentAndTeacher(models.Model):
     def __unicode__(self):
         return "%s - [ %s students and %s teachers]"% (self.school_year, self.student, self.teacher)
         
-
-class SchoolIndicatorSet(models.Model):
-    school = models.ForeignKey(School, blank=True, null=True)
-    title = models.CharField(max_length=100,blank=False)
-    order = models.IntegerField(default=0)
-
-    def __unicode__(self):
-        return "%s - %s"% (self.school.school_name, self.title)
         
 class SchoolIndicator(models.Model):
-    school_indicator_set = models.ForeignKey(SchoolIndicatorSet, blank=True, null=True)
+    school_indicator_set = models.ForeignKey('SchoolIndicatorSet', blank=True, null=True)
     title = models.ForeignKey(IndicatorTitle)
     order = models.IntegerField(default=0)
     short_title = models.CharField(max_length=100,blank=True)
@@ -180,6 +178,18 @@ class SchoolIndicator(models.Model):
     
     def __unicode__(self):
         return "%s - %s"% (self.school_indicator_set, self.title)
+
+class SchoolIndicatorSet(models.Model):
+    school = models.ForeignKey(School, blank=True, null=True)
+    title = models.CharField(max_length=100,blank=False)
+    order = models.IntegerField(default=0)
+
+    @property
+    def indicators(self):
+        return SchoolIndicator.objects.filter(district_indicator_set=self)
+
+    def __unicode__(self):
+        return "%s - %s"% (self.school.school_name, self.title)
 
 class SchoolIndicatorDataSet(models.Model):
     school_indicator = models.ForeignKey(SchoolIndicator, blank=True, null=True)
