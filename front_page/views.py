@@ -15,7 +15,5 @@ def report(request, report_type, code):
         school_indicator_set = SchoolIndicatorSet.objects.filter(school = school).order_by("order")
 
         context = {"school": school,
-                   "school_indicator_set": school_indicator_set,
-                   "school_indicator": school_indicator,
-                   "school_indicator_data_set": school_indicator_data_set}
+                   "school_indicator_set": school_indicator_set}
     return render_to_response('front_page/report.html', context, context_instance=RequestContext(request))

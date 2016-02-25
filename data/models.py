@@ -78,7 +78,7 @@ class DistrictIndicatorSet(models.Model):
 
     @property
     def indicators(self):
-        return DistrictIndicator.objects.filter(district_indicator_set=self)
+        return DistrictIndicator.objects.filter(district_indicator_set=self).order_by("order")
         
     def __unicode__(self):
         return "%s - %s"% (self.district.district_name, self.title)
@@ -186,7 +186,7 @@ class SchoolIndicatorSet(models.Model):
 
     @property
     def indicators(self):
-        return SchoolIndicator.objects.filter(district_indicator_set=self)
+        return SchoolIndicator.objects.filter(school_indicator_set=self).order_by("order")
 
     def __unicode__(self):
         return "%s - %s"% (self.school.school_name, self.title)
