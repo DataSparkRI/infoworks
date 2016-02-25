@@ -35,7 +35,7 @@
                 <span class='dot'></span>
               </a>
           </li>
-          {% for i in school_indicator_set %}
+          {% for i in district.indicatorset %}
           <li>
               <a href="#{{i.order}}" class="page-scroll">
                 <span class="menu-title">{{i.title}}</span>
@@ -50,28 +50,11 @@
         <!-- Start: Header -->
         <div class="row hero-header" id="home">
           <div class="col-md-7">
-            <h1>{{school.school_name}}</h1>
-            <h3>{{school.description}}</h3>
-            <h4><i class="fa fa-map-marker"></i> {{school.street}} {{school.city}} {{school.state}} {{school.zip}}</h4>
-            <h4><i class="fa fa-phone"></i> {{school.phone}}</h4>
-            <h4><i class="fa fa-globe"></i> {{school.website}}</h4>
-            <h4><i class="fa fa-graduation-cap"></i> Grade:</h4>
-            <p class="btn btn-red" style="cursor: text;" {% if school.grade_pk == False %}disabled="disabled"{% endif %}>PK</p>
-            <p class="btn btn-red" style="cursor: text;" {% if school.grade_k == False %}disabled="disabled"{% endif %}>K</p>
-            <p class="btn btn-red" style="cursor: text;" {% if school.grade_1 == False %}disabled="disabled"{% endif %}>1</p>
-            <p class="btn btn-red" style="cursor: text;" {% if school.grade_2 == False %}disabled="disabled"{% endif %}>2</p>
-            <p class="btn btn-red" style="cursor: text;" {% if school.grade_3 == False %}disabled="disabled"{% endif %}>3</p>
-            <p class="btn btn-red" style="cursor: text;" {% if school.grade_4 == False %}disabled="disabled"{% endif %}>4</p>
-            <p class="btn btn-red" style="cursor: text;" {% if school.grade_5 == False %}disabled="disabled"{% endif %}>5</p>
-            <p class="btn btn-red" style="cursor: text;" {% if school.grade_6 == False %}disabled="disabled"{% endif %}>6</p>
-            <p class="btn btn-red" style="cursor: text;" {% if school.grade_7 == False %}disabled="disabled"{% endif %}>7</p>
-            <p class="btn btn-red" style="cursor: text;" {% if school.grade_8 == False %}disabled="disabled"{% endif %}>8</p>
-            <p class="btn btn-red" style="cursor: text;" {% if school.grade_9 == False %}disabled="disabled"{% endif %}>9</p>
-            <p class="btn btn-red" style="cursor: text;" {% if school.grade_10 == False %}disabled="disabled"{% endif %}>10</p>
-            <p class="btn btn-red" style="cursor: text;" {% if school.grade_11 == False %}disabled="disabled"{% endif %}>11</p>
-            <p class="btn btn-red" style="cursor: text;" {% if school.grade_12 == False %}disabled="disabled"{% endif %}>12</p>
-
-
+            <h1>{{district.district_name}}</h1>
+            <h3>{{district.description}}</h3>
+            <h4><i class="fa fa-map-marker"></i> {{district.street}} {{district.city}} {{district.state}} {{district.zip}}</h4>
+            <h4><i class="fa fa-phone"></i> {{district.phone}}</h4>
+            <h4><i class="fa fa-globe"></i> {{district.website}}</h4>
           </div>
           <div class="col-md-5 hidden-xs">
             <img src="{% static "img/rocket.png" %}" class="rocket animated bounce">
@@ -80,7 +63,7 @@
         <!-- End: Header -->
       </div>
       <!-- Start: Schedule -->
-      {% for i in school_indicator_set %}
+      {% for i in district.indicatorset %}
       <section class="container">
         <div class="row me-row schedule" id="{{i.order}}">
           <h2 class="row-title content-ct">{{i.title}}</h2>

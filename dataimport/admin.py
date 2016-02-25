@@ -16,7 +16,6 @@ def get_index_or_none(headers, option):
     try:
         return headers.index(option)
     except:
-        #print option
         return None
 
 def import_or_update_district_information(modeladmin, request, queryset):
@@ -33,11 +32,12 @@ def import_or_update_district_information(modeladmin, request, queryset):
         phone = get_or_none(fields, "PHONE")
         web_site = get_or_none(fields, "WEB_SITE")
         superintendent = get_or_none(fields, "SUPERINTENDENT")
+        description = get_or_none(fields, "DESCRIPTION")
 
         with open(path) as f:
             reader = csv.reader(f)
             headers = reader.next()
-        
+            
             district_code_index = get_index_or_none(headers, district_code)
             district_name_index = get_index_or_none(headers, district_name)
             address_index = get_index_or_none(headers, address)
@@ -47,7 +47,8 @@ def import_or_update_district_information(modeladmin, request, queryset):
             phone_index = get_index_or_none(headers, phone)
             web_site_index = get_index_or_none(headers, web_site)
             superintendent_index = get_index_or_none(headers, superintendent)
-
+            description_index = get_index_or_none(headers, description)
+            
             for row in reader:
                 district, created = District.objects.get_or_create(
                     district_code=row[district_code_index]
@@ -70,6 +71,9 @@ def import_or_update_district_information(modeladmin, request, queryset):
                     district.website = row[web_site_index]
                 if superintendent_index != None:
                     district.superintendent = row[superintendent_index]
+                if description_index != None:
+                    district.description = row[description_index]
+                    
                 district.save()
 
     messages.add_message(request, messages.INFO, "Done")
@@ -82,8 +86,6 @@ class DistrictFileAdmin(admin.ModelAdmin):
     inlines = [DistrictFieldInline]
     actions = [import_or_update_district_information]
 admin.site.register(DistrictFile, DistrictFileAdmin)
-
-
 
 def import_or_update_school_information(modeladmin, request, queryset):
     for q in queryset:
@@ -105,7 +107,7 @@ def import_or_update_school_information(modeladmin, request, queryset):
         low_grade = get_or_none(fields,"LOW_GRADE")
         high_grade = get_or_none(fields,"HIGH_GRADE")
         principal = get_or_none(fields,"PRINCIPAL")
-        
+        description = get_or_none(fields, "DESCRIPTION")
 
         with open(path) as f:
             reader = csv.reader(f)
@@ -127,6 +129,7 @@ def import_or_update_school_information(modeladmin, request, queryset):
             high_grade_index = get_index_or_none(headers,high_grade)
             
             principal_index = get_index_or_none(headers,principal)
+            description_index = get_index_or_none(headers, description)
 
             for row in reader:
                 school, created = School.objects.get_or_create(
@@ -151,6 +154,8 @@ def import_or_update_school_information(modeladmin, request, queryset):
                     school.website = row[web_site_index]
                 if principal_index != None:
                     school.principal = row[principal_index]
+                if description_index != None:
+                    school.description = row[description_index]
                 
                 if district_code_index != None:
                     school.district = District.objects.get(district_code = row[district_code_index])
