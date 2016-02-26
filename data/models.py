@@ -32,11 +32,46 @@ class DistrictNumberOfStudentAndTeacher(models.Model):
     def __unicode__(self):
         return "%s - [ %s students and %s teachers]"% (self.school_year, self.student, self.teacher)
 
+class DistrictDisplayData(models.Model):
+    district_indicator = models.ForeignKey("DistrictIndicator", blank=True, null=True)
+    display = models.ForeignKey("dataimport.DimensionFor")
+    order = models.IntegerField(default=1)
+    
+    def __unicode__(self):
+        return "%s - %s"% (self.district_indicator, self.display)
+
+class DistrictIndicatorData(models.Model):
+    district_indicator_dataset = models.ForeignKey("DistrictIndicatorDataSet", blank=True, null=True)
+    dimension_x = models.CharField(max_length=100, blank=True)
+    dimension_y = models.CharField(max_length=100, blank=True)
+    key_value = models.CharField(max_length=100, db_index=True)
+    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
+    import_job = models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
+    
+    def __unicode__(self):
+        return "%s - %s: %s"%(self.dimension_y, self.dimension_x, self.key_value)
+
 class DistrictIndicatorDataSet(models.Model):
     district_indicator = models.ForeignKey("DistrictIndicator", blank=True, null=True)
     school_year = models.ForeignKey(SchoolYear)
     csv_file = models.FileField(upload_to="District_Indicator_Data", blank=True, null=True)
     import_file = models.BooleanField(default=False) #If True start import file, then mark False after
+    
+    @property
+    def displaydata(self):
+        index = DistrictDisplayData.objects.filter(district_indicator=self.district_indicator).values_list('display__name',flat=True).order_by("order")
+        data = DistrictIndicatorData.objects.filter(district_indicator_dataset=self, dimension_x__in=index)
+        result = []
+        
+        y_names = data.values("dimension_y").annotate(Count("dimension_y"))
+        
+        for i in y_names:
+            result.append({"dimension_y":i["dimension_y"],"data":[ data.get(dimension_y=i["dimension_y"], dimension_x=a) for a in index]})
+        return result
+        
+    @property
+    def data(self):
+        return DistrictIndicatorData.objects.filter(district_indicator_dataset=self)
     
     def __unicode__(self):
         return "%s - %s"%(self.district_indicator, self.school_year)
@@ -56,6 +91,10 @@ class DistrictIndicator(models.Model):
     def dataset(self):
         return DistrictIndicatorDataSet.objects.filter(district_indicator=self).order_by("-school_year__school_year")
 
+    @property
+    def displaydata(self):
+        return DistrictDisplayData.objects.filter(district_indicator=self).order_by("order")
+
     def save(self, *args, **kwargs):
         ''' On save, update timestamps '''
         if not self.id:
@@ -68,13 +107,6 @@ class DistrictIndicator(models.Model):
     def __unicode__(self):
         return "%s - %s"% (self.district_indicator_set, self.title)
 
-class DistrictDisplayData(models.Model):
-    district_indicator = models.ForeignKey("DistrictIndicator", blank=True, null=True)
-    display = models.ForeignKey("dataimport.DimensionFor")
-    order = models.IntegerField(default=1)
-    
-    def __unicode__(self):
-        return "%s - %s"% (self.district_indicator, self.display)
 
 class DistrictIndicatorSet(models.Model):
     district = models.ForeignKey("District")
@@ -84,6 +116,7 @@ class DistrictIndicatorSet(models.Model):
     @property
     def indicators(self):
         return DistrictIndicator.objects.filter(district_indicator_set=self).order_by("order")
+        
         
     def __unicode__(self):
         return "%s - %s"% (self.district.district_name, self.title)
@@ -114,18 +147,6 @@ class District(models.Model):
     
     def __unicode__(self):
         return "%s (District)"% self.district_name
-
-class DistrictIndicatorData(models.Model):
-    district_indicator_dataset = models.ForeignKey(DistrictIndicatorDataSet, blank=True, null=True)
-    dimension_x = models.CharField(max_length=100, blank=True)
-    dimension_y = models.CharField(max_length=100, blank=True)
-    key_value = models.CharField(max_length=100, db_index=True)
-    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
-    import_job = models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
-    
-    def __unicode__(self):
-        return "%s - %s: %s"%(self.dimension_y, self.dimension_x, self.key_value)
-
 
         
 class SchoolNumberOfStudentAndTeacher(models.Model):
