@@ -1,5 +1,5 @@
 from django.contrib import admin
-from data.models import SchoolYear, DistrictIndicatorDataSet, SchoolIndicatorDataSet, IndicatorTitle, District, DistrictIndicatorSet, DistrictIndicator, School, SchoolIndicatorSet, SchoolIndicator, SchoolNumberOfStudentAndTeacher, DistrictNumberOfStudentAndTeacher
+from data.models import DistrictDisplayData, SchoolDisplayData, SchoolYear, DistrictIndicatorDataSet, SchoolIndicatorDataSet, IndicatorTitle, District, DistrictIndicatorSet, DistrictIndicator, School, SchoolIndicatorSet, SchoolIndicator, SchoolNumberOfStudentAndTeacher, DistrictNumberOfStudentAndTeacher
 from django.contrib import messages
 
 admin.site.register(IndicatorTitle)
@@ -14,6 +14,11 @@ def write_default_district_indicator_set(modeladmin, request, queryset):
         DistrictIndicatorSet.objects.get_or_create(title='Other' ,district=q, order=6)
     messages.add_message(request, messages.INFO, "Done")
 
+class DistrictDisplayDataInline(admin.TabularInline):
+    model = DistrictDisplayData
+    
+class SchoolDisplayDataInline(admin.TabularInline):
+    model = SchoolDisplayData
 
 class DistrictNumberOfStudentAndTeacherInline(admin.TabularInline):
     model = DistrictNumberOfStudentAndTeacher
@@ -42,7 +47,7 @@ admin.site.register(DistrictIndicatorSet, DistrictIndicatorSetAdmin)
 class DistrictIndicatorAdmin(admin.ModelAdmin):
     list_display = ('district_indicator_set','title','created','modified')
     raw_id_fields = ('district_indicator_set',)
-    inlines = [DistrictIndicatorDataSetInline]
+    inlines = [DistrictDisplayDataInline, DistrictIndicatorDataSetInline]
 admin.site.register(DistrictIndicator, DistrictIndicatorAdmin)
 
 #class DistrictNumberOfStudentAndTeacherAdmin(admin.ModelAdmin):
@@ -95,7 +100,7 @@ admin.site.register(SchoolIndicatorSet, SchoolIndicatorSetAdmin)
 class SchoolIndicatorAdmin(admin.ModelAdmin):
     list_display = ('school_indicator_set','title','created','modified')
     raw_id_fields = ('school_indicator_set',)
-    inlines = [SchoolIndicatorDataSetInline]
+    inlines = [SchoolDisplayDataInline, SchoolIndicatorDataSetInline]
 admin.site.register(SchoolIndicator, SchoolIndicatorAdmin)
 admin.site.register(SchoolYear)
 #class SchoolNumberOfStudentAndTeacherAdmin(admin.ModelAdmin):

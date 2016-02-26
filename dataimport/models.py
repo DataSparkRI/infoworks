@@ -110,6 +110,7 @@ class DimensionName(models.Model):
     
     def __unicode__(self):
         return self.name
+        
 class DimensionFor(models.Model):
     name = models.CharField(max_length=50, blank=True)
     

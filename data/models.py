@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.utils import timezone
-
+from django.db.models import Count
 
 DATA_TYPE_CHOICES = (
     ('NUMERIC', 'numeric'),
@@ -67,6 +67,14 @@ class DistrictIndicator(models.Model):
     def __unicode__(self):
         return "%s - %s"% (self.district_indicator_set, self.title)
 
+class DistrictDisplayData(models.Model):
+    district_indicator = models.ForeignKey("DistrictIndicator", blank=True, null=True)
+    display = models.ForeignKey("dataimport.DimensionFor")
+    order = models.IntegerField(default=1)
+    
+    def __unicode__(self):
+        return "%s - %s"% (self.district_indicator, self.display)
+
 class DistrictIndicatorSet(models.Model):
     district = models.ForeignKey("District")
     title = models.CharField(max_length=100,blank=False)
@@ -84,7 +92,7 @@ class District(models.Model):
     district_code = models.CharField(max_length=100,unique=True)
     activate = models.BooleanField(default=True)
     website = models.URLField(blank=True)
-    slug = models.SlugField(unique=True,db_index=True)
+    slug = models.SlugField(unique=True,db_index=True,prepopulate_from=('district_name',))
     superintendent = models.CharField(max_length=100, blank=True)
     street = models.CharField(max_length=100, blank=True)
     city = models.CharField(max_length=100, blank=True)
@@ -124,15 +132,51 @@ class SchoolNumberOfStudentAndTeacher(models.Model):
     def __unicode__(self):
         return "%s - [ %s students and %s teachers]"% (self.school_year, self.student, self.teacher)
         
+class SchoolDisplayData(models.Model):
+    school_indicator = models.ForeignKey("SchoolIndicator", blank=True, null=True)
+    display = models.ForeignKey("dataimport.DimensionFor")
+    order = models.IntegerField(default=1)
+    
+    def __unicode__(self):
+        return "%s - %s"% (self.school_indicator, self.display)
+       
+class SchoolIndicatorData(models.Model):
+    school_indicator_dataset = models.ForeignKey('SchoolIndicatorDataSet', blank=True, null=True)
+    dimension_x = models.CharField(max_length=100, blank=True)
+    dimension_y = models.CharField(max_length=100, blank=True)
+    key_value = models.CharField(max_length=100, db_index=True)
+    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
+    import_job = models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
+    
+    def __unicode__(self):
+        return "%s - %s: %s"%(self.dimension_y, self.dimension_x, self.key_value)
+ 
 class SchoolIndicatorDataSet(models.Model):
     school_indicator = models.ForeignKey("SchoolIndicator", blank=True, null=True)
     school_year = models.ForeignKey(SchoolYear)
     csv_file = models.FileField(upload_to="School_Indicator_Data", blank=True, null=True)
     import_file = models.BooleanField(default=False) #If True start import file, then mark False after
     
+    @property
+    def displaydata(self):
+        index = SchoolDisplayData.objects.filter(school_indicator=self.school_indicator).values_list('display__name',flat=True).order_by("order")
+        data = SchoolIndicatorData.objects.filter(school_indicator_dataset=self, dimension_x__in=index)
+        result = []
+        
+        y_names = data.values("dimension_y").annotate(Count("dimension_y"))
+        
+        for i in y_names:
+            result.append({"dimension_y":i["dimension_y"],"data":data.filter(dimension_y=i["dimension_y"])})
+        return result
+        
+    @property
+    def data(self):
+        return SchoolIndicatorData.objects.filter(school_indicator_dataset=self)
+        
+    
     def __unicode__(self):
         return "%s - %s"%(self.school_indicator, self.school_year)
-        
+
 class SchoolIndicator(models.Model):
     school_indicator_set = models.ForeignKey('SchoolIndicatorSet', blank=True, null=True)
     title = models.ForeignKey(IndicatorTitle)
@@ -146,6 +190,10 @@ class SchoolIndicator(models.Model):
     @property
     def dataset(self):
         return SchoolIndicatorDataSet.objects.filter(school_indicator=self).order_by("-school_year__school_year")
+
+    @property
+    def displaydata(self):
+        return SchoolDisplayData.objects.filter(school_indicator=self).order_by("order")
 
     def save(self, *args, **kwargs):
         ''' On save, update timestamps '''
@@ -181,7 +229,7 @@ class School(models.Model):
     
     activate = models.BooleanField(default=True)
     website = models.URLField(blank=True)
-    slug = models.SlugField(unique=True,db_index=True)
+    slug = models.SlugField(unique=True,db_index=True,prepopulate_from=('school_name',))
     street = models.CharField(max_length=100, blank=True)
     city = models.CharField(max_length=100, blank=True)
     state = models.CharField(max_length=100, blank=True)
@@ -216,16 +264,6 @@ class School(models.Model):
     def __unicode__(self):
         return "%s (School)"% self.school_name
 
-class SchoolIndicatorData(models.Model):
-    school_indicator_dataset = models.ForeignKey(SchoolIndicatorDataSet, blank=True, null=True)
-    dimension_x = models.CharField(max_length=100, blank=True)
-    dimension_y = models.CharField(max_length=100, blank=True)
-    key_value = models.CharField(max_length=100, db_index=True)
-    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
-    import_job = models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
-    
-    def __unicode__(self):
-        return "%s - %s: %s"%(self.dimension_y, self.dimension_x, self.key_value)
         
         
         

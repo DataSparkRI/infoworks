@@ -56,7 +56,7 @@ def import_or_update_district_information(modeladmin, request, queryset):
                 
                 if district_name_index != None:
                     district.district_name = row[district_name_index]
-                district.slug = row[district_code_index].lower()
+                #district.slug = row[district_code_index].lower()
                 if address_index != None:
                     district.street = row[address_index]
                 if city_index != None:
@@ -137,7 +137,7 @@ def import_or_update_school_information(modeladmin, request, queryset):
                     )
                 if school_code_index != None:    
                     school.school_name = row[school_name_index]
-                school.slug = row[school_code_index].lower()
+                #school.slug = row[school_code_index].lower()
                 if school_type_index != None:
                     school.school_type = row[school_type_index]
                 if address_index != None:
