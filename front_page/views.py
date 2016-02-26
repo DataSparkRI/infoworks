@@ -9,12 +9,13 @@ def search(request):
     context = {}
     return render_to_response('front_page/base.html', context, context_instance=RequestContext(request))
     
-def report(request, report_type, code):
-    if report_type == "school":
-        school = School.objects.get(school_code=code)
-        context = {"school": school}
-        return render_to_response('front_page/school_report.html', context, context_instance=RequestContext(request))
-    elif report_type == "district":
-        district = District.objects.get(district_code=code)
-        context = {"district": district}
-        return render_to_response('front_page/district_report.html', context, context_instance=RequestContext(request))
+def school(request, slug):
+    school = School.objects.get(slug=slug)
+    context = {"school": school}
+    return render_to_response('front_page/school_report.html', context, context_instance=RequestContext(request))
+    
+def district(request, slug):
+    district = District.objects.get(slug=slug)
+    context = {"district": district}
+    return render_to_response('front_page/district_report.html', context, context_instance=RequestContext(request))
+
