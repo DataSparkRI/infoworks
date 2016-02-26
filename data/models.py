@@ -102,6 +102,11 @@ class District(models.Model):
     description = models.TextField(blank=True)
     indicator_modified = models.DateTimeField(blank=True, null=True)
     
+    def save(self, *args, **kwargs):
+        if self.slug == None or self.slug == '':
+            self.slug = slugify(self.district_name)
+        super(District, self).save(*args, **kwargs)
+    
     @property
     def indicatorset(self):
         return DistrictIndicatorSet.objects.filter(district=self).order_by("order")
@@ -260,6 +265,11 @@ class School(models.Model):
     @property
     def indicatorset(self):
         return SchoolIndicatorSet.objects.filter(school=self).order_by("order")
+    
+    def save(self, *args, **kwargs):
+        if self.slug == None or self.slug == '':
+            self.slug = slugify(self.school_name)
+        super(School, self).save(*args, **kwargs)
     
     def __unicode__(self):
         return "%s (School)"% self.school_name
