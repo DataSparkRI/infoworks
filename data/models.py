@@ -92,7 +92,7 @@ class District(models.Model):
     district_code = models.CharField(max_length=100,unique=True)
     activate = models.BooleanField(default=True)
     website = models.URLField(blank=True)
-    slug = models.SlugField(unique=True,db_index=True,prepopulate_from=('district_name',))
+    slug = models.SlugField(unique=True,db_index=True)
     superintendent = models.CharField(max_length=100, blank=True)
     street = models.CharField(max_length=100, blank=True)
     city = models.CharField(max_length=100, blank=True)
@@ -229,7 +229,7 @@ class School(models.Model):
     
     activate = models.BooleanField(default=True)
     website = models.URLField(blank=True)
-    slug = models.SlugField(unique=True,db_index=True,prepopulate_from=('school_name',))
+    slug = models.SlugField(unique=True,db_index=True)
     street = models.CharField(max_length=100, blank=True)
     city = models.CharField(max_length=100, blank=True)
     state = models.CharField(max_length=100, blank=True)

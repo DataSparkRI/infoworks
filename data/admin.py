@@ -36,6 +36,7 @@ class DistrictAdmin(admin.ModelAdmin):
     list_display = ('district_name', 'activate','slug', 'indicator_modified')
     inlines = [DistrictNumberOfStudentAndTeacherInline, DistrictIndicatorSetInline]
     actions = [write_default_district_indicator_set]
+    prepopulated_fields = {'slug': ('district_name',), }
 admin.site.register(District, DistrictAdmin)
     
 class DistrictIndicatorSetAdmin(admin.ModelAdmin):
@@ -89,6 +90,7 @@ class SchoolAdmin(admin.ModelAdmin):
     list_display = ('district','school_name', 'activate','slug', 'indicator_modified')
     inlines = [SchoolNumberOfStudentAndTeacherInline, SchoolIndicatorSetInline]
     actions = [write_default_school_indicator_set]
+    prepopulated_fields = {'slug': ('school_name',), }
 admin.site.register(School, SchoolAdmin)
 
 class SchoolIndicatorSetAdmin(admin.ModelAdmin):
