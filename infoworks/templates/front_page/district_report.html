@@ -98,32 +98,26 @@
                     <div class="media">
                       <div class="media-body">
                         
-                        <table class="table table-hover"> 
-                          <thead> <tr><th></th> 
-                                      <th>This School</th> 
-                                      <th>Statewide</th>
-                                      <th>Nationwide</th>
-                                      <th>Details</th>
+                        <table class="table table-hover">
+                          <thead> <tr><th></th>
+                                      {% for k in j.displaydata%}
+                                      <th>{{k.display.name}}</th>
+                                      {% endfor %}
                                   </tr>
                           </thead>
-                          <tbody> <tr><th scope="row">Mathematics Average (out of 800)</th>
-                                      <td>588</td>
-                                      <td>481</td>
-                                      <td>511</td>
-                                      <td>---</td>
+                          <tbody> 
+                                  {% if j.dataset %}
+                                  {% for indicatordata in j.dataset.0.displaydata %}
+                                  <tr><th scope="row">{{indicatordata.dimension_y}}</th>
+                                      {% for row in indicatordata.data %}
+                                      {% if row %}<td>{{row.key_value}}</td>
+                                      {% else %}<td>No Data</td>{% endif %}
+                                      {% endfor %}
                                   </tr>
-                                  <tr><th scope="row">Reading Average (out of 800)</th>
-                                      <td>588</td>
-                                      <td>481</td>
-                                      <td>511</td>
-                                      <td>---</td>
-                                  </tr>
-                                  <tr><th scope="row">Writing Average (out of 800)</th>
-                                      <td>588</td>
-                                      <td>481</td>
-                                      <td>511</td>
-                                      <td>---</td>
-                                  </tr>
+                                  {% endfor %}
+                                  {% endif %}
+
+
                           </tbody>
                         </table>
                         

@@ -193,7 +193,13 @@ class SchoolIndicatorDataSet(models.Model):
         y_names = data.values("dimension_y").annotate(Count("dimension_y"))
         
         for i in y_names:
-            result.append({"dimension_y":i["dimension_y"],"data":[ data.get(dimension_y=i["dimension_y"], dimension_x=a) for a in index]})
+            result_data = []
+            for a in index:
+                try:
+                    result_data.append(data.get(dimension_y=i["dimension_y"], dimension_x=a))
+                except:
+                    result_data.append(None)
+            result.append({"dimension_y":i["dimension_y"],"data":result_data})
         return result
         
     @property

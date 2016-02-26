@@ -127,7 +127,8 @@
                                   {% for indicatordata in j.dataset.0.displaydata %}
                                   <tr><th scope="row">{{indicatordata.dimension_y}}</th>
                                       {% for row in indicatordata.data %}
-                                      <td>{{row.key_value}}</td>
+                                      {% if row %}<td>{{row.key_value}}</td>
+                                      {% else %}<td>No Data</td>{% endif %}
                                       {% endfor %}
                                   </tr>
                                   {% endfor %}
