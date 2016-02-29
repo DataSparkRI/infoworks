@@ -20,17 +20,6 @@ class SchoolYear(models.Model):
     school_year = models.CharField(max_length=100)
     def __unicode__(self):
         return "%s"% self.school_year
-
-
-class SchoolNumberOfStudentAndTeacher(models.Model):
-    school = models.ForeignKey("School")
-    activate = models.BooleanField(default=False)
-    school_year = models.ForeignKey(SchoolYear)
-    student = models.IntegerField(null=True)
-    teacher = models.IntegerField(null=True)
-
-    def __unicode__(self):
-        return "%s - [ %s students and %s teachers]"% (self.school_year, self.student, self.teacher)
         
 class SchoolDisplayData(models.Model):
     school_indicator = models.ForeignKey("SchoolIndicator", blank=True, null=True)
@@ -134,6 +123,8 @@ class School(models.Model):
     principal = models.CharField(max_length=100, blank=True)
     
     activate = models.BooleanField(default=True)
+    number_of_student = models.IntegerField(blank=True, null=True)
+    number_of_teacher = models.IntegerField(blank=True, null=True)
     website = models.URLField(blank=True)
     slug = models.SlugField(unique=True,db_index=True)
     street = models.CharField(max_length=100, blank=True)
@@ -175,18 +166,6 @@ class School(models.Model):
     def __unicode__(self):
         return "%s (School)"% self.school_name
 
-
-
-class DistrictNumberOfStudentAndTeacher(models.Model):
-    district = models.ForeignKey("District")
-    activate = models.BooleanField(default=False)
-    school_year = models.ForeignKey(SchoolYear)
-    student = models.IntegerField(null=True)
-    teacher = models.IntegerField(null=True)
-    school = models.IntegerField(null=True)
-    
-    def __unicode__(self):
-        return "%s - [ %s students and %s teachers]"% (self.school_year, self.student, self.teacher)
 
 class DistrictDisplayData(models.Model):
     district_indicator = models.ForeignKey("DistrictIndicator", blank=True, null=True)
@@ -281,6 +260,8 @@ class District(models.Model):
     district_name = models.CharField(max_length=100)
     district_code = models.CharField(max_length=100,unique=True)
     activate = models.BooleanField(default=True)
+    number_of_student = models.IntegerField(blank=True, null=True)
+    number_of_teacher = models.IntegerField(blank=True, null=True)
     website = models.URLField(blank=True)
     slug = models.SlugField(unique=True,db_index=True)
     superintendent = models.CharField(max_length=100, blank=True)
@@ -303,7 +284,7 @@ class District(models.Model):
     
     @property
     def schools(self):
-        return School.objects.filter(district=self)
+        return School.objects.filter(district=self, activate=True).order_by("school_name")
     
     def __unicode__(self):
         return "%s (District)"% self.district_name

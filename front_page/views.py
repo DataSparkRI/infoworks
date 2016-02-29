@@ -24,8 +24,8 @@ def district(request, slug):
 
 def landing_page(request):
     
-    district = District.objects.filter(activate=True)
-    paginator = Paginator(district, 25) # Show 25 contacts per page
+    district = District.objects.filter(activate=True).order_by('district_name')
+    paginator = Paginator(district, 10) # Show 25 contacts per page
     
     page = request.GET.get('page')
     

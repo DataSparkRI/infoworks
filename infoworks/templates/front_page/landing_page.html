@@ -1,61 +1,25 @@
-{% load staticfiles %}
+{% extends "front_page/base.html" %}{% load staticfiles %}
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Meetup is a free responsive single page bootstrap template by designerdada.com">
-  <meta name="author" content="Akash Bhadange">
-  <title>Meetup: Free Responsive One Page Bootstrap Template</title>
 
-  <!-- Bootstrap -->
-  <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
-  <link href="{% static "css/style.css" %}" rel="stylesheet">
-  <link href="{% static "css/themify-icons.css" %}" rel="stylesheet">
-  <link href="{% static "css/dosis-font.css" %}" rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-      <![endif]-->
-    </head>
-    <body id="page-top" data-spy="scroll" data-target=".side-menu">
-        <nav class="navbar navbar-default navbar-fixed-top">
-           <div class="container">
-              <!-- Brand and toggle get grouped for better mobile display -->
-              <div class="navbar-header">
-                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                 <span class="sr-only">Toggle navigation</span>
-                 <span class="icon-bar"></span>
-                 <span class="icon-bar"></span>
-                 <span class="icon-bar"></span>
-                 </button>
-                 <a class="navbar-brand" href="#"><img src="{% static "img/infoworks.png" %}" alt="" style="height: 35px;"></a>
-              </div>
-              <!-- Collect the nav links, forms, and other content for toggling -->
-              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#HOME">Home</a></li>
-                    <li><a href="#SERVICE">Services</a></li>
-                    <li><a href="#ABOUT">About</a></li>
-                    <li><a href="#TESTIMONIAL">Testimonial</a></li>
-                    <li><a href="#WORK">Work</a></li>
-                    <li><a href="#CONTACT">Contact</a></li>
-                 </ul>
-              </div>
-              <!-- /.navbar-collapse -->
-           </div>
-           <!-- /.container -->
-        </nav>
-
-
-
-
-
+{% block body %}
       <section class="container body">
+          <div class="text-right">
+            <span class="step-links">
+                {% if district.has_previous %}
+                    <a href="?page={{ district.previous_page_number }}">previous</a>
+                {% endif %}
+        
+                <span class="current">
+                    Page {{ district.number }} of {{ district.paginator.num_pages }}.
+                </span>
+        
+                {% if district.has_next %}
+                    <a href="?page={{ district.next_page_number }}">next</a>
+                {% endif %}
+            </span>
+        </div>
+          
+          
            <table class="table table-hover">
                <thead>
                   <tr>
@@ -70,20 +34,20 @@
                      <th scope="row"><a href="{% url 'district' d.slug %}">{{d.district_name}}</a></th>
                      <td><a href="{% url 'school' school.slug %}">{{school.school_name}}</a></td>
                      <td>
-                        <p class="btn btn-red" style="cursor: text;" {% if school.grade_pk == False %}disabled="disabled"{% endif %}>PK</p>
-                        <p class="btn btn-red" style="cursor: text;" {% if school.grade_k == False %}disabled="disabled"{% endif %}>K</p>
-                        <p class="btn btn-red" style="cursor: text;" {% if school.grade_1 == False %}disabled="disabled"{% endif %}>1</p>
-                        <p class="btn btn-red" style="cursor: text;" {% if school.grade_2 == False %}disabled="disabled"{% endif %}>2</p>
-                        <p class="btn btn-red" style="cursor: text;" {% if school.grade_3 == False %}disabled="disabled"{% endif %}>3</p>
-                        <p class="btn btn-red" style="cursor: text;" {% if school.grade_4 == False %}disabled="disabled"{% endif %}>4</p>
-                        <p class="btn btn-red" style="cursor: text;" {% if school.grade_5 == False %}disabled="disabled"{% endif %}>5</p>
-                        <p class="btn btn-red" style="cursor: text;" {% if school.grade_6 == False %}disabled="disabled"{% endif %}>6</p>
-                        <p class="btn btn-red" style="cursor: text;" {% if school.grade_7 == False %}disabled="disabled"{% endif %}>7</p>
-                        <p class="btn btn-red" style="cursor: text;" {% if school.grade_8 == False %}disabled="disabled"{% endif %}>8</p>
-                        <p class="btn btn-red" style="cursor: text;" {% if school.grade_9 == False %}disabled="disabled"{% endif %}>9</p>
-                        <p class="btn btn-red" style="cursor: text;" {% if school.grade_10 == False %}disabled="disabled"{% endif %}>10</p>
-                        <p class="btn btn-red" style="cursor: text;" {% if school.grade_11 == False %}disabled="disabled"{% endif %}>11</p>
-                        <p class="btn btn-red" style="cursor: text;" {% if school.grade_12 == False %}disabled="disabled"{% endif %}>12</p>
+                        <p class="btn btn-red btn-xs" style="cursor: text;" {% if school.grade_pk == False %}disabled="disabled"{% endif %}>PK</p>
+                        <p class="btn btn-red btn-xs" style="cursor: text;" {% if school.grade_k == False %}disabled="disabled"{% endif %}>K</p>
+                        <p class="btn btn-red btn-xs" style="cursor: text;" {% if school.grade_1 == False %}disabled="disabled"{% endif %}>1</p>
+                        <p class="btn btn-red btn-xs" style="cursor: text;" {% if school.grade_2 == False %}disabled="disabled"{% endif %}>2</p>
+                        <p class="btn btn-red btn-xs" style="cursor: text;" {% if school.grade_3 == False %}disabled="disabled"{% endif %}>3</p>
+                        <p class="btn btn-red btn-xs" style="cursor: text;" {% if school.grade_4 == False %}disabled="disabled"{% endif %}>4</p>
+                        <p class="btn btn-red btn-xs" style="cursor: text;" {% if school.grade_5 == False %}disabled="disabled"{% endif %}>5</p>
+                        <p class="btn btn-red btn-xs" style="cursor: text;" {% if school.grade_6 == False %}disabled="disabled"{% endif %}>6</p>
+                        <p class="btn btn-red btn-xs" style="cursor: text;" {% if school.grade_7 == False %}disabled="disabled"{% endif %}>7</p>
+                        <p class="btn btn-red btn-xs" style="cursor: text;" {% if school.grade_8 == False %}disabled="disabled"{% endif %}>8</p>
+                        <p class="btn btn-red btn-xs" style="cursor: text;" {% if school.grade_9 == False %}disabled="disabled"{% endif %}>9</p>
+                        <p class="btn btn-red btn-xs" style="cursor: text;" {% if school.grade_10 == False %}disabled="disabled"{% endif %}>10</p>
+                        <p class="btn btn-red btn-xs" style="cursor: text;" {% if school.grade_11 == False %}disabled="disabled"{% endif %}>11</p>
+                        <p class="btn btn-red btn-xs" style="cursor: text;" {% if school.grade_12 == False %}disabled="disabled"{% endif %}>12</p>
                          
                          
                      </td>
@@ -112,34 +76,4 @@
 
         </section>
 
-
-
-
-
-      <!-- Start: Footer -->
-      <section class="container-fluid footer">
-        <div class="row footer-credit">
-          <div class="col-md-6 col-sm-6">
-            <p>&copy; 2015, <a href="http://www.designerdada.com">DesignerDada.com</a> | All rights reserved.</p>
-          </div>
-          <div class="col-md-6 col-sm-6"> 
-            <ul class="footer-menu">
-              <li><a href="#">About Us</a></li>
-              <li><a href="#">Privacy Policy</a></li>
-              <li><a href="#">Terms &amp; Condition</a></li>
-            </ul>
-          </div>
-        </div>
-      </section>
-      <!-- End: Footer -->
-
-      <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-      <script src="{% static "js/jquery.min.js" %}"></script>
-      <!-- Include all compiled plugins (below), or include individual files as needed -->
-      <script src="{% static "js/bootstrap.min.js" %}"></script>
-      <script src="{% static "js/jquery.easing.min.js" %}"></script>
-      <script src="{% static "js/scrolling-nav.js" %}"></script>
-      <script src="{% static "js/validator.js" %}"></script>
-
-    </body>
-    </html>
+{% endblock body %}

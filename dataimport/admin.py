@@ -33,6 +33,8 @@ def import_or_update_district_information(modeladmin, request, queryset):
         web_site = get_or_none(fields, "WEB_SITE")
         superintendent = get_or_none(fields, "SUPERINTENDENT")
         description = get_or_none(fields, "DESCRIPTION")
+        number_student = get_or_none(fields, "NUMBER_STUDENT")
+        number_teacher = get_or_none(fields, "NUMBER_TEACHER")
 
         with open(path) as f:
             reader = csv.reader(f)
@@ -48,6 +50,8 @@ def import_or_update_district_information(modeladmin, request, queryset):
             web_site_index = get_index_or_none(headers, web_site)
             superintendent_index = get_index_or_none(headers, superintendent)
             description_index = get_index_or_none(headers, description)
+            number_student_index = get_index_or_none(headers, number_student)
+            number_teacher_index = get_index_or_none(headers, number_teacher)
             
             for row in reader:
                 district, created = District.objects.get_or_create(
@@ -73,6 +77,10 @@ def import_or_update_district_information(modeladmin, request, queryset):
                     district.superintendent = row[superintendent_index]
                 if description_index != None:
                     district.description = row[description_index]
+                if number_student_index != None:
+                    district.number_of_student = row[number_student_index]
+                if number_teacher_index != None:
+                    district.number_of_teacher = row[number_teacher_index]
                     
                 district.save()
 
@@ -108,6 +116,8 @@ def import_or_update_school_information(modeladmin, request, queryset):
         high_grade = get_or_none(fields,"HIGH_GRADE")
         principal = get_or_none(fields,"PRINCIPAL")
         description = get_or_none(fields, "DESCRIPTION")
+        number_student = get_or_none(fields, "NUMBER_STUDENT")
+        number_teacher = get_or_none(fields, "NUMBER_TEACHER")
 
         with open(path) as f:
             reader = csv.reader(f)
@@ -130,7 +140,9 @@ def import_or_update_school_information(modeladmin, request, queryset):
             
             principal_index = get_index_or_none(headers,principal)
             description_index = get_index_or_none(headers, description)
-
+            number_student_index = get_index_or_none(headers, number_student)
+            number_teacher_index = get_index_or_none(headers, number_teacher)
+            
             for row in reader:
                 school, created = School.objects.get_or_create(
                     school_code=row[school_code_index]
@@ -156,7 +168,11 @@ def import_or_update_school_information(modeladmin, request, queryset):
                     school.principal = row[principal_index]
                 if description_index != None:
                     school.description = row[description_index]
-                
+                if number_student_index != None:
+                    district.number_of_student = row[number_student_index]
+                if number_teacher_index != None:
+                    district.number_of_teacher = row[number_teacher_index]
+                    
                 if district_code_index != None:
                     school.district = District.objects.get(district_code = row[district_code_index])
                 if grade_type_index != None:

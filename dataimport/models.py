@@ -20,6 +20,8 @@ class DistrictField(models.Model):
                             ('WEB_SITE','web_site'),
                             ('SUPERINTENDENT','Superintendent'),
                             ('DESCRIPTION','Description'),
+                            ('NUMBER_STUDENT','number of student'),
+                            ('NUMBER_TEACHER','number of teacher')
                             )
     )
     def save(self, *args, **kwargs):
@@ -73,6 +75,8 @@ class SchoolField(models.Model):
                             ('LOW_GRADE', 'low_grade'),
                             ('HIGH_GRADE','high_grade'),
                             ('DESCRIPTION','Description'),
+                            ('NUMBER_STUDENT','number of student'),
+                            ('NUMBER_TEACHER','number of teacher')
                             )
     )
     def save(self, *args, **kwargs):

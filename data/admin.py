@@ -1,5 +1,5 @@
 from django.contrib import admin
-from data.models import DistrictDisplayData, SchoolDisplayData, SchoolYear, DistrictIndicatorDataSet, SchoolIndicatorDataSet, IndicatorTitle, District, DistrictIndicatorSet, DistrictIndicator, School, SchoolIndicatorSet, SchoolIndicator, SchoolNumberOfStudentAndTeacher, DistrictNumberOfStudentAndTeacher
+from data.models import DistrictDisplayData, SchoolDisplayData, SchoolYear, DistrictIndicatorDataSet, SchoolIndicatorDataSet, IndicatorTitle, District, DistrictIndicatorSet, DistrictIndicator, School, SchoolIndicatorSet, SchoolIndicator
 from django.contrib import messages
 
 admin.site.register(IndicatorTitle)
@@ -20,9 +20,6 @@ class DistrictDisplayDataInline(admin.TabularInline):
 class SchoolDisplayDataInline(admin.TabularInline):
     model = SchoolDisplayData
 
-class DistrictNumberOfStudentAndTeacherInline(admin.TabularInline):
-    model = DistrictNumberOfStudentAndTeacher
-
 class DistrictIndicatorSetInline(admin.TabularInline):
     model = DistrictIndicatorSet
 
@@ -34,7 +31,7 @@ class DistrictIndicatorInline(admin.TabularInline):
 
 class DistrictAdmin(admin.ModelAdmin):
     list_display = ('district_name', 'activate','slug', 'indicator_modified')
-    inlines = [DistrictNumberOfStudentAndTeacherInline, DistrictIndicatorSetInline]
+    inlines = [DistrictIndicatorSetInline]
     actions = [write_default_district_indicator_set]
 admin.site.register(District, DistrictAdmin)
     
@@ -65,16 +62,8 @@ def write_default_school_indicator_set(modeladmin, request, queryset):
         SchoolIndicatorSet.objects.get_or_create(title='Other' ,school=q, order=6)
     messages.add_message(request, messages.INFO, "Done")
 
-
-class SchoolNumberOfStudentAndTeacherInline(admin.TabularInline):
-    model = SchoolNumberOfStudentAndTeacher
-
 class SchoolIndicatorSetInline(admin.TabularInline):
     model = SchoolIndicatorSet
-
-
-class SchoolNumberOfStudentAndTeacherInline(admin.TabularInline):
-    model = SchoolNumberOfStudentAndTeacher
 
 class SchoolIndicatorSetInline(admin.TabularInline):
     model = SchoolIndicatorSet
@@ -87,7 +76,7 @@ class SchoolIndicatorInline(admin.TabularInline):
 
 class SchoolAdmin(admin.ModelAdmin):
     list_display = ('district','school_name', 'activate','slug', 'indicator_modified')
-    inlines = [SchoolNumberOfStudentAndTeacherInline, SchoolIndicatorSetInline]
+    inlines = [SchoolIndicatorSetInline]
     actions = [write_default_school_indicator_set]
 admin.site.register(School, SchoolAdmin)
 
