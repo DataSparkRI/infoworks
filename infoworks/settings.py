@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_jenkins',
     'data',
     'dataimport',
     'api_infowork',
@@ -118,6 +119,13 @@ USE_L10N = True
 
 USE_TZ = True
 
+JENKINS_TASKS = (
+    'django_jenkins.tasks.run_pep8',
+    'django_jenkins.tasks.run_pyflakes',
+    'django_jenkins.tasks.run_pylint',
+    #'django_jenkins.tasks.run_csslint',    
+    #'django_jenkins.tasks.run_sloccount'
+)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
