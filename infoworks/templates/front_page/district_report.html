@@ -34,6 +34,10 @@
             <h4><i class="fa fa-map-marker"></i> {{district.street}} {{district.city}} {{district.state}} {{district.zip}}</h4>
             <h4><i class="fa fa-phone"></i> {{district.phone}}</h4>
             <h4><i class="fa fa-globe"></i> {{district.website}}</h4>
+            <h4></h4>
+            {% if district.number_of_student %}<p class="btn btn-red" style="cursor: text;">{{district.number_of_student}} Students</p>{% endif %}
+			      {% if district.number_of_teacher %}<p class="btn btn-red" style="cursor: text;">{{district.number_of_teacher}} Teachers</p>{% endif %}
+      
           </div>
           <div class="col-md-5 hidden-xs">
             <img src="{% static "img/rocket.png" %}" class="rocket animated bounce">
