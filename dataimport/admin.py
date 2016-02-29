@@ -169,9 +169,9 @@ def import_or_update_school_information(modeladmin, request, queryset):
                 if description_index != None:
                     school.description = row[description_index]
                 if number_student_index != None:
-                    district.number_of_student = row[number_student_index]
+                    school.number_of_student = row[number_student_index]
                 if number_teacher_index != None:
-                    district.number_of_teacher = row[number_teacher_index]
+                    school.number_of_teacher = row[number_teacher_index]
                     
                 if district_code_index != None:
                     school.district = District.objects.get(district_code = row[district_code_index])
