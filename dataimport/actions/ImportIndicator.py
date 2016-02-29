@@ -12,7 +12,6 @@ def get_or_none(objects, match_option):
         else:
             return objs
     except:
-        print match_option
         return None
 
 def get_index_or_none(headers, option):

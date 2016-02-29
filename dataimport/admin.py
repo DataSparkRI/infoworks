@@ -9,7 +9,6 @@ def get_or_none(objects, match_option):
     try:
         return objects.get(match_option=match_option).name
     except:
-        print match_option
         return None
 
 def get_index_or_none(headers, option):
@@ -169,9 +168,11 @@ def import_or_update_school_information(modeladmin, request, queryset):
                 if description_index != None:
                     school.description = row[description_index]
                 if number_student_index != None:
-                    school.number_of_student = row[number_student_index]
+                    if row[number_student_index] != '':
+                       school.number_of_student = row[number_student_index]
                 if number_teacher_index != None:
-                    school.number_of_teacher = row[number_teacher_index]
+                    if row[number_teacher_index] != '':
+                       school.number_of_teacher = row[number_teacher_index]
                     
                 if district_code_index != None:
                     school.district = District.objects.get(district_code = row[district_code_index])
@@ -201,7 +202,6 @@ def import_or_update_school_information(modeladmin, request, queryset):
                         if row[high_grade_index].lower() == i['id']:
                             lock = False
                             break
-                print school.grade_pk
                             
                 school.save()
 
