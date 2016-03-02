@@ -258,7 +258,8 @@ class DistrictIndicatorSet(models.Model):
         return "%s - %s"% (self.district.district_name, self.title)
         
 class District(models.Model):
-    state = models.ForeignKey("State", blank=True, null=True)
+    
+    us_state = models.ForeignKey("State", blank=True, null=True)
     district_name = models.CharField(max_length=100)
     district_code = models.CharField(max_length=100,unique=True)
     activate = models.BooleanField(default=True)

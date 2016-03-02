@@ -150,9 +150,14 @@ def import_or_update_district_information(modeladmin, request, queryset):
                 district, created = District.objects.get_or_create(
                     district_code=row[district_code_index]
                     )
-                if district_code_index != None:
-                    district.state = District.objects.get_or_create(state_code = row[state_code_index])
-                
+                if state_code_index != None:
+                    district.us_state = State.objects.get_or_create(state_code = row[state_code_index])
+                else:
+                    try:
+                        district.us_state = State.objects.filter(default_state=True)[0]
+                    except:
+                        pass
+
                 if district_name_index != None:
                     district.district_name = row[district_name_index]
                 #district.slug = row[district_code_index].lower()
