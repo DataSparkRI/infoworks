@@ -137,3 +137,10 @@ STATICFILES_DIRS = [
 ]
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR+'/media/'
+
+try:
+    from local_settings import *
+    #CTX_CONFIG.update(CTX_CONFIG_)
+except ImportError, e:
+    pass
+
