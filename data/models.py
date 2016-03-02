@@ -48,21 +48,39 @@ class SchoolIndicatorDataSet(models.Model):
     import_file = models.BooleanField(default=False) #If True start import file, then mark False after
     
     @property
-    def displaydata(self):
+    def displaydata_x(self):
+        index = SchoolDisplayData.objects.filter(school_indicator=self.school_indicator).values_list('display__name',flat=True).order_by("order")
+        return index
+
+    @property
+    def displaydata_y(self):
         index = SchoolDisplayData.objects.filter(school_indicator=self.school_indicator).values_list('display__name',flat=True).order_by("order")
         data = SchoolIndicatorData.objects.filter(school_indicator_dataset=self, dimension_x__in=index)
         result = []
-        
+
         y_names = data.values("dimension_y").annotate(Count("dimension_y"))
-        
-        for i in y_names:
-            result_data = []
-            for a in index:
+        return [i["dimension_y"]  for i in y_names]
+
+    @property
+    def get_objects(self, dimension_x, dimension_y):
+        try:
+           return SchoolIndicatorData.objects.get(school_indicator_dataset=self, dimension_x=dimension_x, dimension_y=dimension_y)
+        except:
+           return None
+
+    @property
+    def displaydata(self):
+        dim_x = self.displaydata_x
+        dim_y = self.displaydata_y
+        result = []
+        for y in dim_y:
+            data = []
+            for x in dim_x:
                 try:
-                    result_data.append(data.get(dimension_y=i["dimension_y"], dimension_x=a))
+                   data.append(SchoolIndicatorData.objects.get(school_indicator_dataset=self, dimension_x=x, dimension_y=y))
                 except:
-                    result_data.append(None)
-            result.append({"dimension_y":i["dimension_y"],"data":result_data})
+                   data.append(None)
+            result.append({"dimension_y":y, "data":data})
         return result
         
     @property
@@ -192,19 +210,43 @@ class DistrictIndicatorDataSet(models.Model):
     school_year = models.ForeignKey(SchoolYear)
     csv_file = models.FileField(upload_to="District_Indicator_Data", blank=True, null=True)
     import_file = models.BooleanField(default=False) #If True start import file, then mark False after
-    
+
     @property
-    def displaydata(self):
+    def displaydata_x(self):
+        index = DistrictDisplayData.objects.filter(district_indicator=self.district_indicator).values_list('display__name',flat=True).order_by("order")
+        return index
+
+    @property
+    def displaydata_y(self):
         index = DistrictDisplayData.objects.filter(district_indicator=self.district_indicator).values_list('display__name',flat=True).order_by("order")
         data = DistrictIndicatorData.objects.filter(district_indicator_dataset=self, dimension_x__in=index)
         result = []
-        
+
         y_names = data.values("dimension_y").annotate(Count("dimension_y"))
-        
-        for i in y_names:
-            result.append({"dimension_y":i["dimension_y"],"data":[ data.get(dimension_y=i["dimension_y"], dimension_x=a) for a in index]})
+        return [i["dimension_y"]  for i in y_names]
+
+    @property
+    def get_objects(self, dimension_x, dimension_y):
+        try:
+           return DistrictIndicatorData.objects.get(district_indicator_dataset=self, dimension_x=dimension_x, dimension_y=dimension_y)
+        except:
+           return None
+
+    @property
+    def displaydata(self):
+        dim_x = self.displaydata_x
+        dim_y = self.displaydata_y
+        result = []
+        for y in dim_y:
+            data = []
+            for x in dim_x:
+                try:
+                   data.append(DistrictIndicatorData.objects.get(district_indicator_dataset=self, dimension_x=x, dimension_y=y))
+                except:
+                   data.append(None)
+            result.append({"dimension_y":y, "data":data})
         return result
-        
+
     @property
     def data(self):
         return DistrictIndicatorData.objects.filter(district_indicator_dataset=self)
@@ -321,15 +363,39 @@ class StateIndicatorDataSet(models.Model):
     import_file = models.BooleanField(default=False) #If True start import file, then mark False after
     
     @property
-    def displaydata(self):
+    def displaydata_x(self):
+        index = StateDisplayData.objects.filter(state_indicator=self.state_indicator).values_list('display__name',flat=True).order_by("order")
+        return index
+
+    @property
+    def displaydata_y(self):
         index = StateDisplayData.objects.filter(state_indicator=self.state_indicator).values_list('display__name',flat=True).order_by("order")
         data = StateIndicatorData.objects.filter(state_indicator_dataset=self, dimension_x__in=index)
         result = []
-        
+
         y_names = data.values("dimension_y").annotate(Count("dimension_y"))
-        
-        for i in y_names:
-            result.append({"dimension_y":i["dimension_y"],"data":[ data.get(dimension_y=i["dimension_y"], dimension_x=a) for a in index]})
+        return [i["dimension_y"]  for i in y_names]
+
+    @property
+    def get_objects(self, dimension_x, dimension_y):
+        try:
+           return StateIndicatorData.objects.get(state_indicator_dataset=self, dimension_x=dimension_x, dimension_y=dimension_y)
+        except:
+           return None
+
+    @property
+    def displaydata(self):
+        dim_x = self.displaydata_x
+        dim_y = self.displaydata_y
+        result = []
+        for y in dim_y:
+            data = []
+            for x in dim_x:
+                try:
+                   data.append(StateIndicatorData.objects.get(state_indicator_dataset=self, dimension_x=x, dimension_y=y))
+                except:
+                   data.append(None)
+            result.append({"dimension_y":y, "data":data})
         return result
         
     @property
