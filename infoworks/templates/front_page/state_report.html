@@ -14,7 +14,7 @@
                 <span class='dot'></span>
               </a>
           </li>
-          {% for i in district.indicatorset %}
+          {% for i in state.indicatorset %}
           <li>
               <a href="#{{i.order}}" class="page-scroll">
                 <span class="menu-title">{{i.title}}</span>
@@ -29,24 +29,24 @@
         <!-- Start: Header -->
         <div class="row hero-header" id="home">
           <div class="col-md-7">
-            <h1>{{district.district_name}}</h1>
-            <h3>{{district.description}}</h3>
-            <h4><i class="fa fa-map-marker"></i> {{district.street}} {{district.city}} {{district.state}} {{district.zip}}</h4>
-            <h4><i class="fa fa-phone"></i> {{district.phone}}</h4>
-            <h4><i class="fa fa-globe"></i> {{district.website}}</h4>
+            <h1>{{state.state_name}}</h1>
+            <h3>{{state.description}}</h3>
+            <h4><i class="fa fa-map-marker"></i> {{state.street}} {{state.city}} {{state.state}} {{state.zip}}</h4>
+            <h4><i class="fa fa-phone"></i> {{state.phone}}</h4>
+            <h4><i class="fa fa-globe"></i> {{state.website}}</h4>
             <h4></h4>
-            {% if district.number_of_student %}<p class="btn btn-red" style="cursor: text;">{{district.number_of_student}} Students</p>{% endif %}
-			      {% if district.number_of_teacher %}<p class="btn btn-red" style="cursor: text;">{{district.number_of_teacher}} Teachers</p>{% endif %}
-      
+            {% if state.number_of_student %}<p class="btn btn-red" style="cursor: text;">{{state.number_of_student}} Students</p>{% endif %}
+			      {% if state.number_of_teacher %}<p class="btn btn-red" style="cursor: text;">{{state.number_of_teacher}} Teachers</p>{% endif %}
+			      {% if state.number_of_school %}<p class="btn btn-red" style="cursor: text;">{{state.number_of_school}} Teachers</p>{% endif %}
           </div>
           <div class="col-md-5 hidden-xs">
-            <img src="{% static "img/district.png" %}" class="rocket animated bounce">
+            <img src="{% static "img/rocket.png" %}" class="rocket animated bounce">
           </div>
         </div>
         <!-- End: Header -->
       </div>
       <!-- Start: Schedule -->
-      {% for i in district.indicatorset %}
+      {% for i in state.indicatorset %}
       <section class="container">
         <div class="row me-row schedule" id="{{i.order}}">
           <h2 class="row-title content-ct">{{i.title}}</h2>

@@ -1,9 +1,106 @@
 from django.contrib import admin
-from data.models import DistrictDisplayData, SchoolDisplayData, SchoolYear, DistrictIndicatorDataSet, SchoolIndicatorDataSet, IndicatorTitle, District, DistrictIndicatorSet, DistrictIndicator, School, SchoolIndicatorSet, SchoolIndicator
+from data.models import SchoolYear, IndicatorTitle, \
+District, DistrictDisplayData, DistrictIndicatorDataSet, DistrictIndicatorSet, DistrictIndicator, \
+School, SchoolIndicatorSet, SchoolIndicator, SchoolDisplayData, SchoolIndicatorDataSet, \
+State, StateIndicatorSet, StateIndicator, StateDisplayData, StateIndicatorDataSet
 from django.contrib import messages
 
 admin.site.register(IndicatorTitle)
 
+##### state #########
+def write_default_state_indicator_set(modeladmin, request, queryset):
+    for q in queryset:
+        StateIndicatorSet.objects.get_or_create(title='Student Achievement' ,state=q, order=1)
+        StateIndicatorSet.objects.get_or_create(title='Teaching' ,state=q, order=2)
+        StateIndicatorSet.objects.get_or_create(title='Families and Communities' ,state=q, order=3)
+        StateIndicatorSet.objects.get_or_create(title='Safe and Supportive Schools' ,state=q, order=4)
+        StateIndicatorSet.objects.get_or_create(title='Funding and Resources' ,state=q, order=5)
+        StateIndicatorSet.objects.get_or_create(title='Other' ,state=q, order=6)
+    messages.add_message(request, messages.INFO, "Done")
+
+def write_default_state_indicator(modeladmin, request, queryset):
+    for q in queryset:
+        if q.title == "Student Achievement":
+            title, created = IndicatorTitle.objects.get_or_create(title="Accountability")
+            StateIndicator.objects.get_or_create(state_indicator_set=q, title=title, order=1)
+            title, created = IndicatorTitle.objects.get_or_create(title="PARCC Assessments")
+            StateIndicator.objects.get_or_create(state_indicator_set=q, title=title, order=2)
+            title, created = IndicatorTitle.objects.get_or_create(title="NECAP Assessments")
+            StateIndicator.objects.get_or_create(state_indicator_set=q, title=title, order=3)
+            title, created = IndicatorTitle.objects.get_or_create(title="SAT Exams (High School)")
+            StateIndicator.objects.get_or_create(state_indicator_set=q, title=title, order=4)
+            title, created = IndicatorTitle.objects.get_or_create(title="AP Exams (High School)")
+            StateIndicator.objects.get_or_create(state_indicator_set=q, title=title, order=5)
+            title, created = IndicatorTitle.objects.get_or_create(title="Developmental Reading Assessment")
+            StateIndicator.objects.get_or_create(state_indicator_set=q, title=title, order=6)
+            
+        elif q.title == "Teaching":
+            title, created = IndicatorTitle.objects.get_or_create(title="Qualifications and Teacher-Student Ratio")
+            StateIndicator.objects.get_or_create(state_indicator_set=q, title=title, order=1)
+            
+        elif q.title == "Families and Communities":
+            title, created = IndicatorTitle.objects.get_or_create(title="Student Characteristics")
+            StateIndicator.objects.get_or_create(state_indicator_set=q, title=title, order=1)
+        elif q.title == "Safe and Supportive Schools":
+            title, created = IndicatorTitle.objects.get_or_create(title="Attendance")
+            StateIndicator.objects.get_or_create(state_indicator_set=q, title=title, order=1)
+            title, created = IndicatorTitle.objects.get_or_create(title="Four Year Graduation Rate")
+            StateIndicator.objects.get_or_create(state_indicator_set=q, title=title, order=2)
+            title, created = IndicatorTitle.objects.get_or_create(title="Five Year Graduation Rate")
+            StateIndicator.objects.get_or_create(state_indicator_set=q, title=title, order=3)
+            title, created = IndicatorTitle.objects.get_or_create(title="Incidents of Suspension")
+            StateIndicator.objects.get_or_create(state_indicator_set=q, title=title, order=4)
+            title, created = IndicatorTitle.objects.get_or_create(title="Student Indicators")
+            StateIndicator.objects.get_or_create(state_indicator_set=q, title=title, order=5)
+
+        elif q.title == "Funding and Resources":
+            title, created = IndicatorTitle.objects.get_or_create(title="Uniform Chart of Accounts (UCOA)")
+            StateIndicator.objects.get_or_create(state_indicator_set=q, title=title, order=1)
+        elif q.title == "Other":
+            title, created = IndicatorTitle.objects.get_or_create(title="NAEP Exams")
+            StateIndicator.objects.get_or_create(state_indicator_set=q, title=title, order=1)
+            title, created = IndicatorTitle.objects.get_or_create(title="SurveyWorks Reports")
+            StateIndicator.objects.get_or_create(state_indicator_set=q, title=title, order=2)
+        else:
+            pass
+    messages.add_message(request, messages.INFO, "Done")
+
+
+class StateDisplayDataInline(admin.TabularInline):
+    model = StateDisplayData
+    
+class SchoolDisplayDataInline(admin.TabularInline):
+    model = SchoolDisplayData
+
+class StateIndicatorSetInline(admin.TabularInline):
+    model = StateIndicatorSet
+
+class StateIndicatorDataSetInline(admin.TabularInline):
+    model = StateIndicatorDataSet
+
+class StateIndicatorInline(admin.TabularInline):
+    model = StateIndicator
+
+class StateAdmin(admin.ModelAdmin):
+    list_display = ('state_name', 'default_state', 'activate','slug', 'indicator_modified')
+    inlines = [StateIndicatorSetInline]
+    actions = [write_default_state_indicator_set]
+admin.site.register(State, StateAdmin)
+    
+class StateIndicatorSetAdmin(admin.ModelAdmin):
+    list_display = ('state', 'title')
+    search_fields = ['state__state_name','title']
+    inlines = [StateIndicatorInline]
+    actions = [write_default_state_indicator]
+admin.site.register(StateIndicatorSet, StateIndicatorSetAdmin)
+
+class StateIndicatorAdmin(admin.ModelAdmin):
+    list_display = ('state_indicator_set','title','created','modified')
+    raw_id_fields = ('state_indicator_set',)
+    inlines = [StateDisplayDataInline, StateIndicatorDataSetInline]
+admin.site.register(StateIndicator, StateIndicatorAdmin)
+
+###### district ########
 def write_default_district_indicator_set(modeladmin, request, queryset):
     for q in queryset:
         DistrictIndicatorSet.objects.get_or_create(title='Student Achievement' ,district=q, order=1)
@@ -13,6 +110,51 @@ def write_default_district_indicator_set(modeladmin, request, queryset):
         DistrictIndicatorSet.objects.get_or_create(title='Funding and Resources' ,district=q, order=5)
         DistrictIndicatorSet.objects.get_or_create(title='Other' ,district=q, order=6)
     messages.add_message(request, messages.INFO, "Done")
+
+def write_default_district_indicator(modeladmin, request, queryset):
+    for q in queryset:
+        if q.title == "Student Achievement":
+            title, created = IndicatorTitle.objects.get_or_create(title="Accountability")
+            DistrictIndicator.objects.get_or_create(district_indicator_set=q, title=title, order=1)
+            title, created = IndicatorTitle.objects.get_or_create(title="PARCC Assessments")
+            DistrictIndicator.objects.get_or_create(district_indicator_set=q, title=title, order=2)
+            title, created = IndicatorTitle.objects.get_or_create(title="NECAP Assessments")
+            DistrictIndicator.objects.get_or_create(district_indicator_set=q, title=title, order=3)
+            title, created = IndicatorTitle.objects.get_or_create(title="SAT Exams (High School)")
+            DistrictIndicator.objects.get_or_create(district_indicator_set=q, title=title, order=4)
+            title, created = IndicatorTitle.objects.get_or_create(title="AP Exams (High School)")
+            DistrictIndicator.objects.get_or_create(district_indicator_set=q, title=title, order=5)
+            
+        elif q.title == "Teaching":
+            title, created = IndicatorTitle.objects.get_or_create(title="Qualifications and Teacher-Student Ratio")
+            DistrictIndicator.objects.get_or_create(district_indicator_set=q, title=title, order=1)
+            
+        elif q.title == "Families and Communities":
+            title, created = IndicatorTitle.objects.get_or_create(title="Student Characteristics")
+            DistrictIndicator.objects.get_or_create(district_indicator_set=q, title=title, order=1)
+        elif q.title == "Safe and Supportive Schools":
+            title, created = IndicatorTitle.objects.get_or_create(title="Attendance")
+            DistrictIndicator.objects.get_or_create(district_indicator_set=q, title=title, order=1)
+            title, created = IndicatorTitle.objects.get_or_create(title="Four Year Graduation Rate")
+            DistrictIndicator.objects.get_or_create(district_indicator_set=q, title=title, order=2)
+            title, created = IndicatorTitle.objects.get_or_create(title="Five Year Graduation Rate")
+            DistrictIndicator.objects.get_or_create(district_indicator_set=q, title=title, order=3)
+            title, created = IndicatorTitle.objects.get_or_create(title="Incidents of Suspension")
+            DistrictIndicator.objects.get_or_create(district_indicator_set=q, title=title, order=4)
+            title, created = IndicatorTitle.objects.get_or_create(title="Student Indicators")
+            DistrictIndicator.objects.get_or_create(district_indicator_set=q, title=title, order=5)
+
+        elif q.title == "Funding and Resources":
+            title, created = IndicatorTitle.objects.get_or_create(title="Uniform Chart of Accounts (UCOA)")
+            DistrictIndicator.objects.get_or_create(district_indicator_set=q, title=title, order=1)
+        elif q.title == "Other":
+            title, created = IndicatorTitle.objects.get_or_create(title="SurveyWorks Reports")
+            DistrictIndicator.objects.get_or_create(district_indicator_set=q, title=title, order=1)
+        else:
+            pass
+    messages.add_message(request, messages.INFO, "Done")
+
+
 
 class DistrictDisplayDataInline(admin.TabularInline):
     model = DistrictDisplayData
@@ -39,6 +181,7 @@ class DistrictIndicatorSetAdmin(admin.ModelAdmin):
     list_display = ('district', 'title')
     search_fields = ['district__district_name','title']
     inlines = [DistrictIndicatorInline]
+    actions = [write_default_district_indicator]
 admin.site.register(DistrictIndicatorSet, DistrictIndicatorSetAdmin)
 
 class DistrictIndicatorAdmin(admin.ModelAdmin):

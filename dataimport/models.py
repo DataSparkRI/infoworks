@@ -2,15 +2,68 @@ from __future__ import unicode_literals
 
 from django.db import models
 import csv
-from data.models import DistrictIndicator, SchoolIndicator, IndicatorTitle, SchoolYear
+from data.models import StateIndicator, DistrictIndicator, SchoolIndicator, IndicatorTitle, SchoolYear
 
 # Create your models here.
+class StateField(models.Model):
+    state_file = models.ForeignKey('StateFile')
+    name = models.CharField(max_length=50, blank=True)
+    match_option = models.CharField(max_length=30, blank=True, null=True,
+                   help_text='(required) Select state_code, state_name, address, city, state, zip, phone, web_site, commissioner',
+                   choices=(('STATE_CODE', 'state_code'),
+                            ('STATE_NAME', 'state_name'),
+                            ('ADDRESS', 'address'),
+                            ('CITY', 'city'),
+                            ('STATE', 'state'),
+                            ('ZIP','zip'),
+                            ('PHONE','phone'),
+                            ('WEB_SITE','web_site'),
+                            ('COMMISSIONER','Commissioner'),
+                            ('DESCRIPTION','Description'),
+                            ('NUMBER_STUDENT','number of student'),
+                            ('NUMBER_TEACHER','number of teacher'),
+                            ('NUMBER_SCHOOL','number of school'),
+                            )
+    )
+    def save(self, *args, **kwargs):
+        if self.name != '':
+            super(StateField, self).save(*args, **kwargs)
+    
+    def __unicode__(self):
+        return "%s - %s"%(self.name, self.match_option)
+
+class StateFile(models.Model):
+    school_year = models.ForeignKey(SchoolYear)
+    file = models.FileField(upload_to="State_Information", blank=True, null=True)
+    
+    def save(self, *args, **kwargs):
+
+        super(StateFile, self).save(*args, **kwargs)
+        if StateField.objects.filter(state_file=self).count() == 0:
+            try:
+                f = open(self.file.path, 'rb')
+                reader = csv.reader(f)
+                headers = reader.next()
+                for i in headers:
+                    print i
+                    try:
+                       StateField.objects.get_or_create(state_file=self, name=i)
+                    except:
+                       pass
+            except IOError:
+                pass
+    
+    def __unicode__(self):
+        return "%s"% self.school_year
+
+
 class DistrictField(models.Model):
     district_file = models.ForeignKey('DistrictFile')
     name = models.CharField(max_length=50, blank=True)
     match_option = models.CharField(max_length=30, blank=True, null=True,
                    help_text='(required) Select district_code, district_name, address, city, state, zip, phone, web_site, superintendent',
-                   choices=(('DISTRICT_CODE', 'district_code'),
+                   choices=(('STATE_CODE', 'state_code'),
+                            ('DISTRICT_CODE', 'district_code'),
                             ('DISTRICT_NAME', 'district_name'),
                             ('ADDRESS', 'address'),
                             ('CITY', 'city'),
@@ -148,11 +201,12 @@ class IndicatorFile(models.Model):
     name = models.CharField(max_length=100)
     school_year = models.ForeignKey(SchoolYear)
     file = models.FileField(upload_to="Indicator_Information", blank=True, null=True)
+    state_indicator = models.BooleanField(default=False)
     district_indicator = models.BooleanField(default=False)
     school_indicator = models.BooleanField(default=False)
     indicator = models.ForeignKey(IndicatorTitle, blank=True, null=True)
     indicator_for = models.ForeignKey(DimensionFor, blank=True, null=True)
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs): 
 
         super(IndicatorFile, self).save(*args, **kwargs)
         if IndicatorField.objects.filter(indicator_file=self).count() == 0:

@@ -1,6 +1,6 @@
 from django.contrib import admin
-from dataimport.models import DimensionFor, DistrictFile, DistrictField, SchoolFile, SchoolField, IndicatorFile, IndicatorField, DimensionName
-from data.models import District, School
+from dataimport.models import DimensionFor,StateFile, StateField, DistrictFile, DistrictField, SchoolFile, SchoolField, IndicatorFile, IndicatorField, DimensionName
+from data.models import District, School, State
 from dataimport.actions.ImportIndicator import import_indicator
 import csv
 from django.contrib import messages
@@ -17,11 +17,104 @@ def get_index_or_none(headers, option):
     except:
         return None
 
+
+def import_or_update_state_information(modeladmin, request, queryset):
+    for q in queryset:
+        path = q.file.path
+        fields = StateField.objects.filter(state_file=q)
+    
+        state_code = get_or_none(fields, "STATE_CODE")
+        state_name = get_or_none(fields, "STATE_NAME")
+        address = get_or_none(fields, "ADDRESS")
+        city = get_or_none(fields, "CITY")
+        state = get_or_none(fields, "STATE")
+        zip = get_or_none(fields, "ZIP")
+        phone = get_or_none(fields, "PHONE")
+        web_site = get_or_none(fields, "WEB_SITE")
+        commissioner = get_or_none(fields, "COMMISSIONER")
+        description = get_or_none(fields, "DESCRIPTION")
+        number_student = get_or_none(fields, "NUMBER_STUDENT")
+        number_teacher = get_or_none(fields, "NUMBER_TEACHER")
+        number_school = get_or_none(fields, "NUMBER_SCHOOL")
+        
+        with open(path) as f:
+            reader = csv.reader(f)
+            headers = reader.next()
+            
+            state_code_index = get_index_or_none(headers, state_code)
+            state_name_index = get_index_or_none(headers, state_name)
+            address_index = get_index_or_none(headers, address)
+            city_index = get_index_or_none(headers, city)
+            state_index = get_index_or_none(headers, state)
+            zip_index = get_index_or_none(headers, zip)
+            phone_index = get_index_or_none(headers, phone)
+            web_site_index = get_index_or_none(headers, web_site)
+            commissioner_index = get_index_or_none(headers, commissioner)
+            description_index = get_index_or_none(headers, description)
+            number_student_index = get_index_or_none(headers, number_student)
+            number_teacher_index = get_index_or_none(headers, number_teacher)
+            number_school_index = get_index_or_none(headers, number_school)
+            
+            for row in reader:
+                state, created = State.objects.get_or_create(
+                    state_code=row[state_code_index]
+                    )
+                
+                if state_name_index != None:
+                    state.state_name = row[state_name_index]
+                #state.slug = row[state_code_index].lower()
+                if address_index != None:
+                    state.street = row[address_index]
+                if city_index != None:
+                    state.city = row[city_index]
+                if state_index != None:
+                    state.state = row[state_index]
+                if zip_index != None:
+                    state.zip = row[zip_index]
+                if phone_index != None:
+                    state.phone = row[phone_index]
+                if web_site_index != None:
+                    state.website = row[web_site_index]
+                if commissioner_index != None:
+                    state.commissioner = row[commissioner_index]
+                if description_index != None:
+                    state.description = row[description_index]
+                if number_student_index != None:
+                        try:
+                            state.number_of_student = int(row[number_student_index])
+                        except:
+                            pass
+                if number_teacher_index != None:
+                        try:
+                            state.number_of_teacher = int(row[number_teacher_index])
+                        except:
+                            pass
+                if number_school_index != None:
+                        try:
+                            state.number_of_school = int(row[number_school_index])    
+                        except:
+                            pass
+                print state.__dict__
+                state.save()
+
+    messages.add_message(request, messages.INFO, "Done")
+
+
+class StateFieldInline(admin.TabularInline):
+    model = StateField
+
+class StateFileAdmin(admin.ModelAdmin):
+    inlines = [StateFieldInline]
+    actions = [import_or_update_state_information]
+admin.site.register(StateFile, StateFileAdmin)
+
+
 def import_or_update_district_information(modeladmin, request, queryset):
     for q in queryset:
         path = q.file.path
         fields = DistrictField.objects.filter(district_file=q)
-    
+        
+        state_code = get_or_none(fields, "STATE_CODE")
         district_code = get_or_none(fields, "DISTRICT_CODE")
         district_name = get_or_none(fields, "DISTRICT_NAME")
         address = get_or_none(fields, "ADDRESS")
@@ -39,6 +132,7 @@ def import_or_update_district_information(modeladmin, request, queryset):
             reader = csv.reader(f)
             headers = reader.next()
             
+            state_code_index = get_index_or_none(headers, state_code)
             district_code_index = get_index_or_none(headers, district_code)
             district_name_index = get_index_or_none(headers, district_name)
             address_index = get_index_or_none(headers, address)
@@ -56,6 +150,8 @@ def import_or_update_district_information(modeladmin, request, queryset):
                 district, created = District.objects.get_or_create(
                     district_code=row[district_code_index]
                     )
+                if district_code_index != None:
+                    district.state = District.objects.get_or_create(state_code = row[state_code_index])
                 
                 if district_name_index != None:
                     district.district_name = row[district_name_index]
@@ -77,9 +173,15 @@ def import_or_update_district_information(modeladmin, request, queryset):
                 if description_index != None:
                     district.description = row[description_index]
                 if number_student_index != None:
-                    district.number_of_student = row[number_student_index]
+                    try:
+                        district.number_of_student = int(row[number_student_index])
+                    except:
+                        pass
                 if number_teacher_index != None:
-                    district.number_of_teacher = row[number_teacher_index]
+                    try:
+                        district.number_of_teacher = int(row[number_teacher_index])
+                    except:
+                        pass
                     
                 district.save()
 
@@ -168,11 +270,15 @@ def import_or_update_school_information(modeladmin, request, queryset):
                 if description_index != None:
                     school.description = row[description_index]
                 if number_student_index != None:
-                    if row[number_student_index] != '':
-                       school.number_of_student = row[number_student_index]
+                    try:
+                       school.number_of_student = int(row[number_student_index])
+                    except:
+                        pass
                 if number_teacher_index != None:
-                    if row[number_teacher_index] != '':
-                       school.number_of_teacher = row[number_teacher_index]
+                    try:
+                       school.number_of_teacher = int(row[number_teacher_index])
+                    except:
+                        pass
                     
                 if district_code_index != None:
                     school.district = District.objects.get(district_code = row[district_code_index])

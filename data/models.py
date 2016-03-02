@@ -28,7 +28,8 @@ class SchoolDisplayData(models.Model):
     
     def __unicode__(self):
         return "%s - %s"% (self.school_indicator, self.display)
-       
+
+############# School #####################
 class SchoolIndicatorData(models.Model):
     school_indicator_dataset = models.ForeignKey('SchoolIndicatorDataSet', blank=True, null=True)
     dimension_x = models.CharField(max_length=100, blank=True)
@@ -166,7 +167,7 @@ class School(models.Model):
     def __unicode__(self):
         return "%s (School)"% self.school_name
 
-
+############# District #####################
 class DistrictDisplayData(models.Model):
     district_indicator = models.ForeignKey("DistrictIndicator", blank=True, null=True)
     display = models.ForeignKey("dataimport.DimensionFor")
@@ -257,6 +258,7 @@ class DistrictIndicatorSet(models.Model):
         return "%s - %s"% (self.district.district_name, self.title)
         
 class District(models.Model):
+    state = models.ForeignKey("State", blank=True, null=True)
     district_name = models.CharField(max_length=100)
     district_code = models.CharField(max_length=100,unique=True)
     activate = models.BooleanField(default=True)
@@ -290,8 +292,131 @@ class District(models.Model):
         return "%s (District)"% self.district_name
 
         
+############# State #####################
+
+class StateDisplayData(models.Model):
+    state_indicator = models.ForeignKey("StateIndicator", blank=True, null=True)
+    display = models.ForeignKey("dataimport.DimensionFor")
+    order = models.IntegerField(default=1)
+    
+    def __unicode__(self):
+        return "%s - %s"% (self.state_indicator, self.display)
+
+class StateIndicatorData(models.Model):
+    state_indicator_dataset = models.ForeignKey("StateIndicatorDataSet", blank=True, null=True)
+    dimension_x = models.CharField(max_length=100, blank=True)
+    dimension_y = models.CharField(max_length=100, blank=True)
+    key_value = models.CharField(max_length=100, db_index=True)
+    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
+    import_job = models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
+    
+    def __unicode__(self):
+        return "%s - %s: %s"%(self.dimension_y, self.dimension_x, self.key_value)
+
+class StateIndicatorDataSet(models.Model):
+    state_indicator = models.ForeignKey("StateIndicator", blank=True, null=True)
+    school_year = models.ForeignKey(SchoolYear)
+    csv_file = models.FileField(upload_to="State_Indicator_Data", blank=True, null=True)
+    import_file = models.BooleanField(default=False) #If True start import file, then mark False after
+    
+    @property
+    def displaydata(self):
+        index = StateDisplayData.objects.filter(state_indicator=self.state_indicator).values_list('display__name',flat=True).order_by("order")
+        data = StateIndicatorData.objects.filter(state_indicator_dataset=self, dimension_x__in=index)
+        result = []
+        
+        y_names = data.values("dimension_y").annotate(Count("dimension_y"))
+        
+        for i in y_names:
+            result.append({"dimension_y":i["dimension_y"],"data":[ data.get(dimension_y=i["dimension_y"], dimension_x=a) for a in index]})
+        return result
+        
+    @property
+    def data(self):
+        return StateIndicatorData.objects.filter(state_indicator_dataset=self)
+    
+    def __unicode__(self):
+        return "%s - %s"%(self.state_indicator, self.school_year)
 
 
+class StateIndicator(models.Model):
+    state_indicator_set = models.ForeignKey('StateIndicatorSet', blank=True, null=True)
+    title = models.ForeignKey(IndicatorTitle)
+    order = models.IntegerField(default=0)
+    short_title = models.CharField(max_length=100,blank=True)
+    description = models.TextField(blank=True)
+    data_indeicator = models.BooleanField(default=True)
+    created = models.DateTimeField(editable=False)
+    modified = models.DateTimeField(blank=True)
+
+    @property
+    def dataset(self):
+        return StateIndicatorDataSet.objects.filter(state_indicator=self).order_by("-school_year__school_year")
+
+    @property
+    def displaydata(self):
+        return StateDisplayData.objects.filter(state_indicator=self).order_by("order")
+
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        if not self.id:
+            self.created = timezone.now()
+        self.modified = timezone.now()
+        self.state_indicator_set.state.indicator_modified = timezone.now()
+        self.state_indicator_set.state.save()
+        return super(StateIndicator, self).save(*args, **kwargs)
+        
+    def __unicode__(self):
+        return "%s - %s"% (self.state_indicator_set, self.title)
+
+
+class StateIndicatorSet(models.Model):
+    state = models.ForeignKey("State")
+    title = models.CharField(max_length=100,blank=False)
+    order = models.IntegerField(default=1)
+
+    @property
+    def indicators(self):
+        return StateIndicator.objects.filter(state_indicator_set=self).order_by("order")
+        
+        
+    def __unicode__(self):
+        return "%s - %s"% (self.state.state_name, self.title)
+        
+class State(models.Model):
+    state_name = models.CharField(max_length=100)
+    state_code = models.CharField(max_length=100, blank=True, null=True, unique=True)
+    default_state = models.BooleanField(default=False)
+    activate = models.BooleanField(default=True)
+    number_of_student = models.IntegerField(blank=True, null=True)
+    number_of_teacher = models.IntegerField(blank=True, null=True)
+    number_of_school = models.IntegerField(blank=True, null=True)
+    website = models.URLField(blank=True)
+    slug = models.SlugField(unique=True,db_index=True)
+    commissioner = models.CharField(max_length=100, blank=True)
+    street = models.CharField(max_length=100, blank=True)
+    city = models.CharField(max_length=100, blank=True)
+    state = models.CharField(max_length=100, blank=True)
+    zip = models.CharField(max_length=100, blank=True)
+    phone = models.CharField(max_length=100, blank=True)
+    description = models.TextField(blank=True)
+    indicator_modified = models.DateTimeField(blank=True, null=True)
+    
+    def save(self, *args, **kwargs):
+        if self.slug == None or self.slug == '':
+            self.slug = slugify(self.state_name)
+        super(State, self).save(*args, **kwargs)
+    
+    @property
+    def indicatorset(self):
+        return StateIndicatorSet.objects.filter(state=self).order_by("order")
+    
+    @property
+    def districts(self):
+        return District.objects.filter(state=self, activate=True).order_by("district_name")
+    
+    def __unicode__(self):
+        return "%s (State)"% self.state_name
         
         
         
