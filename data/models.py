@@ -20,7 +20,9 @@ class SchoolYear(models.Model):
     school_year = models.CharField(max_length=100)
     def __unicode__(self):
         return "%s"% self.school_year
-        
+
+############# School #####################        
+
 class SchoolDisplayData(models.Model):
     school_indicator = models.ForeignKey("SchoolIndicator", blank=True, null=True)
     display = models.ForeignKey("dataimport.DimensionFor")
@@ -29,7 +31,14 @@ class SchoolDisplayData(models.Model):
     def __unicode__(self):
         return "%s - %s"% (self.school_indicator, self.display)
 
-############# School #####################
+class SchoolDisplayDataY(models.Model):
+    school_indicator = models.ForeignKey("SchoolIndicator", blank=True, null=True)
+    display = models.CharField(max_length=100, blank=True)
+    order = models.IntegerField(default=1)
+    
+    def __unicode__(self):
+        return "%s - %s"% (self.school_indicator, self.display)
+
 class SchoolIndicatorData(models.Model):
     school_indicator_dataset = models.ForeignKey('SchoolIndicatorDataSet', blank=True, null=True)
     dimension_x = models.CharField(max_length=100, blank=True)
@@ -194,6 +203,14 @@ class DistrictDisplayData(models.Model):
     def __unicode__(self):
         return "%s - %s"% (self.district_indicator, self.display)
 
+class DistrictDisplayDataY(models.Model):
+    district_indicator = models.ForeignKey("DistrictIndicator", blank=True, null=True)
+    display = models.CharField(max_length=100, blank=True)
+    order = models.IntegerField(default=1)
+    
+    def __unicode__(self):
+        return "%s - %s"% (self.district_indicator, self.display)
+
 class DistrictIndicatorData(models.Model):
     district_indicator_dataset = models.ForeignKey("DistrictIndicatorDataSet", blank=True, null=True)
     dimension_x = models.CharField(max_length=100, blank=True)
@@ -340,6 +357,14 @@ class District(models.Model):
 class StateDisplayData(models.Model):
     state_indicator = models.ForeignKey("StateIndicator", blank=True, null=True)
     display = models.ForeignKey("dataimport.DimensionFor")
+    order = models.IntegerField(default=1)
+    
+    def __unicode__(self):
+        return "%s - %s"% (self.state_indicator, self.display)
+
+class StateDisplayDataY(models.Model):
+    state_indicator = models.ForeignKey("StateIndicator", blank=True, null=True)
+    display = models.CharField(max_length=100, blank=True)
     order = models.IntegerField(default=1)
     
     def __unicode__(self):

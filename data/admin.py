@@ -1,8 +1,8 @@
 from django.contrib import admin
 from data.models import SchoolYear, IndicatorTitle, \
-District, DistrictDisplayData, DistrictIndicatorDataSet, DistrictIndicatorSet, DistrictIndicator, \
-School, SchoolIndicatorSet, SchoolIndicator, SchoolDisplayData, SchoolIndicatorDataSet, \
-State, StateIndicatorSet, StateIndicator, StateDisplayData, StateIndicatorDataSet
+District, DistrictDisplayData, DistrictIndicatorDataSet, DistrictIndicatorSet, DistrictIndicator, DistrictDisplayDataY, \
+School, SchoolIndicatorSet, SchoolIndicator, SchoolDisplayData, SchoolIndicatorDataSet, SchoolDisplayDataY, \
+State, StateIndicatorSet, StateIndicator, StateDisplayData, StateIndicatorDataSet, StateDisplayDataY
 from django.contrib import messages
 
 admin.site.register(IndicatorTitle)
@@ -65,6 +65,8 @@ def write_default_state_indicator(modeladmin, request, queryset):
             pass
     messages.add_message(request, messages.INFO, "Done")
 
+class StateDisplayDataYInline(admin.TabularInline):
+    model = StateDisplayDataY
 
 class StateDisplayDataInline(admin.TabularInline):
     model = StateDisplayData
@@ -97,7 +99,7 @@ admin.site.register(StateIndicatorSet, StateIndicatorSetAdmin)
 class StateIndicatorAdmin(admin.ModelAdmin):
     list_display = ('state_indicator_set','title','created','modified')
     raw_id_fields = ('state_indicator_set',)
-    inlines = [StateDisplayDataInline, StateIndicatorDataSetInline]
+    inlines = [StateDisplayDataInline, StateDisplayDataYInline, StateIndicatorDataSetInline]
 admin.site.register(StateIndicator, StateIndicatorAdmin)
 
 ###### district ########
@@ -154,7 +156,8 @@ def write_default_district_indicator(modeladmin, request, queryset):
             pass
     messages.add_message(request, messages.INFO, "Done")
 
-
+class DistrictDisplayDataYInline(admin.TabularInline):
+    model = DistrictDisplayDataY
 
 class DistrictDisplayDataInline(admin.TabularInline):
     model = DistrictDisplayData
@@ -187,7 +190,7 @@ admin.site.register(DistrictIndicatorSet, DistrictIndicatorSetAdmin)
 class DistrictIndicatorAdmin(admin.ModelAdmin):
     list_display = ('district_indicator_set','title','created','modified')
     raw_id_fields = ('district_indicator_set',)
-    inlines = [DistrictDisplayDataInline, DistrictIndicatorDataSetInline]
+    inlines = [DistrictDisplayDataInline, DistrictDisplayDataYInline, DistrictIndicatorDataSetInline]
 admin.site.register(DistrictIndicator, DistrictIndicatorAdmin)
 
 #class DistrictNumberOfStudentAndTeacherAdmin(admin.ModelAdmin):
@@ -204,6 +207,9 @@ def write_default_school_indicator_set(modeladmin, request, queryset):
         SchoolIndicatorSet.objects.get_or_create(title='Funding and Resources' ,school=q, order=5)
         SchoolIndicatorSet.objects.get_or_create(title='Other' ,school=q, order=6)
     messages.add_message(request, messages.INFO, "Done")
+
+class SchoolDisplayDataYInline(admin.TabularInline):
+    model = SchoolDisplayDataY
 
 class SchoolIndicatorSetInline(admin.TabularInline):
     model = SchoolIndicatorSet
@@ -232,7 +238,7 @@ admin.site.register(SchoolIndicatorSet, SchoolIndicatorSetAdmin)
 class SchoolIndicatorAdmin(admin.ModelAdmin):
     list_display = ('school_indicator_set','title','created','modified')
     raw_id_fields = ('school_indicator_set',)
-    inlines = [SchoolDisplayDataInline, SchoolIndicatorDataSetInline]
+    inlines = [SchoolDisplayDataInline, SchoolDisplayDataYInline, SchoolIndicatorDataSetInline]
 admin.site.register(SchoolIndicator, SchoolIndicatorAdmin)
 admin.site.register(SchoolYear)
 #class SchoolNumberOfStudentAndTeacherAdmin(admin.ModelAdmin):
