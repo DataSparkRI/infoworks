@@ -33,7 +33,7 @@ class SchoolDisplayData(models.Model):
 
 class SchoolDisplayDataY(models.Model):
     school_indicator = models.ForeignKey("SchoolIndicator", blank=True, null=True)
-    display = models.CharField(max_length=100, blank=True)
+    display = models.ForeignKey("dataimport.DimensionName", blank=True, null=True)
     order = models.IntegerField(default=1)
     
     def __unicode__(self):
@@ -63,12 +63,14 @@ class SchoolIndicatorDataSet(models.Model):
 
     @property
     def displaydata_y(self):
-        index = SchoolDisplayData.objects.filter(school_indicator=self.school_indicator).values_list('display__name',flat=True).order_by("order")
-        data = SchoolIndicatorData.objects.filter(school_indicator_dataset=self, dimension_x__in=index)
-        result = []
+        index = SchoolDisplayDataY.objects.filter(school_indicator=self.school_indicator).values_list('display__name',flat=True).order_by("order")
+        return index
+        #index = SchoolDisplayData.objects.filter(school_indicator=self.school_indicator).values_list('display__name',flat=True).order_by("order")
+        #data = SchoolIndicatorData.objects.filter(school_indicator_dataset=self, dimension_x__in=index)
+        #result = []
 
-        y_names = data.values("dimension_y").annotate(Count("dimension_y"))
-        return [i["dimension_y"]  for i in y_names]
+        #y_names = data.values("dimension_y").annotate(Count("dimension_y"))
+        #return [i["dimension_y"]  for i in y_names]
 
     @property
     def get_objects(self, dimension_x, dimension_y):
@@ -205,7 +207,7 @@ class DistrictDisplayData(models.Model):
 
 class DistrictDisplayDataY(models.Model):
     district_indicator = models.ForeignKey("DistrictIndicator", blank=True, null=True)
-    display = models.CharField(max_length=100, blank=True)
+    display = models.ForeignKey("dataimport.DimensionName", blank=True, null=True)
     order = models.IntegerField(default=1)
     
     def __unicode__(self):
@@ -235,12 +237,14 @@ class DistrictIndicatorDataSet(models.Model):
 
     @property
     def displaydata_y(self):
-        index = DistrictDisplayData.objects.filter(district_indicator=self.district_indicator).values_list('display__name',flat=True).order_by("order")
-        data = DistrictIndicatorData.objects.filter(district_indicator_dataset=self, dimension_x__in=index)
-        result = []
+        index = DistrictDisplayDataY.objects.filter(district_indicator=self.district_indicator).values_list('display__name',flat=True).order_by("order")
+        return index
+        #index = DistrictDisplayData.objects.filter(district_indicator=self.district_indicator).values_list('display__name',flat=True).order_by("order")
+        #data = DistrictIndicatorData.objects.filter(district_indicator_dataset=self, dimension_x__in=index)
+        #result = []
 
-        y_names = data.values("dimension_y").annotate(Count("dimension_y"))
-        return [i["dimension_y"]  for i in y_names]
+        #y_names = data.values("dimension_y").annotate(Count("dimension_y"))
+        #return [i["dimension_y"]  for i in y_names]
 
     @property
     def get_objects(self, dimension_x, dimension_y):
@@ -364,7 +368,7 @@ class StateDisplayData(models.Model):
 
 class StateDisplayDataY(models.Model):
     state_indicator = models.ForeignKey("StateIndicator", blank=True, null=True)
-    display = models.CharField(max_length=100, blank=True)
+    display = models.ForeignKey("dataimport.DimensionName", blank=True, null=True)
     order = models.IntegerField(default=1)
     
     def __unicode__(self):
@@ -394,12 +398,15 @@ class StateIndicatorDataSet(models.Model):
 
     @property
     def displaydata_y(self):
-        index = StateDisplayData.objects.filter(state_indicator=self.state_indicator).values_list('display__name',flat=True).order_by("order")
-        data = StateIndicatorData.objects.filter(state_indicator_dataset=self, dimension_x__in=index)
-        result = []
+        index = StateDisplayDataY.objects.filter(state_indicator=self.state_indicator).values_list('display__name',flat=True).order_by("order")
+        return index
 
-        y_names = data.values("dimension_y").annotate(Count("dimension_y"))
-        return [i["dimension_y"]  for i in y_names]
+        #index = StateDisplayData.objects.filter(state_indicator=self.state_indicator).values_list('display__name',flat=True).order_by("order")
+        #data = StateIndicatorData.objects.filter(state_indicator_dataset=self, dimension_x__in=index)
+        #result = []
+
+        #y_names = data.values("dimension_y").annotate(Count("dimension_y"))
+        #return [i["dimension_y"]  for i in y_names]
 
     @property
     def get_objects(self, dimension_x, dimension_y):

@@ -5,6 +5,8 @@ School, SchoolIndicatorSet, SchoolIndicator, SchoolDisplayData, SchoolIndicatorD
 State, StateIndicatorSet, StateIndicator, StateDisplayData, StateIndicatorDataSet, StateDisplayDataY
 from django.contrib import messages
 
+#from data.form import StateDisplayDataYForm, DistrictDisplayDataYForm, SchoolDisplayDataYForm
+
 admin.site.register(IndicatorTitle)
 
 ##### state #########
@@ -67,6 +69,7 @@ def write_default_state_indicator(modeladmin, request, queryset):
 
 class StateDisplayDataYInline(admin.TabularInline):
     model = StateDisplayDataY
+    #form = StateDisplayDataYForm
 
 class StateDisplayDataInline(admin.TabularInline):
     model = StateDisplayData
@@ -158,6 +161,7 @@ def write_default_district_indicator(modeladmin, request, queryset):
 
 class DistrictDisplayDataYInline(admin.TabularInline):
     model = DistrictDisplayDataY
+    #form = DistrictDisplayDataYForm
 
 class DistrictDisplayDataInline(admin.TabularInline):
     model = DistrictDisplayData
@@ -210,6 +214,7 @@ def write_default_school_indicator_set(modeladmin, request, queryset):
 
 class SchoolDisplayDataYInline(admin.TabularInline):
     model = SchoolDisplayDataY
+    #form = SchoolDisplayDataYForm
 
 class SchoolIndicatorSetInline(admin.TabularInline):
     model = SchoolIndicatorSet
@@ -238,6 +243,7 @@ admin.site.register(SchoolIndicatorSet, SchoolIndicatorSetAdmin)
 class SchoolIndicatorAdmin(admin.ModelAdmin):
     list_display = ('school_indicator_set','title','created','modified')
     raw_id_fields = ('school_indicator_set',)
+    #form = SchoolDisplayDataYForm
     inlines = [SchoolDisplayDataInline, SchoolDisplayDataYInline, SchoolIndicatorDataSetInline]
 admin.site.register(SchoolIndicator, SchoolIndicatorAdmin)
 admin.site.register(SchoolYear)
