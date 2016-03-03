@@ -20,6 +20,11 @@ a {
 a:hover, a:focus, a:active, a:visited {
     text-decoration: none;
 }
+/* user add */
+.title-404 {
+    font-weight: 900;
+    font-size: 200px;
+}
 
 /* Buttons override */
 .btn {

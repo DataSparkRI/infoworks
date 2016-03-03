@@ -25,7 +25,7 @@ SECRET_KEY = '01c^b3uc=7b709lcr+!5q3*raqai#w=papoj!t5a-b!c)sez4w'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost','infoworks-yangxu.c9users.io']
 
 
 # Application definition

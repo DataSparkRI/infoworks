@@ -1,0 +1,23 @@
+{% extends "front_page/base.html" %}{% load staticfiles %}
+
+{% block body %}
+      <div class="container" style="height: calc(90vh - 51px);">
+        <div class="row content-ct" style="padding: 46px 0;">
+          <h1 class="title-404">404</h1>
+          <h2><i class="fa fa-exclamation-triangle"></i> {% if message %}{{message}}{% else %}Oops! The Page you requested was not found!{% endif %}</h2>
+          <h3>Would you like to go to <a href="/">homepage</a> instead?</h3>
+          {% if objects.0 %}
+              <h2>You may look at:</h2>
+              {% for i in objects %}
+              {% if i.school_name %}
+                  <h3><a href='{% url 'school' i.slug%}'>{{i.school_name}}</a></h3>
+              {% endif %}
+              {% if i.district_name %}
+                  <h3><a href='{% url 'district' i.slug%}'>{{i.district_name}}</a></h3>
+              {% endif %}
+              {% endfor %}
+          {% endif %}
+
+        </div>
+      </div>
+{% endblock %}
