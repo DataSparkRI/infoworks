@@ -32,8 +32,9 @@
             <h1>{{state.state_name}}</h1>
             <h3>{{state.description}}</h3>
             <h4><i class="fa fa-map-marker"></i> {{state.street}} {{state.city}} {{state.state}} {{state.zip}}</h4>
-            <h4><i class="fa fa-phone"></i> {{state.phone}}</h4>
-            <h4><i class="fa fa-globe"></i> {{state.website}}</h4>
+            {% if state.phone %}<h4><i class="fa fa-phone"></i> {{state.phone}}</h4>{% endif %}
+            {% if state.website %}<h4 class='header-link'><i class="fa fa-globe"></i> <a href='{{state.website}}'>{{state.website}}</a></h4>{% endif %}
+            {% if state.commissioner %}<h4><i class="fa fa-user"></i> Commissioner {{state.commissioner}}</h4>{% endif %}
             <h4></h4>
             {% if state.number_of_student %}<p class="btn btn-red" style="cursor: text;">{{state.number_of_student}} Students</p>{% endif %}
 			      {% if state.number_of_teacher %}<p class="btn btn-red" style="cursor: text;">{{state.number_of_teacher}} Teachers</p>{% endif %}

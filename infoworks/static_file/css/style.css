@@ -25,6 +25,12 @@ a:hover, a:focus, a:active, a:visited {
     font-weight: 900;
     font-size: 200px;
 }
+.header-link a{
+    color: white;
+}
+.header-link a:hover {
+    color:yellow;
+}
 
 /* Buttons override */
 .btn {
