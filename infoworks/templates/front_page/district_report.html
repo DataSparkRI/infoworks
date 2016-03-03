@@ -31,9 +31,9 @@
           <div class="col-md-7">
             <h1>{{district.district_name}}</h1>
             <h3>{{district.description}}</h3>
-            <h4><i class="fa fa-map-marker"></i> {{district.street}} {{district.city}} {{district.state}} {{district.zip}}</h4>
+            {% if district.street %}<h4><i class="fa fa-map-marker"></i> {{district.street}} {{district.city}} {{district.state}} {{district.zip}}</h4>{% endif %}
             {% if district.phone%}<h4><i class="fa fa-phone"></i> {{district.phone}}</h4>{% endif %}
-            {% if district.website %}<h4 class='header-link'><i class="fa fa-globe"></i> <a href='{{district.website}}'>{{district.website}}</a></h4>{% endif %}
+            {% if district.website %}<h4 class='header-link'><i class="fa fa-globe"></i> <a href='{{district.website}}' target="_blank">{{district.website}}</a></h4>{% endif %}
             {% if district.superintendent %}<h4><i class="fa fa-user"></i> Superintendent {{district.superintendent}}</h4>{% endif %}
             <h4></h4>
             {% if district.number_of_student %}<p class="btn btn-red" style="cursor: text;">{{district.number_of_student}} Students</p>{% endif %}

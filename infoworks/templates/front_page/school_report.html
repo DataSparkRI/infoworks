@@ -29,9 +29,9 @@
           <div class="col-md-7">
             <h1>{{school.school_name}}</h1>
             <h3>{{school.description}}</h3>
-            <h4><i class="fa fa-map-marker"></i> {{school.street}} {{school.city}} {{school.state}} {{school.zip}}</h4>
+            {% if school.street %}<h4><i class="fa fa-map-marker"></i> {{school.street}} {{school.city}} {{school.state}} {{school.zip}}</h4>{% endif %}
             {% if school.phone %}<h4><i class="fa fa-phone"></i> {{school.phone}}</h4>{% endif %}
-            {% if school.website %}<h4 class='header-link'><i class="fa fa-globe"></i> <a href='{{school.website}}'>{{school.website}}</a></h4>{% endif %}
+            {% if school.website %}<h4 class='header-link'><i class="fa fa-globe"></i> <a href='{{school.website}}' target="_blank">{{school.website}}</a></h4>{% endif %}
             {% if school.principal %}<h4><i class="fa fa-user"></i> Principal {{school.principal}}</h4>{% endif %}
             <h4><i class="fa fa-graduation-cap"></i> Grade:</h4>
             <p class="btn btn-red" style="cursor: text;" {% if school.grade_pk == False %}disabled="disabled"{% endif %}>PK</p>
