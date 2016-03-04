@@ -27,7 +27,7 @@
         <!-- Start: Header -->
         <div class="row hero-header" id="home">
           <div class="col-md-7">
-            <h1>{{school.school_name}}</h1>
+            <h1>{{school.school_name}}{% if request.user.is_active and request.user.is_staff %} <a href="/admin/data/school/{{school.id}}" target="_blank"><i class="fa fa-pencil"></i></a>{% endif %}</h1>
             <h3>{{school.description |safe }}</h3>
             {% if school.street %}<h4><i class="fa fa-map-marker"></i> {{school.street}} {{school.city}} {{school.state}} {{school.zip}}</h4>{% endif %}
             {% if school.phone %}<h4><i class="fa fa-phone"></i> {{school.phone}}</h4>{% endif %}
@@ -67,7 +67,7 @@
       {% for i in school.indicatorset %}
       <section class="container">
         <div class="row me-row schedule" id="{{i.order}}">
-          <h2 class="row-title content-ct">{{i.title}}</h2>
+          <h2 class="row-title content-ct">{{i.title}}{% if request.user.is_active and request.user.is_staff %} <a href="/admin/data/schoolindicatorset/{{i.id}}" target="_blank"><i class="fa fa-pencil"></i></a>{% endif %}</h2>
           <div class="col-md-12">
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
@@ -83,13 +83,16 @@
                 <div class="row">
                   <div class="col-md-5">
                     <div class="media">
+                      {% if request.user.is_active and request.user.is_staff %}
                       <div class="media-left">
-                        <a href="#">
-                          <img class="media-object" src="{% static "img/speaker-1.png" %}" alt="...">
+                        <a href="/admin/data/schoolindicator/{{j.id}}">
+                          <i class="fa fa-pencil"></i>
                         </a>
                       </div>
+                      {% endif %}
                       <div class="media-body">
                         <h4 class="media-heading">{{j.short_title}}</h4>
+                        {% if j.dataset %}<h3 class="text-right">{{j.dataset.0.school_year.school_year}}</h3>{% endif %}
                         <p>{{j.description|safe}}</p>
                       </div>
                     </div>
