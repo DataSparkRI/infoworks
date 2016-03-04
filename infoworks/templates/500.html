@@ -1,7 +1,7 @@
 {% extends "front_page/base.html" %}{% load staticfiles %}
 
 {% block body %}
-      <div class="container" style="height: calc(90vh - 51px);">
+      <div class="container">
         <div class="row content-ct" style="padding: 46px 0;">
           <h1 class="title-404">500</h1>
           <h2><i class="fa fa-exclamation-triangle"></i>{% if message %}{{message}}{% else %}Something has gone seriously wrong{% endif %}</h2>

@@ -4,6 +4,7 @@ from django.db import models
 from django.utils import timezone
 from django.db.models import Count
 from django.utils.text import slugify
+from ckeditor.fields import RichTextField
 
 DATA_TYPE_CHOICES = (
     ('NUMERIC', 'numeric'),
@@ -107,7 +108,7 @@ class SchoolIndicator(models.Model):
     title = models.ForeignKey(IndicatorTitle)
     order = models.IntegerField(default=0)
     short_title = models.CharField(max_length=100,blank=True)
-    description = models.TextField(blank=True)
+    description = RichTextField(blank=True)
     data_indeicator = models.BooleanField(default=True)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField(blank=True)
@@ -162,7 +163,8 @@ class School(models.Model):
     state = models.CharField(max_length=100, blank=True)
     zip = models.CharField(max_length=100, blank=True)
     phone = models.CharField(max_length=100, blank=True)
-    description = models.TextField(blank=True)
+    #description = models.TextField(blank=True)
+    description = RichTextField(blank=True)
     
     elementary_school = models.BooleanField(default=False)
     middle_school = models.BooleanField(default=False)
@@ -281,7 +283,7 @@ class DistrictIndicator(models.Model):
     title = models.ForeignKey(IndicatorTitle)
     order = models.IntegerField(default=0)
     short_title = models.CharField(max_length=100,blank=True)
-    description = models.TextField(blank=True)
+    description = RichTextField(blank=True)
     data_indeicator = models.BooleanField(default=True)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField(blank=True)
@@ -336,7 +338,8 @@ class District(models.Model):
     state = models.CharField(max_length=100, blank=True)
     zip = models.CharField(max_length=100, blank=True)
     phone = models.CharField(max_length=100, blank=True)
-    description = models.TextField(blank=True)
+    #description = models.TextField(blank=True)
+    description = RichTextField(blank=True)
     indicator_modified = models.DateTimeField(blank=True, null=True)
     
     def save(self, *args, **kwargs):
@@ -443,7 +446,7 @@ class StateIndicator(models.Model):
     title = models.ForeignKey(IndicatorTitle)
     order = models.IntegerField(default=0)
     short_title = models.CharField(max_length=100,blank=True)
-    description = models.TextField(blank=True)
+    description = RichTextField(blank=True)
     data_indeicator = models.BooleanField(default=True)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField(blank=True)
@@ -498,7 +501,8 @@ class State(models.Model):
     state = models.CharField(max_length=100, blank=True)
     zip = models.CharField(max_length=100, blank=True)
     phone = models.CharField(max_length=100, blank=True)
-    description = models.TextField(blank=True)
+    #description = models.TextField(blank=True)
+    description = RichTextField(blank=True)
     indicator_modified = models.DateTimeField(blank=True, null=True)
     
     def save(self, *args, **kwargs):

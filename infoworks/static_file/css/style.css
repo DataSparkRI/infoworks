@@ -25,6 +25,15 @@ a:hover, a:focus, a:active, a:visited {
     font-weight: 900;
     font-size: 200px;
 }
+
+.hero-header div h3 p a{
+    color: white;
+}
+
+.hero-header div h3 p a:hover{
+    color: yellow;
+}
+
 .header-link a{
     color: white;
 }
