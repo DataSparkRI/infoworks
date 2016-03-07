@@ -29,11 +29,12 @@
         <!-- Start: Header -->
         <div class="row hero-header" id="home">
           <div class="col-md-7">
-            <h1>{{state.state_name}}</h1>
-            <h3>{{state.description}}</h3>
-            <h4><i class="fa fa-map-marker"></i> {{state.street}} {{state.city}} {{state.state}} {{state.zip}}</h4>
-            <h4><i class="fa fa-phone"></i> {{state.phone}}</h4>
-            <h4><i class="fa fa-globe"></i> {{state.website}}</h4>
+            <h1>{{state.state_name}}{% if request.user.is_active and request.user.is_staff %} <a href="/admin/data/state/{{state.id}}" target="_blank"><i class="fa fa-pencil"></i></a>{% endif %}</h1>
+            <h3>{{state.description|safe}}</h3>
+            {% if state.street %}<h4><i class="fa fa-map-marker"></i> {{state.street}} {{state.city}} {{state.state}} {{state.zip}}</h4>{% endif %}
+            {% if state.phone %}<h4><i class="fa fa-phone"></i> {{state.phone}}</h4>{% endif %}
+            {% if state.website %}<h4 class='header-link'><i class="fa fa-globe"></i> <a href='{{state.website}}' target="_blank">{{state.website}}</a></h4>{% endif %}
+            {% if state.commissioner %}<h4><i class="fa fa-user"></i> Commissioner {{state.commissioner}}</h4>{% endif %}
             <h4></h4>
             {% if state.number_of_student %}<p class="btn btn-red" style="cursor: text;">{{state.number_of_student}} Students</p>{% endif %}
 			      {% if state.number_of_teacher %}<p class="btn btn-red" style="cursor: text;">{{state.number_of_teacher}} Teachers</p>{% endif %}
@@ -49,7 +50,7 @@
       {% for i in state.indicatorset %}
       <section class="container">
         <div class="row me-row schedule" id="{{i.order}}">
-          <h2 class="row-title content-ct">{{i.title}}</h2>
+          <h2 class="row-title content-ct">{{i.title}}{% if request.user.is_active and request.user.is_staff %}  <a href="/admin/data/stateindicatorset/{{i.id}}" target="_blank"><i class="fa fa-pencil"></i></a>{% endif %}</h2>
           <div class="col-md-12">
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
@@ -65,14 +66,17 @@
                 <div class="row">
                   <div class="col-md-5">
                     <div class="media">
+                      {% if request.user.is_active and request.user.is_staff %}
                       <div class="media-left">
-                        <a href="#">
-                          <img class="media-object" src="{% static "img/speaker-1.png" %}" alt="...">
+                        <a href="/admin/data/stateindicator/{{j.id}}">
+                          <i class="fa fa-pencil"></i>
                         </a>
                       </div>
+                      {% endif %}
                       <div class="media-body">
                         <h4 class="media-heading">{{j.short_title}}</h4>
-                        <p>{{j.description}}</p>
+                        {% if j.dataset %}<h3 class="text-right">{{j.dataset.0.school_year.school_year}}</h3>{% endif %}
+                        <p>{{j.description|safe}}</p>
                       </div>
                     </div>
                   </div>

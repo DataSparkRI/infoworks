@@ -17,7 +17,6 @@ def get_index_or_none(headers, option):
     except:
         return None
 
-
 def import_or_update_state_information(modeladmin, request, queryset):
     for q in queryset:
         path = q.file.path
@@ -78,22 +77,25 @@ def import_or_update_state_information(modeladmin, request, queryset):
                 if commissioner_index != None:
                     state.commissioner = row[commissioner_index]
                 if description_index != None:
-                    state.description = row[description_index]
+                    if row[description_index][0] == '<':
+                        state.description = row[description_index]
+                    else:
+                        state.description = '<p>'+row[description_index]+'</p>'
                 if number_student_index != None:
-                        try:
-                            state.number_of_student = int(row[number_student_index])
-                        except:
-                            pass
+                    try:
+                        state.number_of_student = int(row[number_student_index])
+                    except:
+                        pass
                 if number_teacher_index != None:
-                        try:
-                            state.number_of_teacher = int(row[number_teacher_index])
-                        except:
-                            pass
+                    try:
+                        state.number_of_teacher = int(row[number_teacher_index])
+                    except:
+                        pass
                 if number_school_index != None:
-                        try:
-                            state.number_of_school = int(row[number_school_index])    
-                        except:
-                            pass
+                    try:
+                        state.number_of_school = int(row[number_school_index])    
+                    except:
+                        pass
                 print state.__dict__
                 state.save()
 
@@ -176,7 +178,10 @@ def import_or_update_district_information(modeladmin, request, queryset):
                 if superintendent_index != None:
                     district.superintendent = row[superintendent_index]
                 if description_index != None:
-                    district.description = row[description_index]
+                    if row[description_index][0] == '<':
+                        district.description = row[description_index]
+                    else:
+                        district.description = '<p>'+row[description_index]+'</p>'
                 if number_student_index != None:
                     try:
                         district.number_of_student = int(row[number_student_index])
@@ -273,7 +278,10 @@ def import_or_update_school_information(modeladmin, request, queryset):
                 if principal_index != None:
                     school.principal = row[principal_index]
                 if description_index != None:
-                    school.description = row[description_index]
+                    if row[description_index][0] == '<':
+                        school.description = row[description_index]
+                    else:
+                        school.description = '<p>'+row[description_index]+'</p>'
                 if number_student_index != None:
                     try:
                        school.number_of_student = int(row[number_student_index])

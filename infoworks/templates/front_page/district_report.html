@@ -29,11 +29,12 @@
         <!-- Start: Header -->
         <div class="row hero-header" id="home">
           <div class="col-md-7">
-            <h1>{{district.district_name}}</h1>
-            <h3>{{district.description}}</h3>
-            <h4><i class="fa fa-map-marker"></i> {{district.street}} {{district.city}} {{district.state}} {{district.zip}}</h4>
-            <h4><i class="fa fa-phone"></i> {{district.phone}}</h4>
-            <h4><i class="fa fa-globe"></i> {{district.website}}</h4>
+            <h1>{{district.district_name}}{% if request.user.is_active and request.user.is_staff %} <a href="/admin/data/district/{{district.id}}" target="_blank"><i class="fa fa-pencil"></i></a>{% endif %}</h1>
+            <h3>{{district.description|safe}}</h3>
+            {% if district.street %}<h4><i class="fa fa-map-marker"></i> {{district.street}} {{district.city}} {{district.state}} {{district.zip}}</h4>{% endif %}
+            {% if district.phone%}<h4><i class="fa fa-phone"></i> {{district.phone}}</h4>{% endif %}
+            {% if district.website %}<h4 class='header-link'><i class="fa fa-globe"></i> <a href='{{district.website}}' target="_blank">{{district.website}}</a></h4>{% endif %}
+            {% if district.superintendent %}<h4><i class="fa fa-user"></i> Superintendent {{district.superintendent}}</h4>{% endif %}
             <h4></h4>
             {% if district.number_of_student %}<p class="btn btn-red" style="cursor: text;">{{district.number_of_student}} Students</p>{% endif %}
 			      {% if district.number_of_teacher %}<p class="btn btn-red" style="cursor: text;">{{district.number_of_teacher}} Teachers</p>{% endif %}
@@ -49,7 +50,7 @@
       {% for i in district.indicatorset %}
       <section class="container">
         <div class="row me-row schedule" id="{{i.order}}">
-          <h2 class="row-title content-ct">{{i.title}}</h2>
+          <h2 class="row-title content-ct">{{i.title}}{% if request.user.is_active and request.user.is_staff %} <a href="/admin/data/districtindicatorset/{{i.id}}" target="_blank"><i class="fa fa-pencil"></i></a>{% endif %}</h2>
           <div class="col-md-12">
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
@@ -65,14 +66,17 @@
                 <div class="row">
                   <div class="col-md-5">
                     <div class="media">
+                      {% if request.user.is_active and request.user.is_staff %}
                       <div class="media-left">
-                        <a href="#">
-                          <img class="media-object" src="{% static "img/speaker-1.png" %}" alt="...">
+                        <a href="/admin/data/districtindicator/{{j.id}}" target="_blank">
+                          <i class="fa fa-pencil"></i>
                         </a>
                       </div>
+                      {% endif %}
                       <div class="media-body">
                         <h4 class="media-heading">{{j.short_title}}</h4>
-                        <p>{{j.description}}</p>
+                        {% if j.dataset %}<h3 class="text-right">{{j.dataset.0.school_year.school_year}}</h3>{% endif %}
+                        <p>{{j.description|safe}}</p>
                       </div>
                     </div>
                   </div>

@@ -20,6 +20,26 @@ a {
 a:hover, a:focus, a:active, a:visited {
     text-decoration: none;
 }
+/* user add */
+.title-404 {
+    font-weight: 900;
+    font-size: 200px;
+}
+
+.hero-header div h3 p a{
+    color: white;
+}
+
+.hero-header div h3 p a:hover{
+    color: yellow;
+}
+
+.header-link a{
+    color: white;
+}
+.header-link a:hover {
+    color:yellow;
+}
 
 /* Buttons override */
 .btn {
@@ -146,7 +166,7 @@ a:hover, a:focus, a:active, a:visited {
 	max-width: 100%;
 }
 .me-row {
-	padding: 30px 0;
+	padding: 40px 0;
 }
 .row-title {
 	font-weight: 400;

@@ -1,0 +1,22 @@
+{% extends "front_page/base.html" %}{% load staticfiles %}
+
+{% block body %}
+      <div class="container body">
+        <div class="row content-ct">
+          <h1 class="title-404">500</h1>
+          <h2><i class="fa fa-exclamation-triangle"></i>{% if message %}{{message}}{% else %}Something has gone seriously wrong{% endif %}</h2>
+              <h3>We're experiencing an internal server problem.</h3>
+              {% if objects.0 %}
+              <h2>You may look at:</h2>
+              {% for i in objects %}
+              {% if i.school_name %}
+                  <h3><a href='{% url 'school' i.slug%}'>{{i.school_name}}</a></h3>
+              {% endif %}
+              {% if i.district_name %}
+                  <h3><a href='{% url 'district' i.slug%}'>{{i.district_name}}</a></h3>
+              {% endif %}
+              {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+{% endblock %}
