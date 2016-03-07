@@ -1,8 +1,8 @@
 {% extends "front_page/base.html" %}{% load staticfiles %}
 
 {% block body %}
-      <div class="container">
-        <div class="row content-ct" style="padding: 46px 0;">
+      <div class="container body">
+        <div class="row content-ct">
           <h1 class="title-404">500</h1>
           <h2><i class="fa fa-exclamation-triangle"></i>{% if message %}{{message}}{% else %}Something has gone seriously wrong{% endif %}</h2>
               <h3>We're experiencing an internal server problem.</h3>
@@ -17,7 +17,6 @@
               {% endif %}
               {% endfor %}
           {% endif %}
-
         </div>
       </div>
 {% endblock %}

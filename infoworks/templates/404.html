@@ -1,8 +1,8 @@
 {% extends "front_page/base.html" %}{% load staticfiles %}
 
 {% block body %}
-      <div class="container">
-        <div class="row content-ct" style="padding: 46px 0;">
+      <div class="container body">
+        <div class="row content-ct">
           <h1 class="title-404">404</h1>
           <h2><i class="fa fa-exclamation-triangle"></i> {% if message %}{{message}}{% else %}Oops! The Page you requested was not found!{% endif %}</h2>
           <h3>Would you like to go to <a href="/">homepage</a> instead?</h3>
