@@ -1,0 +1,48 @@
+{% extends "front_page/base.html" %}{% load staticfiles %}
+
+{% block body %}
+
+      
+      <nav class="side-menu">
+        <ul>
+          <li class="hidden active">
+              <a class="page-scroll" href="#page-top"></a>
+          </li>
+          <li>
+              <a href="#home" class="page-scroll">
+                <span class="menu-title">Home</span>
+                <span class='dot'></span>
+              </a>
+          </li>
+          {% for c in category %}
+          <li>
+              <a href="#{{c.category}}" class="page-scroll">
+                <span class="menu-title">{{c.category}}</span>
+                <span class="dot"></span>
+              </a>
+          </li>
+          {% endfor %}
+        </ul>
+      </nav>
+      
+      <!-- Start: Schedule -->
+      <div class="container body">
+      <h1>Understanding Data - Dictionary of Date Term</h1>
+      {% for c in category %}
+        <div class="row">
+            <div class="col-md-9" id={{c.category}}>
+                <h4>{{ c.category }}</h4>
+                
+                {% for j in c.dictionary %}
+                  <div class="row">
+                    <h5>{{ j.term }}</h5>
+                    <p>{{ j.content }}</p>
+                  </div>
+                {% endfor %}
+            </div>
+        </div>
+      {% endfor %}
+      </div>
+      <!-- End: Schedule -->
+
+{% endblock body %}

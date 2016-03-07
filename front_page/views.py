@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponse
 from django.template import RequestContext
 from data.models import School, District, State
+from models import Dictionary, Category
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -51,3 +52,8 @@ def landing_page(request):
     
     context = {"district": district}
     return render_to_response('front_page/landing_page.html', context, context_instance=RequestContext(request))
+    
+def dictionary(request):
+    category = Category.objects.all()
+    context = {"category":category}
+    return render_to_response('front_page/dictionary.html', context, context_instance=RequestContext(request))

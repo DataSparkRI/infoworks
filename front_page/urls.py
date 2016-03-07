@@ -8,5 +8,6 @@ urlpatterns = [
     url(r'^district/(?P<slug>[\w-]+)$', views.district, name="district"),
     url(r'^state$', views.state, name="state"),
     url(r'^state/(?P<slug>[\w-]+)$', views.states, name="states"),
+    url(r'^understanding-data/dictionary$',views.dictionary,name="dictionary"),
     ]
 
