@@ -45,7 +45,6 @@ class StateFile(models.Model):
                 reader = csv.reader(f)
                 headers = reader.next()
                 for i in headers:
-                    print i
                     try:
                        StateField.objects.get_or_create(state_file=self, name=i)
                     except:
@@ -97,7 +96,6 @@ class DistrictFile(models.Model):
                 reader = csv.reader(f)
                 headers = reader.next()
                 for i in headers:
-                    print i
                     try:
                        DistrictField.objects.get_or_create(district_file=self, name=i)
                     except:

@@ -18,7 +18,10 @@ def write_default_state_indicator_set(modeladmin, request, queryset):
         StateIndicatorSet.objects.get_or_create(title='Safe and Supportive Schools' ,state=q, order=4)
         StateIndicatorSet.objects.get_or_create(title='Funding and Resources' ,state=q, order=5)
         StateIndicatorSet.objects.get_or_create(title='Other' ,state=q, order=6)
-    messages.add_message(request, messages.INFO, "Done")
+    try:
+        messages.add_message(request, messages.INFO, "Done")
+    except:
+        pass
 
 def write_default_state_indicator(modeladmin, request, queryset):
     for q in queryset:
@@ -65,7 +68,10 @@ def write_default_state_indicator(modeladmin, request, queryset):
             StateIndicator.objects.get_or_create(state_indicator_set=q, title=title, order=2)
         else:
             pass
-    messages.add_message(request, messages.INFO, "Done")
+    try:
+        messages.add_message(request, messages.INFO, "Done")
+    except:
+        pass
 
 class StateDisplayDataYInline(admin.TabularInline):
     model = StateDisplayDataY
@@ -114,7 +120,10 @@ def write_default_district_indicator_set(modeladmin, request, queryset):
         DistrictIndicatorSet.objects.get_or_create(title='Safe and Supportive Schools' ,district=q, order=4)
         DistrictIndicatorSet.objects.get_or_create(title='Funding and Resources' ,district=q, order=5)
         DistrictIndicatorSet.objects.get_or_create(title='Other' ,district=q, order=6)
-    messages.add_message(request, messages.INFO, "Done")
+    try:
+        messages.add_message(request, messages.INFO, "Done")
+    except:
+        pass
 
 def write_default_district_indicator(modeladmin, request, queryset):
     for q in queryset:
@@ -157,7 +166,10 @@ def write_default_district_indicator(modeladmin, request, queryset):
             DistrictIndicator.objects.get_or_create(district_indicator_set=q, title=title, order=1)
         else:
             pass
-    messages.add_message(request, messages.INFO, "Done")
+    try:
+        messages.add_message(request, messages.INFO, "Done")
+    except:
+        pass
 
 class DistrictDisplayDataYInline(admin.TabularInline):
     model = DistrictDisplayDataY

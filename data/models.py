@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.db.models import Count
 from django.utils.text import slugify
 from ckeditor.fields import RichTextField
+import csv
 
 DATA_TYPE_CHOICES = (
     ('NUMERIC', 'numeric'),
@@ -55,6 +56,7 @@ class SchoolIndicatorDataSet(models.Model):
     school_indicator = models.ForeignKey("SchoolIndicator", blank=True, null=True)
     school_year = models.ForeignKey(SchoolYear)
     csv_file = models.FileField(upload_to="School_Indicator_Data", blank=True, null=True)
+    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
     import_file = models.BooleanField(default=False) #If True start import file, then mark False after
     
     @property
@@ -99,6 +101,40 @@ class SchoolIndicatorDataSet(models.Model):
     def data(self):
         return SchoolIndicatorData.objects.filter(school_indicator_dataset=self)
         
+    
+    def save(self, *args, **kwargs):
+        if self.import_file == True:
+            super(SchoolIndicatorDataSet, self).save(*args, **kwargs)
+            from dataimport.models import DimensionFor, DimensionName
+            self.csv_file.file.open(mode='rb')
+            reader = csv.reader(self.csv_file.file)
+            headers = reader.next()
+            
+            for row in reader:
+                dimension_y = ""
+                dimension_x = ""
+                for header_index in xrange(len(headers)):
+                    if header_index == 0:
+                        dim_x, created_x = DimensionFor.objects.get_or_create(name = row[header_index])
+                        dimension_x = row[header_index]
+                    else:
+                        dim_y, created_y = DimensionName.objects.get_or_create(name = headers[header_index])
+                        dimension_y = headers[header_index]
+                        value = row[header_index]
+                        data, created = SchoolIndicatorData.objects.get_or_create(school_indicator_dataset=self,
+                                                                    dimension_y=dimension_y,
+                                                                    dimension_x=dimension_x)
+                        data.key_value = value
+                        data.data_type = self.data_type
+                        data.save()
+                        print "%s - %s [%s]"%(headers[header_index], row[header_index],value)
+            
+            
+            self.import_file = False
+        
+        return super(SchoolIndicatorDataSet, self).save(*args, **kwargs)
+    
+    
     
     def __unicode__(self):
         return "%s - %s"%(self.school_indicator, self.school_year)
@@ -230,6 +266,7 @@ class DistrictIndicatorDataSet(models.Model):
     district_indicator = models.ForeignKey("DistrictIndicator", blank=True, null=True)
     school_year = models.ForeignKey(SchoolYear)
     csv_file = models.FileField(upload_to="District_Indicator_Data", blank=True, null=True)
+    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
     import_file = models.BooleanField(default=False) #If True start import file, then mark False after
 
     @property
@@ -273,6 +310,40 @@ class DistrictIndicatorDataSet(models.Model):
     @property
     def data(self):
         return DistrictIndicatorData.objects.filter(district_indicator_dataset=self)
+    
+    def save(self, *args, **kwargs):
+        if self.import_file == True:
+            super(DistrictIndicatorDataSet, self).save(*args, **kwargs)
+            from dataimport.models import DimensionFor, DimensionName
+            self.csv_file.file.open(mode='rb')
+            reader = csv.reader(self.csv_file.file)
+            headers = reader.next()
+            
+            for row in reader:
+                dimension_y = ""
+                dimension_x = ""
+                for header_index in xrange(len(headers)):
+                    if header_index == 0:
+                        dim_x, created_x = DimensionFor.objects.get_or_create(name = row[header_index])
+                        dimension_x = row[header_index]
+                    else:
+                        dim_y, created_y = DimensionName.objects.get_or_create(name = headers[header_index])
+                        dimension_y = headers[header_index]
+                        value = row[header_index]
+                        data, created = DistrictIndicatorData.objects.get_or_create(district_indicator_dataset=self,
+                                                                    dimension_y=dimension_y,
+                                                                    dimension_x=dimension_x)
+                        data.key_value = value
+                        data.data_type = self.data_type
+                        data.save()
+                        print "%s - %s [%s]"%(headers[header_index], row[header_index],value)
+            
+            
+            self.import_file = False
+        
+        return super(DistrictIndicatorDataSet, self).save(*args, **kwargs)
+        
+    
     
     def __unicode__(self):
         return "%s - %s"%(self.district_indicator, self.school_year)
@@ -392,6 +463,7 @@ class StateIndicatorDataSet(models.Model):
     state_indicator = models.ForeignKey("StateIndicator", blank=True, null=True)
     school_year = models.ForeignKey(SchoolYear)
     csv_file = models.FileField(upload_to="State_Indicator_Data", blank=True, null=True)
+    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
     import_file = models.BooleanField(default=False) #If True start import file, then mark False after
     
     @property
@@ -436,6 +508,38 @@ class StateIndicatorDataSet(models.Model):
     @property
     def data(self):
         return StateIndicatorData.objects.filter(state_indicator_dataset=self)
+    
+    def save(self, *args, **kwargs):
+        if self.import_file == True:
+            super(StateIndicatorDataSet, self).save(*args, **kwargs)
+            from dataimport.models import DimensionFor, DimensionName
+            self.csv_file.file.open(mode='rb')
+            reader = csv.reader(self.csv_file.file)
+            headers = reader.next()
+            
+            for row in reader:
+                dimension_y = ""
+                dimension_x = ""
+                for header_index in xrange(len(headers)):
+                    if header_index == 0:
+                        dim_x, created_x = DimensionFor.objects.get_or_create(name = row[header_index])
+                        dimension_x = row[header_index]
+                    else:
+                        dim_y, created_y = DimensionName.objects.get_or_create(name = headers[header_index])
+                        dimension_y = headers[header_index]
+                        value = row[header_index]
+                        data, created = StateIndicatorData.objects.get_or_create(state_indicator_dataset=self,
+                                                                    dimension_y=dimension_y,
+                                                                    dimension_x=dimension_x)
+                        data.key_value = value
+                        data.data_type = self.data_type
+                        data.save()
+                        print "%s - %s [%s]"%(headers[header_index], row[header_index],value)
+            
+            
+            self.import_file = False
+        
+        return super(StateIndicatorDataSet, self).save(*args, **kwargs)
     
     def __unicode__(self):
         return "%s - %s"%(self.state_indicator, self.school_year)
