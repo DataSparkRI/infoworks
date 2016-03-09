@@ -145,7 +145,7 @@ class SchoolIndicator(models.Model):
     order = models.IntegerField(default=0)
     short_title = models.CharField(max_length=100,blank=True)
     description = RichTextField(blank=True)
-    data_indeicator = models.BooleanField(default=True)
+    data_indicator = models.BooleanField(default=True)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField(blank=True)
 
@@ -355,7 +355,7 @@ class DistrictIndicator(models.Model):
     order = models.IntegerField(default=0)
     short_title = models.CharField(max_length=100,blank=True)
     description = RichTextField(blank=True)
-    data_indeicator = models.BooleanField(default=True)
+    data_indicator = models.BooleanField(default=True)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField(blank=True)
 
@@ -551,7 +551,7 @@ class StateIndicator(models.Model):
     order = models.IntegerField(default=0)
     short_title = models.CharField(max_length=100,blank=True)
     description = RichTextField(blank=True)
-    data_indeicator = models.BooleanField(default=True)
+    data_indicator = models.BooleanField(default=True)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField(blank=True)
 
