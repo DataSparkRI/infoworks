@@ -1,8 +1,10 @@
 from django.contrib import admin
-from data.models import SchoolYear, IndicatorTitle, \
+from data.models import SchoolYear, IndicatorTitle, DetailDataSetTitle, \
 District, DistrictDisplayData, DistrictIndicatorDataSet, DistrictIndicatorSet, DistrictIndicator, DistrictDisplayDataY, \
 School, SchoolIndicatorSet, SchoolIndicator, SchoolDisplayData, SchoolIndicatorDataSet, SchoolDisplayDataY, \
-State, StateIndicatorSet, StateIndicator, StateDisplayData, StateIndicatorDataSet, StateDisplayDataY
+State, StateIndicatorSet, StateIndicator, StateDisplayData, StateIndicatorDataSet, StateDisplayDataY, \
+DistrictIndicatorData, DistrictIndicatorDetailDataSet
+
 from django.contrib import messages
 
 #from data.form import StateDisplayDataYForm, DistrictDisplayDataYForm, SchoolDisplayDataYForm
@@ -171,6 +173,10 @@ def write_default_district_indicator(modeladmin, request, queryset):
     except:
         pass
 
+
+class DistrictIndicatorDetailDataSetInline(admin.TabularInline):
+    model = DistrictIndicatorDetailDataSet
+
 class DistrictDisplayDataYInline(admin.TabularInline):
     model = DistrictDisplayDataY
     #form = DistrictDisplayDataYForm
@@ -190,6 +196,10 @@ class DistrictIndicatorDataSetInline(admin.TabularInline):
 class DistrictIndicatorInline(admin.TabularInline):
     model = DistrictIndicator
 
+class DistrictIndicatorDataAdmin(admin.ModelAdmin):
+    inlines = [DistrictIndicatorDetailDataSetInline]
+admin.site.register(DistrictIndicatorData, DistrictIndicatorDataAdmin)
+    
 class DistrictAdmin(admin.ModelAdmin):
     list_display = ('district_name', 'activate','slug', 'indicator_modified')
     inlines = [DistrictIndicatorSetInline]
@@ -259,6 +269,7 @@ class SchoolIndicatorAdmin(admin.ModelAdmin):
     inlines = [SchoolDisplayDataInline, SchoolDisplayDataYInline, SchoolIndicatorDataSetInline]
 admin.site.register(SchoolIndicator, SchoolIndicatorAdmin)
 admin.site.register(SchoolYear)
+admin.site.register(DetailDataSetTitle)
 #class SchoolNumberOfStudentAndTeacherAdmin(admin.ModelAdmin):
 #    list_display = ('school', 'school_year','student', 'teacher')
 #admin.site.register(SchoolNumberOfStudentAndTeacher, SchoolNumberOfStudentAndTeacherAdmin)

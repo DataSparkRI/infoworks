@@ -87,7 +87,7 @@ class ImportStateFileTestCase(TestCase):
         number_of_school = StateField.objects.get(name="number_of_school", state_file=state_file)
         self.assertEqual(number_of_school.match_option, None)
         number_of_school.match_option = "NUMBER_SCHOOL"
-        number_of_school.save()        
+        number_of_school.save()
         
         from dataimport.admin import import_or_update_state_information
         
@@ -255,7 +255,41 @@ class ImportStateFileTestCase(TestCase):
         self.assertContains(response, "Developmental Reading Assessment")
         self.assertContains(response, "Attendance")
         self.assertContains(response, "Four Year Graduation Rate")
+    '''    
+    def test_import_state_indicator_data(self):
+        from data.models import StateIndicatorSet, StateIndicator, IndicatorTitle
+        from data.admin import write_default_state_indicator, write_default_state_indicator_set
+        file = open('dataimport/test_files/test_statefile_indicator_data.csv')
+        django_file = Django_File(file)
+        queryset = State.objects.all()
+        rf = RequestFactory()
+        request = rf.post(
+        '/admin/app/model',   # url of the admin change list
+        {
+            '_selected_action': [],
+            'action': 'write_default_state_indicator_set',
+            'post': 'post', 
+        }
+        )
+        write_default_state_indicator_set(admin.ModelAdmin, request, queryset)
+        queryset = StateIndicatorSet.objects.all()
+        self.assertEqual(queryset.count(), 12)
+        rf = RequestFactory()
+        request = rf.post(
+        '/admin/app/model',   # url of the admin change list
+        {
+            '_selected_action': [],
+            'action': 'write_default_state_indicator',
+            'post': 'post', 
+        }
+        )
+        write_default_state_indicator(admin.ModelAdmin, request, queryset)
         
+        from dataimport.models import IndicatorFile
+        school_year, created = SchoolYear.objects.get_or_create(school_year="2014-2015")
+        indicator_file = IndicatorFile(name="State", school_year=school_year, state_indicator=True, file=django_file).save()
+    '''
+
 
 class ImportDistrictFileTestCase(TestCase):
     def setUp(self):

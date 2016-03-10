@@ -89,6 +89,7 @@
                           <thead> <tr><th></th>
                                       {% for k in j.displaydata%}
                                       <th>{{k.display.name}}</th>
+                                      
                                       {% endfor %}
                                   </tr>
                           </thead>
@@ -97,8 +98,14 @@
                                   {% for indicatordata in j.dataset.0.displaydata %}
                                   <tr><th scope="row">{{indicatordata.dimension_y}}</th>
                                       {% for row in indicatordata.data %}
-                                      {% if row %}<td>{{row.key_value}}</td>
-                                      {% else %}<td>No Data</td>{% endif %}
+                                      {% if row %}<td>{% if row.key_value != 'NULL' %}{{row.key_value}}{% endif %}
+                                      {% if row.log %}<a href="{% url 'district_detail' district.slug row.id %}" target="_blank"><i class="fa fa-{{row.log}}"></i></a>{% endif %}
+                                      {% if request.user.is_active and request.user.is_staff %}
+                                      <a href="/admin/data/districtindicatordata/{{row.id}}" target="_blank"><i class="fa fa-pencil"></i></a>
+                                      {% endif %}
+                                      </td>
+                                      {% else %}<td>No Data
+                                      </td>{% endif %}
                                       {% endfor %}
                                   </tr>
                                   {% endfor %}

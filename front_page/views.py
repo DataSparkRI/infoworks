@@ -2,7 +2,8 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
 from django.template import RequestContext
-from data.models import School, District, State
+from data.models import School, District, State, \
+DistrictIndicatorDetailDataSet, SchoolIndicatorDetailDataSet, StateIndicatorDetailDataSet
 from models import Dictionary, Category
 
 from django.core import exceptions
@@ -45,6 +46,11 @@ def district(request, slug):
     
     context = {"district": district}
     return render_to_response('front_page/district_report.html', context, context_instance=RequestContext(request))
+
+def district_detail_dataset(request, slug, indicator_detail_dataset_id):
+    dataset = DistrictIndicatorDetailDataSet.objects.filter(indicator_data__id=indicator_detail_dataset_id).order_by("order")
+    context = {"dataset":dataset}
+    return render_to_response('front_page/district_detail.html', context, context_instance=RequestContext(request))
 
 def state(request):
     try:
