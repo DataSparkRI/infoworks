@@ -117,10 +117,11 @@ def import_indicator_detail(modeladmin, request, queryset):
                             
                             #Get or Greate District Indicator Detail DataSet
                             
-                            district_indicator_detail_dataset, created = DistrictIndicatorDetailDataSet.objects.get_or_create(indicator_data=indicator_data, title = q.category, display_type="TABLE")
-                            
-                            print q.category
-                            
+                            district_indicator_detail_dataset, created = DistrictIndicatorDetailDataSet.objects.get_or_create(indicator_data=indicator_data, title = q.category)
+                            if created:
+                                district_indicator_detail_dataset.display_type="TABLE"
+                                district_indicator_detail_dataset.save()
+                                
                             for key, value in index.iteritems():
 
                                 DistrictIndicatorDetailData.objects.get_or_create(district_indicator_detail_dataset=district_indicator_detail_dataset,
