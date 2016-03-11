@@ -224,31 +224,63 @@ class IndicatorFile(models.Model):
     def __unicode__(self):
         return "%s - %s"% (self.name, self.school_year)
         
+class IndicatorDetailField(models.Model):
+    indicator_detail_file = models.ForeignKey('IndicatorDetailFile')
+    name = models.CharField(max_length=50, blank=True)
+    match_option = models.CharField(max_length=30, blank=True, null=True,
+                   help_text='(required)',
+                   choices=(
+                            ('STATE_CODE', 'state_code (required pick one)'),
+                            ('DISTRICT_CODE', 'district_code (required pick one)'),
+                            ('SCHOOL_CODE', 'school_code (required pick one)'),
+                            ('INDICATOR_NAME','indicator name'),
+                            ('SCHOOL_YEAR','school year'),
+                            ('DIMENSION_NAME','dimension name'),
+                            ('DIMENSION', 'dimension (required)'),
+                            ))
+    data_type = models.CharField(max_length=30, blank=True, null=True,
+                    help_text='(required)',
+                    choices=(('NUMERIC', 'numeric'),
+                            ('STRING', 'string')
+                            ))
+    dimension_name = models.ForeignKey('DimensionName', blank=True, null=True)
+    
+    def save(self, *args, **kwargs):
+        if self.name != '':
+            super(IndicatorDetailField, self).save(*args, **kwargs)
+    
+    def __unicode__(self):
+        return "%s - %s"%(self.name, self.match_option)
+        
+        
         
 class IndicatorDetailFile(models.Model):
     name = models.CharField(max_length=100)
-    school_year = models.ForeignKey(SchoolYear)
+    indicator = models.ForeignKey("data.IndicatorTitle", blank=True, null=True)
+    school_year = models.ForeignKey(SchoolYear, blank=True, null=True)
+    dimension_name = models.ForeignKey("dataimport.DimensionName", blank=True, null=True)
+    category = models.ForeignKey("data.DetailDataSetTitle", blank=True, null=True)
     file = models.FileField(upload_to="Indicator_Detail_Information", blank=True, null=True)
     state_indicator = models.BooleanField(default=False)
     district_indicator = models.BooleanField(default=False)
     school_indicator = models.BooleanField(default=False)
-    #indicator = models.ForeignKey(IndicatorTitle, blank=True, null=True)
-    #indicator_for = models.ForeignKey(DimensionFor, blank=True, null=True)
-    #def save(self, *args, **kwargs): 
+    indicator_for = models.ForeignKey(DimensionFor, blank=True, null=True)
+    
+    def save(self, *args, **kwargs): 
 
-    #    super(IndicatorFile, self).save(*args, **kwargs)
-    #    if IndicatorField.objects.filter(indicator_file=self).count() == 0:
-    #        try:
-    #            f = open(self.file.path, 'rb')
-    #            reader = csv.reader(f)
-    #            headers = reader.next()
-    #            for i in headers:
-    #                try:
-    #                   IndicatorField.objects.get_or_create(indicator_file=self, name=i)
-    #                except:
-    #                   pass
-    #        except:
-    #            pass
+        super(IndicatorDetailFile, self).save(*args, **kwargs)
+        if IndicatorDetailField.objects.filter(indicator_detail_file=self).count() == 0:
+            try:
+                f = open(self.file.path, 'rb')
+                reader = csv.reader(f)
+                headers = reader.next()
+                for i in headers:
+                    try:
+                       IndicatorDetailField.objects.get_or_create(indicator_detail_file=self, name=i)
+                    except:
+                       pass
+            except:
+                pass
     
     def __unicode__(self):
         return "%s - %s"% (self.name, self.school_year)

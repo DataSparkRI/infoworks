@@ -2,8 +2,10 @@ from django.contrib import admin
 from dataimport.models import DimensionFor,StateFile, StateField, DistrictFile, DistrictField, SchoolFile, SchoolField, IndicatorFile, IndicatorField, DimensionName
 from data.models import District, School, State
 from dataimport.actions.ImportIndicator import import_indicator
+from dataimport.actions.ImportIndicatorDetail import import_indicator_detail
 import csv
 from django.contrib import messages
+from dataimport.models import IndicatorDetailFile, IndicatorDetailField
 # Register your models here.
 def get_or_none(objects, match_option):
     try:
@@ -347,6 +349,14 @@ class IndicatorFileAdmin(admin.ModelAdmin):
     inlines = [IndicatorFieldInline]
     actions = [import_indicator]
 admin.site.register(IndicatorFile, IndicatorFileAdmin)
+
+class IndicatorDetailFieldInline(admin.TabularInline):
+    model = IndicatorDetailField
+
+class IndicatorDetailFileAdmin(admin.ModelAdmin):
+    inlines = [IndicatorDetailFieldInline]
+    actions = [import_indicator_detail]
+admin.site.register(IndicatorDetailFile, IndicatorDetailFileAdmin)
 
 admin.site.register(DimensionName)
 admin.site.register(DimensionFor)

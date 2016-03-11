@@ -1,10 +1,11 @@
 
 import csv
 from django.contrib import messages
-from dataimport.models import IndicatorFile, IndicatorField
+from dataimport.models import IndicatorFile, IndicatorField, IndicatorDetailFile, IndicatorDetailField
 from data.models import SchoolIndicator, SchoolIndicatorDataSet, SchoolIndicatorData, \
 DistrictIndicator, DistrictIndicatorDataSet, DistrictIndicatorData, \
 StateIndicator, StateIndicatorDataSet, StateIndicatorData
+from data.models import DistrictIndicatorDetailDataSet, DistrictIndicatorDetailData
 
 def get_or_none(objects, match_option):
     try:
@@ -42,10 +43,10 @@ def get_index(headers, dimension):
 
 
 
-def import_indicator(modeladmin, request, queryset):
+def import_indicator_detail(modeladmin, request, queryset):
     for q in queryset:
         path = q.file.path
-        fields = IndicatorField.objects.filter(indicator_file=q)
+        fields = IndicatorDetailField.objects.filter(indicator_detail_file=q)
         
         district_codes = get_or_none(fields, "DISTRICT_CODE") #queryset
         school_codes = get_or_none(fields,"SCHOOL_CODE") #queryset
@@ -83,41 +84,54 @@ def import_indicator(modeladmin, request, queryset):
                             )
         
         if q.district_indicator:
-            with open(path) as f:
-                reader = csv.reader(f)
-                headers = reader.next()
-                district_code_index = get_index_or_none(headers, district_codes[0].name)
-                index = get_index(headers, dimension)
-                
-                for row in reader:
-                    try:
-                        district_code = row[district_code_index]
-                    except:
-                        break
-                    try:
-                        indicator = indicators.get(district_indicator_set__district__district_code=district_code)
-                    except:
-                        indicator = None
-                    if indicator != None: # if do have indicator
-                        district_indicator_dataset, created = DistrictIndicatorDataSet.objects.get_or_create(district_indicator=indicator, school_year=q.school_year)
-                        for key, value in index.iteritems():
+            if q.indicator != None and q.school_year != None and q.dimension_name != None and q.category != None:
+                with open(path) as f:
+                    reader = csv.reader(f)
+                    headers = reader.next()
+                    district_code_index = get_index_or_none(headers, district_codes[0].name)
+                    index = get_index(headers, dimension)
+                    
+                    
 
-                            DistrictIndicatorData.objects.get_or_create(district_indicator_dataset=district_indicator_dataset,
-                                                            dimension_x = q.indicator_for,
-                                                            dimension_y = value["dimension_name"].name,
-                                                            key_value = row[key],
-                                                            data_type = value["data_type"],
-                                                            import_job = q
+                    for row in reader:
+                        try:
+                            district_code = row[district_code_index]
+                        except:
+                            break
+                        try:
+                            indicator = indicators.get(district_indicator_set__district__district_code=district_code)
+                        except:
+                            indicator = None
+                        if indicator != None: # if do have indicator
+                            
+                            #Get or Create indicator dataset
+                            district_indicator_dataset, created = DistrictIndicatorDataSet.objects.get_or_create(district_indicator=indicator, school_year=q.school_year)
+                            
+                            #Get or Create indicator data with dimension_name as dimension_y, and Details as dimension_x
+                            indicator_data, created = DistrictIndicatorData.objects.get_or_create(district_indicator_dataset=district_indicator_dataset,
+                                                                dimension_x = 'Details',
+                                                                dimension_y = q.dimension_name.name,
+                                                                key_value = 'NULL',
+                                                                data_type = 'SUBDATASET',
                             )
-                            #if created:
-                            #    DistrictIndicatorData.objects.get_or_create(district_indicator_dataset=district_indicator_dataset,
-                            #                                dimension_x = "School Year",
-                            #                                dimension_y = value["dimension_name"].name,
-                            #                                key_value = q.school_year.school_year,
-                            #                                data_type = "STRING",
-                            #                                import_job = q
-                            #    )
+                            
+                            #Get or Greate District Indicator Detail DataSet
+                            
+                            district_indicator_detail_dataset, created = DistrictIndicatorDetailDataSet.objects.get_or_create(indicator_data=indicator_data, title = q.category, display_type="TABLE")
+                            
+                            print q.category
+                            
+                            for key, value in index.iteritems():
 
+                                DistrictIndicatorDetailData.objects.get_or_create(district_indicator_detail_dataset=district_indicator_detail_dataset,
+                                                                dimension_x = q.indicator_for,
+                                                                dimension_y = value["dimension_name"].name,
+                                                                key_value = row[key],
+                                                                data_type = value["data_type"],
+                                                                import_job = q
+                                )
+                                
+                            
         if q.school_indicator:
             with open(path) as f:
                 reader = csv.reader(f)

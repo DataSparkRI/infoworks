@@ -3,7 +3,12 @@
 {% block body %}
 <div class="container body">
 {% for data in dataset %}
-    <h3>{{data.title}}</h3>
+    {% if forloop.first %}
+    <h3><b>{{data.indicator_data.district_indicator_dataset.district_indicator.district_indicator_set.title}} / {{data.indicator_data.district_indicator_dataset.district_indicator.title.title}}</b></h3>
+    <h3><b>{{data.indicator_data.dimension_y}} {{data.indicator_data.district_indicator_dataset.school_year.school_year}}</b></h3>
+    <h3><b>{{data.indicator_data.district_indicator_dataset.district_indicator.district_indicator_set.district.district_name}}</b></h3>
+    {% endif %}
+    <h4>{{data.title}}</h4>
         {% if data.display_type == 'TABLE' %}
         <div class="media-body">
             <table class="table table-hover">
@@ -33,7 +38,7 @@
             </table>
         </div>
         {% endif %}
-        {% if data.display_type == "BAR-CHART" %}
+        {% if data.display_type == "BAR-CHART" or data.display_type == "BASIC-BAR-CHART" or data.display_type == "STACKED-BAR-CHART" %}
         <div id="container_{{data.id}}" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
         {% endif %}
         {% if data.display_type == "LINE-CHART" %}
@@ -54,23 +59,23 @@
     
     {% for data in dataset %}
     
-    {% if data.display_type == "BAR-CHART" or data.display_type == "LINE-CHART" or data.display_type == "AREA-CHART" %}
+    {% if data.display_type == "BAR-CHART" or data.display_type == "BASIC-BAR-CHART" or data.display_type == "STACKED-BAR-CHART" or data.display_type == "LINE-CHART" or data.display_type == "AREA-CHART" %}
     <script>
         $(function () {
     $('#container_{{data.id}}').highcharts({
         chart: {
             {% if data.display_type == "LINE-CHART" %}
             type: 'line'
-            {% endif %}
-            {% if data.display_type == "BAR-CHART" %}
+            {% elif data.display_type == "BAR-CHART" %}
             type: 'column'
-            {% endif %}
-            {% if data.display_type == "AREA-CHART" %}
+            {% elif data.display_type == "BASIC-BAR-CHART" or data.display_type == "STACKED-BAR-CHART" %}
+            type: 'bar'
+            {% elif data.display_type == "AREA-CHART" %}
             type: 'area'
             {% endif %}
         },
         title: {
-            text: '{{data.title.title}}'
+            text: '{{data.title.title}} {{data.indicator_data.district_indicator_dataset.school_year.school_year}}'
         },
         subtitle: {
             text: '{{data.indicator_data}}'
@@ -86,7 +91,11 @@
         yAxis: {
             min: 0,
             title: {
-                text: ''
+                text: '',
+                align: 'high'
+            },
+            labels: {
+                overflow: 'justify'
             }
         },
         tooltip: {
@@ -98,9 +107,19 @@
             useHTML: true
         },
         plotOptions: {
+            {% if data.display_type == "STACKED-BAR-CHART"%}
+            series: {
+                stacking: 'normal'
+            },
+            {% endif %}
             column: {
                 pointPadding: 0.2,
                 borderWidth: 0
+            },
+            bar: {
+                dataLabels: {
+                    enabled: true
+                }
             }
         },
         series: [

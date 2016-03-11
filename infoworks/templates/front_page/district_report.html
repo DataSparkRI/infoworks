@@ -99,7 +99,7 @@
                                   <tr><th scope="row">{{indicatordata.dimension_y}}</th>
                                       {% for row in indicatordata.data %}
                                       {% if row %}<td>{% if row.key_value != 'NULL' %}{{row.key_value}}{% endif %}
-                                      {% if row.log %}<a href="{% url 'district_detail' district.slug row.id %}" target="_blank"><i class="fa fa-{{row.log}}"></i></a>{% endif %}
+                                      {% if row.log %}<a href="{% url 'district_detail' district.slug row.id %}" target="_blank"><i class="fa fa-{% if row.log == "LINE-CHART" %}line-chart{% elif row.log == "BAR-CHART" or row.log == "BASIC-BAR-CHART" or row.log == "STACKED-BAR-CHART" %}bar-chart{% elif row.log == "AREA-CHART" %}area-chart{% elif row.log == "PIE-CHART" %}pie-chart{% elif row.log == "TABLE" %}table{%else%}newspaper-o{% endif %}"></i></a>{% endif %}
                                       {% if request.user.is_active and request.user.is_staff %}
                                       <a href="/admin/data/districtindicatordata/{{row.id}}" target="_blank"><i class="fa fa-pencil"></i></a>
                                       {% endif %}

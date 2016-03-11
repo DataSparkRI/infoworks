@@ -15,6 +15,8 @@ DATA_TYPE_CHOICES = (
 
 DISPLAY_TYPE_CHOICES = (
     ('BAR-CHART', 'Bar Chart'),
+    ('BASIC-BAR-CHART', 'Bar Chart (Basic)'),
+    ('STACKED-BAR-CHART', 'Bar Chart (Stacked)'),
     ('LINE-CHART', 'Line Chart'),
     ('AREA-CHART','Area Chart'),
     ('PIE-CHART', 'Pie Chart'),
@@ -163,7 +165,7 @@ class SchoolIndicatorDataSet(models.Model):
                         data.key_value = value
                         data.data_type = self.data_type
                         data.save()
-                        print "%s - %s [%s]"%(headers[header_index], row[header_index],value)
+                        #print "%s - %s [%s]"%(headers[header_index], row[header_index],value)
             
             
             self.import_file = False
@@ -293,7 +295,7 @@ class DistrictIndicatorDetailData(models.Model):
     dimension_y = models.CharField(max_length=100, blank=True)
     key_value = models.CharField(max_length=100, db_index=True)
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
-    import_job = models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
+    import_job = models.ForeignKey('dataimport.IndicatorDetailFile', blank=True, null=True)
     
     def __unicode__(self):
         return "%s - %s: %s"%(self.dimension_y, self.dimension_x, self.key_value)    
@@ -329,7 +331,7 @@ class DistrictIndicatorDetailDataSet(models.Model):
                 except:
                    data.append(None)
             result.append({"dimension_y":y, "data":data})
-        print result
+        #print result
         return result
 
 
@@ -348,7 +350,7 @@ class DistrictIndicatorData(models.Model):
     def log(self):
         dataset = DistrictIndicatorDetailDataSet.objects.filter(indicator_data=self).order_by("order")
         if dataset.count() > 0:
-            return dataset[0].display_type.lower()
+            return dataset[0].display_type
         else:
             return None
     
@@ -429,7 +431,7 @@ class DistrictIndicatorDataSet(models.Model):
                         data.key_value = value
                         data.data_type = self.data_type
                         data.save()
-                        print "%s - %s [%s]"%(headers[header_index], row[header_index],value)
+                        #print "%s - %s [%s]"%(headers[header_index], row[header_index],value)
             
             
             self.import_file = False
@@ -647,7 +649,7 @@ class StateIndicatorDataSet(models.Model):
                         data.key_value = value
                         data.data_type = self.data_type
                         data.save()
-                        print "%s - %s [%s]"%(headers[header_index], row[header_index],value)
+                        #print "%s - %s [%s]"%(headers[header_index], row[header_index],value)
             
             
             self.import_file = False
