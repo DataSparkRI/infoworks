@@ -1,0 +1,122 @@
+{% extends "front_page/base.html" %}{% load staticfiles %}
+
+{% block body %}
+<div class="container body">
+{% for data in dataset %}
+    <h3>{{data.title}}</h3>
+        {% if data.display_type == 'TABLE' %}
+        <div class="media-body">
+            <table class="table table-hover">
+                <thead> <tr><th></th>
+                    {% for k in data.displaydata_x%}
+                    <th>{{k}}</th>
+                        {% endfor %}
+                        </tr>
+                </thead>
+                <tbody>
+                                  {% if data.displaydata %}
+                                  {% for indicatordata in data.displaydata %}
+                                  <tr><th scope="row">{{indicatordata.dimension_y}}</th>
+                                      {% for row in indicatordata.data %}
+                                      {% if row %}<td>{% if row.key_value != 'NULL' %}{{row.key_value}}{% endif %}
+                                      {% if row.log %}<a href="{% url 'district_detail' district.slug row.id %}" target="_blank"><i class="fa fa-{{row.log}}"></i></a>{% endif %}
+                                      </td>
+                                      {% else %}<td>No Data
+                                      </td>{% endif %}
+                                      {% endfor %}
+                                  </tr>
+                                  {% endfor %}
+                                  {% endif %}
+
+
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+        {% if data.display_type == "BAR-CHART" %}
+        <div id="container_{{data.id}}" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+        {% endif %}
+        {% if data.display_type == "LINE-CHART" %}
+        <div id="container_{{data.id}}" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+        {% endif %}
+        {% if data.display_type == "AREA-CHART" %}
+        <div id="container_{{data.id}}" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+        {% endif %}
+
+{% endfor %}
+</div>
+{% endblock %}
+
+{% block javascript %}
+{{ block.super }}
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    
+    {% for data in dataset %}
+    
+    {% if data.display_type == "BAR-CHART" or data.display_type == "LINE-CHART" or data.display_type == "AREA-CHART" %}
+    <script>
+        $(function () {
+    $('#container_{{data.id}}').highcharts({
+        chart: {
+            {% if data.display_type == "LINE-CHART" %}
+            type: 'line'
+            {% endif %}
+            {% if data.display_type == "BAR-CHART" %}
+            type: 'column'
+            {% endif %}
+            {% if data.display_type == "AREA-CHART" %}
+            type: 'area'
+            {% endif %}
+        },
+        title: {
+            text: '{{data.title.title}}'
+        },
+        subtitle: {
+            text: '{{data.indicator_data}}'
+        },
+        xAxis: {
+            categories: [
+                {% for i in data.displaydata_x %}
+                '{{i}}',
+                {% endfor %}
+            ],
+            crosshair: true
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: ''
+            }
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y}</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+            }
+        },
+        series: [
+        {% for i in data.displaydata %}    
+        {
+            name: '{{i.dimension_y}}',
+            data: [{% for j in i.data %}{{j.key_value}},{% endfor %}]
+
+        },
+        {% endfor %}
+        ]
+    });
+});
+        
+        
+    </script>
+    {% endif %}
+    {% endfor %}
+{% endblock %}

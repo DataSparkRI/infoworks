@@ -5,10 +5,20 @@ from django.utils import timezone
 from django.db.models import Count
 from django.utils.text import slugify
 from ckeditor.fields import RichTextField
+import csv
 
 DATA_TYPE_CHOICES = (
     ('NUMERIC', 'numeric'),
     ('STRING', 'string'),
+    ('SUBDATASET','subdataset'),
+)
+
+DISPLAY_TYPE_CHOICES = (
+    ('BAR-CHART', 'Bar Chart'),
+    ('LINE-CHART', 'Line Chart'),
+    ('AREA-CHART','Area Chart'),
+    ('PIE-CHART', 'Pie Chart'),
+    ('TABLE','Table'),
 )
 
 # Create your models here.
@@ -21,6 +31,13 @@ class SchoolYear(models.Model):
     school_year = models.CharField(max_length=100)
     def __unicode__(self):
         return "%s"% self.school_year
+
+class DetailDataSetTitle(models.Model):
+    title = models.CharField(max_length=100)
+    short_description = models.CharField(max_length=200,blank=True)
+    
+    def __unicode__(self):
+        return "%s"% self.title
 
 ############# School #####################        
 
@@ -40,6 +57,26 @@ class SchoolDisplayDataY(models.Model):
     def __unicode__(self):
         return "%s - %s"% (self.school_indicator, self.display)
 
+class SchoolIndicatorDetailData(models.Model):
+    school_indicator_detail_dataset = models.ForeignKey("SchoolIndicatorDetailDataSet", blank=True, null=True)
+    dimension_x = models.CharField(max_length=100, blank=True)
+    dimension_y = models.CharField(max_length=100, blank=True)
+    key_value = models.CharField(max_length=100, db_index=True)
+    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
+    import_job = models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
+    
+    def __unicode__(self):
+        return "%s - %s: %s"%(self.dimension_y, self.dimension_x, self.key_value)    
+
+class SchoolIndicatorDetailDataSet(models.Model):
+    title = models.ForeignKey(DetailDataSetTitle)
+    display_type = models.CharField(max_length=20,choices=DISPLAY_TYPE_CHOICES)
+    order = models.IntegerField(default=1)
+    indicator_data = models.ForeignKey('SchoolIndicatorData')
+
+    def __unicode__(self):
+        return "%s - %s" %(self.indicator_data.dimension_x, self.title)
+
 class SchoolIndicatorData(models.Model):
     school_indicator_dataset = models.ForeignKey('SchoolIndicatorDataSet', blank=True, null=True)
     dimension_x = models.CharField(max_length=100, blank=True)
@@ -55,6 +92,7 @@ class SchoolIndicatorDataSet(models.Model):
     school_indicator = models.ForeignKey("SchoolIndicator", blank=True, null=True)
     school_year = models.ForeignKey(SchoolYear)
     csv_file = models.FileField(upload_to="School_Indicator_Data", blank=True, null=True)
+    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
     import_file = models.BooleanField(default=False) #If True start import file, then mark False after
     
     @property
@@ -100,6 +138,40 @@ class SchoolIndicatorDataSet(models.Model):
         return SchoolIndicatorData.objects.filter(school_indicator_dataset=self)
         
     
+    def save(self, *args, **kwargs):
+        if self.import_file == True:
+            super(SchoolIndicatorDataSet, self).save(*args, **kwargs)
+            from dataimport.models import DimensionFor, DimensionName
+            self.csv_file.file.open(mode='rb')
+            reader = csv.reader(self.csv_file.file)
+            headers = reader.next()
+            
+            for row in reader:
+                dimension_y = ""
+                dimension_x = ""
+                for header_index in xrange(len(headers)):
+                    if header_index == 0:
+                        dim_x, created_x = DimensionFor.objects.get_or_create(name = row[header_index])
+                        dimension_x = row[header_index]
+                    else:
+                        dim_y, created_y = DimensionName.objects.get_or_create(name = headers[header_index])
+                        dimension_y = headers[header_index]
+                        value = row[header_index]
+                        data, created = SchoolIndicatorData.objects.get_or_create(school_indicator_dataset=self,
+                                                                    dimension_y=dimension_y,
+                                                                    dimension_x=dimension_x)
+                        data.key_value = value
+                        data.data_type = self.data_type
+                        data.save()
+                        print "%s - %s [%s]"%(headers[header_index], row[header_index],value)
+            
+            
+            self.import_file = False
+        
+        return super(SchoolIndicatorDataSet, self).save(*args, **kwargs)
+    
+    
+    
     def __unicode__(self):
         return "%s - %s"%(self.school_indicator, self.school_year)
 
@@ -109,7 +181,7 @@ class SchoolIndicator(models.Model):
     order = models.IntegerField(default=0)
     short_title = models.CharField(max_length=100,blank=True)
     description = RichTextField(blank=True)
-    data_indeicator = models.BooleanField(default=True)
+    data_indicator = models.BooleanField(default=True)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField(blank=True)
 
@@ -215,8 +287,8 @@ class DistrictDisplayDataY(models.Model):
     def __unicode__(self):
         return "%s - %s"% (self.district_indicator, self.display)
 
-class DistrictIndicatorData(models.Model):
-    district_indicator_dataset = models.ForeignKey("DistrictIndicatorDataSet", blank=True, null=True)
+class DistrictIndicatorDetailData(models.Model):
+    district_indicator_detail_dataset = models.ForeignKey("DistrictIndicatorDetailDataSet", blank=True, null=True)
     dimension_x = models.CharField(max_length=100, blank=True)
     dimension_y = models.CharField(max_length=100, blank=True)
     key_value = models.CharField(max_length=100, db_index=True)
@@ -224,12 +296,70 @@ class DistrictIndicatorData(models.Model):
     import_job = models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
     
     def __unicode__(self):
-        return "%s - %s: %s"%(self.dimension_y, self.dimension_x, self.key_value)
+        return "%s - %s: %s"%(self.dimension_y, self.dimension_x, self.key_value)    
+
+class DistrictIndicatorDetailDataSet(models.Model):
+    indicator_data = models.ForeignKey('DistrictIndicatorData')
+    title = models.ForeignKey(DetailDataSetTitle)
+    order = models.IntegerField(default=1)
+    display_type = models.CharField(max_length=20,choices=DISPLAY_TYPE_CHOICES)
+
+    @property
+    def displaydata_x(self):
+        index = DistrictIndicatorDetailData.objects.filter(district_indicator_detail_dataset=self).values_list('dimension_x',flat=True)
+        return sorted(set(index))
+
+    @property
+    def displaydata_y(self):
+        index = DistrictIndicatorDetailData.objects.filter(district_indicator_detail_dataset=self).values_list('dimension_y',flat=True)
+        return sorted(set(index))
+
+    @property
+    def displaydata(self):
+        dim_x = self.displaydata_x
+        dim_y = self.displaydata_y
+        result = []
+        if len(dim_x) == 0 and len(dim_y) == 0:
+            return None
+        for y in dim_y:
+            data = []
+            for x in dim_x:
+                try:
+                   data.append(DistrictIndicatorDetailData.objects.get(district_indicator_detail_dataset=self, dimension_x=x, dimension_y=y))
+                except:
+                   data.append(None)
+            result.append({"dimension_y":y, "data":data})
+        print result
+        return result
+
+
+    def __unicode__(self):
+        return "%s - %s - %s" %(self.indicator_data.district_indicator_dataset.district_indicator, self.indicator_data.dimension_y, self.title)
+
+class DistrictIndicatorData(models.Model):
+    district_indicator_dataset = models.ForeignKey("DistrictIndicatorDataSet", blank=True, null=True)
+    dimension_x = models.CharField(max_length=100, blank=True)
+    dimension_y = models.CharField(max_length=100, blank=True)
+    key_value = models.CharField(max_length=100, db_index=True)
+    data_type = models.CharField(max_length=20,choices=DATA_TYPE_CHOICES)
+    import_job = models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
+    
+    @property
+    def log(self):
+        dataset = DistrictIndicatorDetailDataSet.objects.filter(indicator_data=self).order_by("order")
+        if dataset.count() > 0:
+            return dataset[0].display_type.lower()
+        else:
+            return None
+    
+    def __unicode__(self):
+        return "%s - %s - %s: %s"%(self.district_indicator_dataset.district_indicator, self.dimension_y, self.dimension_x, self.key_value)
 
 class DistrictIndicatorDataSet(models.Model):
     district_indicator = models.ForeignKey("DistrictIndicator", blank=True, null=True)
     school_year = models.ForeignKey(SchoolYear)
     csv_file = models.FileField(upload_to="District_Indicator_Data", blank=True, null=True)
+    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
     import_file = models.BooleanField(default=False) #If True start import file, then mark False after
 
     @property
@@ -274,6 +404,40 @@ class DistrictIndicatorDataSet(models.Model):
     def data(self):
         return DistrictIndicatorData.objects.filter(district_indicator_dataset=self)
     
+    def save(self, *args, **kwargs):
+        if self.import_file == True:
+            super(DistrictIndicatorDataSet, self).save(*args, **kwargs)
+            from dataimport.models import DimensionFor, DimensionName
+            self.csv_file.file.open(mode='rb')
+            reader = csv.reader(self.csv_file.file)
+            headers = reader.next()
+            
+            for row in reader:
+                dimension_y = ""
+                dimension_x = ""
+                for header_index in xrange(len(headers)):
+                    if header_index == 0:
+                        dim_x, created_x = DimensionFor.objects.get_or_create(name = row[header_index])
+                        dimension_x = row[header_index]
+                    else:
+                        dim_y, created_y = DimensionName.objects.get_or_create(name = headers[header_index])
+                        dimension_y = headers[header_index]
+                        value = row[header_index]
+                        data, created = DistrictIndicatorData.objects.get_or_create(district_indicator_dataset=self,
+                                                                    dimension_y=dimension_y,
+                                                                    dimension_x=dimension_x)
+                        data.key_value = value
+                        data.data_type = self.data_type
+                        data.save()
+                        print "%s - %s [%s]"%(headers[header_index], row[header_index],value)
+            
+            
+            self.import_file = False
+        
+        return super(DistrictIndicatorDataSet, self).save(*args, **kwargs)
+        
+    
+    
     def __unicode__(self):
         return "%s - %s"%(self.district_indicator, self.school_year)
 
@@ -284,7 +448,7 @@ class DistrictIndicator(models.Model):
     order = models.IntegerField(default=0)
     short_title = models.CharField(max_length=100,blank=True)
     description = RichTextField(blank=True)
-    data_indeicator = models.BooleanField(default=True)
+    data_indicator = models.BooleanField(default=True)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField(blank=True)
 
@@ -377,6 +541,26 @@ class StateDisplayDataY(models.Model):
     def __unicode__(self):
         return "%s - %s"% (self.state_indicator, self.display)
 
+class StateIndicatorDetailData(models.Model):
+    state_indicator_detail_dataset = models.ForeignKey("StateIndicatorDetailDataSet", blank=True, null=True)
+    dimension_x = models.CharField(max_length=100, blank=True)
+    dimension_y = models.CharField(max_length=100, blank=True)
+    key_value = models.CharField(max_length=100, db_index=True)
+    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
+    import_job = models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
+    
+    def __unicode__(self):
+        return "%s - %s: %s"%(self.dimension_y, self.dimension_x, self.key_value)    
+
+class StateIndicatorDetailDataSet(models.Model):
+    title = models.ForeignKey(DetailDataSetTitle)
+    display_type = models.CharField(max_length=20,choices=DISPLAY_TYPE_CHOICES)
+    order = models.IntegerField(default=1)
+    indicator_data = models.ForeignKey('StateIndicatorData')
+
+    def __unicode__(self):
+        return "%s - %s" %(self.indicator_data.dimension_x, self.title)
+
 class StateIndicatorData(models.Model):
     state_indicator_dataset = models.ForeignKey("StateIndicatorDataSet", blank=True, null=True)
     dimension_x = models.CharField(max_length=100, blank=True)
@@ -392,6 +576,7 @@ class StateIndicatorDataSet(models.Model):
     state_indicator = models.ForeignKey("StateIndicator", blank=True, null=True)
     school_year = models.ForeignKey(SchoolYear)
     csv_file = models.FileField(upload_to="State_Indicator_Data", blank=True, null=True)
+    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
     import_file = models.BooleanField(default=False) #If True start import file, then mark False after
     
     @property
@@ -437,6 +622,38 @@ class StateIndicatorDataSet(models.Model):
     def data(self):
         return StateIndicatorData.objects.filter(state_indicator_dataset=self)
     
+    def save(self, *args, **kwargs):
+        if self.import_file == True:
+            super(StateIndicatorDataSet, self).save(*args, **kwargs)
+            from dataimport.models import DimensionFor, DimensionName
+            self.csv_file.file.open(mode='rb')
+            reader = csv.reader(self.csv_file.file)
+            headers = reader.next()
+            
+            for row in reader:
+                dimension_y = ""
+                dimension_x = ""
+                for header_index in xrange(len(headers)):
+                    if header_index == 0:
+                        dim_x, created_x = DimensionFor.objects.get_or_create(name = row[header_index])
+                        dimension_x = row[header_index]
+                    else:
+                        dim_y, created_y = DimensionName.objects.get_or_create(name = headers[header_index])
+                        dimension_y = headers[header_index]
+                        value = row[header_index]
+                        data, created = StateIndicatorData.objects.get_or_create(state_indicator_dataset=self,
+                                                                    dimension_y=dimension_y,
+                                                                    dimension_x=dimension_x)
+                        data.key_value = value
+                        data.data_type = self.data_type
+                        data.save()
+                        print "%s - %s [%s]"%(headers[header_index], row[header_index],value)
+            
+            
+            self.import_file = False
+        
+        return super(StateIndicatorDataSet, self).save(*args, **kwargs)
+    
     def __unicode__(self):
         return "%s - %s"%(self.state_indicator, self.school_year)
 
@@ -447,7 +664,7 @@ class StateIndicator(models.Model):
     order = models.IntegerField(default=0)
     short_title = models.CharField(max_length=100,blank=True)
     description = RichTextField(blank=True)
-    data_indeicator = models.BooleanField(default=True)
+    data_indicator = models.BooleanField(default=True)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField(blank=True)
 

@@ -77,10 +77,11 @@ def import_or_update_state_information(modeladmin, request, queryset):
                 if commissioner_index != None:
                     state.commissioner = row[commissioner_index]
                 if description_index != None:
-                    if row[description_index][0] == '<':
-                        state.description = row[description_index]
-                    else:
-                        state.description = '<p>'+row[description_index]+'</p>'
+                    if row[description_index] != "":
+                        if row[description_index][0] == '<':
+                            state.description = row[description_index]
+                        else:
+                            state.description = '<p>'+row[description_index]+'</p>'
                 if number_student_index != None:
                     try:
                         state.number_of_student = int(row[number_student_index])
@@ -96,11 +97,11 @@ def import_or_update_state_information(modeladmin, request, queryset):
                         state.number_of_school = int(row[number_school_index])    
                     except:
                         pass
-                print state.__dict__
                 state.save()
-
-    messages.add_message(request, messages.INFO, "Done")
-
+    try:
+        messages.add_message(request, messages.INFO, "Done")
+    except:
+        pass
 
 class StateFieldInline(admin.TabularInline):
     model = StateField
@@ -178,10 +179,11 @@ def import_or_update_district_information(modeladmin, request, queryset):
                 if superintendent_index != None:
                     district.superintendent = row[superintendent_index]
                 if description_index != None:
-                    if row[description_index][0] == '<':
-                        district.description = row[description_index]
-                    else:
-                        district.description = '<p>'+row[description_index]+'</p>'
+                    if row[description_index] != "":
+                        if row[description_index][0] == '<':
+                            district.description = row[description_index]
+                        else:
+                            district.description = '<p>'+row[description_index]+'</p>'
                 if number_student_index != None:
                     try:
                         district.number_of_student = int(row[number_student_index])
@@ -194,9 +196,10 @@ def import_or_update_district_information(modeladmin, request, queryset):
                         pass
                     
                 district.save()
-
-    messages.add_message(request, messages.INFO, "Done")
-
+    try:
+        messages.add_message(request, messages.INFO, "Done")
+    except:
+        pass
 
 class DistrictFieldInline(admin.TabularInline):
     model = DistrictField
@@ -278,10 +281,11 @@ def import_or_update_school_information(modeladmin, request, queryset):
                 if principal_index != None:
                     school.principal = row[principal_index]
                 if description_index != None:
-                    if row[description_index][0] == '<':
-                        school.description = row[description_index]
-                    else:
-                        school.description = '<p>'+row[description_index]+'</p>'
+                    if row[description_index] != "":
+                        if row[description_index][0] == '<':
+                            school.description = row[description_index]
+                        else:
+                            school.description = '<p>'+row[description_index]+'</p>'
                 if number_student_index != None:
                     try:
                        school.number_of_student = int(row[number_student_index])
@@ -323,9 +327,10 @@ def import_or_update_school_information(modeladmin, request, queryset):
                             break
                             
                 school.save()
-
-    messages.add_message(request, messages.INFO, "Done")
-
+    try:
+        messages.add_message(request, messages.INFO, "Done")
+    except:
+        pass
 
 class SchoolFieldInline(admin.TabularInline):
     model = SchoolField

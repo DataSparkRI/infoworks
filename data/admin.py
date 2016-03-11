@@ -1,8 +1,10 @@
 from django.contrib import admin
-from data.models import SchoolYear, IndicatorTitle, \
+from data.models import SchoolYear, IndicatorTitle, DetailDataSetTitle, \
 District, DistrictDisplayData, DistrictIndicatorDataSet, DistrictIndicatorSet, DistrictIndicator, DistrictDisplayDataY, \
 School, SchoolIndicatorSet, SchoolIndicator, SchoolDisplayData, SchoolIndicatorDataSet, SchoolDisplayDataY, \
-State, StateIndicatorSet, StateIndicator, StateDisplayData, StateIndicatorDataSet, StateDisplayDataY
+State, StateIndicatorSet, StateIndicator, StateDisplayData, StateIndicatorDataSet, StateDisplayDataY, \
+DistrictIndicatorData, DistrictIndicatorDetailDataSet
+
 from django.contrib import messages
 
 #from data.form import StateDisplayDataYForm, DistrictDisplayDataYForm, SchoolDisplayDataYForm
@@ -18,7 +20,10 @@ def write_default_state_indicator_set(modeladmin, request, queryset):
         StateIndicatorSet.objects.get_or_create(title='Safe and Supportive Schools' ,state=q, order=4)
         StateIndicatorSet.objects.get_or_create(title='Funding and Resources' ,state=q, order=5)
         StateIndicatorSet.objects.get_or_create(title='Other' ,state=q, order=6)
-    messages.add_message(request, messages.INFO, "Done")
+    try:
+        messages.add_message(request, messages.INFO, "Done")
+    except:
+        pass
 
 def write_default_state_indicator(modeladmin, request, queryset):
     for q in queryset:
@@ -65,7 +70,10 @@ def write_default_state_indicator(modeladmin, request, queryset):
             StateIndicator.objects.get_or_create(state_indicator_set=q, title=title, order=2)
         else:
             pass
-    messages.add_message(request, messages.INFO, "Done")
+    try:
+        messages.add_message(request, messages.INFO, "Done")
+    except:
+        pass
 
 class StateDisplayDataYInline(admin.TabularInline):
     model = StateDisplayDataY
@@ -114,7 +122,10 @@ def write_default_district_indicator_set(modeladmin, request, queryset):
         DistrictIndicatorSet.objects.get_or_create(title='Safe and Supportive Schools' ,district=q, order=4)
         DistrictIndicatorSet.objects.get_or_create(title='Funding and Resources' ,district=q, order=5)
         DistrictIndicatorSet.objects.get_or_create(title='Other' ,district=q, order=6)
-    messages.add_message(request, messages.INFO, "Done")
+    try:
+        messages.add_message(request, messages.INFO, "Done")
+    except:
+        pass
 
 def write_default_district_indicator(modeladmin, request, queryset):
     for q in queryset:
@@ -157,7 +168,14 @@ def write_default_district_indicator(modeladmin, request, queryset):
             DistrictIndicator.objects.get_or_create(district_indicator_set=q, title=title, order=1)
         else:
             pass
-    messages.add_message(request, messages.INFO, "Done")
+    try:
+        messages.add_message(request, messages.INFO, "Done")
+    except:
+        pass
+
+
+class DistrictIndicatorDetailDataSetInline(admin.TabularInline):
+    model = DistrictIndicatorDetailDataSet
 
 class DistrictDisplayDataYInline(admin.TabularInline):
     model = DistrictDisplayDataY
@@ -178,6 +196,10 @@ class DistrictIndicatorDataSetInline(admin.TabularInline):
 class DistrictIndicatorInline(admin.TabularInline):
     model = DistrictIndicator
 
+class DistrictIndicatorDataAdmin(admin.ModelAdmin):
+    inlines = [DistrictIndicatorDetailDataSetInline]
+admin.site.register(DistrictIndicatorData, DistrictIndicatorDataAdmin)
+    
 class DistrictAdmin(admin.ModelAdmin):
     list_display = ('district_name', 'activate','slug', 'indicator_modified')
     inlines = [DistrictIndicatorSetInline]
@@ -247,6 +269,7 @@ class SchoolIndicatorAdmin(admin.ModelAdmin):
     inlines = [SchoolDisplayDataInline, SchoolDisplayDataYInline, SchoolIndicatorDataSetInline]
 admin.site.register(SchoolIndicator, SchoolIndicatorAdmin)
 admin.site.register(SchoolYear)
+admin.site.register(DetailDataSetTitle)
 #class SchoolNumberOfStudentAndTeacherAdmin(admin.ModelAdmin):
 #    list_display = ('school', 'school_year','student', 'teacher')
 #admin.site.register(SchoolNumberOfStudentAndTeacher, SchoolNumberOfStudentAndTeacherAdmin)
