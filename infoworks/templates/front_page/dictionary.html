@@ -16,8 +16,8 @@
           </li>
           {% for c in category %}
           <li>
-              <a href="#{{c.category}}" class="page-scroll">
-                <span class="menu-title">{{c.category}}</span>
+              <a href="#{{c}}" class="page-scroll">
+                <span class="menu-title">{{c}}</span>
                 <span class="dot"></span>
               </a>
           </li>
@@ -28,16 +28,30 @@
       <!-- Start: Schedule -->
       <div class="container body">
       <h1>Understanding Data - Dictionary of Date Term</h1>
+      <div class="row">
+        <div class="col-lg-6">
+          <form class="in-line" action="/understanding-data/dictionary" method="GET">
+            <div class="input-group">
+              <input type="text" name="search_term" class="form-control" placeholder="Search for...">
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="submit">Search</button>
+              </span>
+            </div><!-- /input-group -->
+          </form>
+        </div><!-- /.col-lg-6 -->
+      </div>
       {% for c in category %}
         <div class="row">
-            <div class="col-md-9" id={{c.category}}>
-                <h4>{{ c.category }}</h4>
+            <div class="col-md-9" id={{c}}>
+                <h4>{{ c }}</h4>
                 
-                {% for j in c.dictionary %}
+                {% for j in terms %}
+                  {% if j.category.category == c %}
                   <div class="row">
                     <h5>{{ j.term }}</h5>
                     <p>{{ j.content }}</p>
                   </div>
+                  {% endif %}
                 {% endfor %}
             </div>
         </div>
