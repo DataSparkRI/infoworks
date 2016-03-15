@@ -9,6 +9,7 @@ import csv
 
 DATA_TYPE_CHOICES = (
     ('NUMERIC', 'numeric'),
+    ('PERCENT','percent'),
     ('STRING', 'string'),
 )
 
@@ -243,10 +244,52 @@ class DistrictDisplayData(models.Model):
     def __unicode__(self):
         return "%s - %s"% (self.district_indicator, self.display)
 
+class DistrictDisplayDataYDetailData(models.Model):
+    detail_set = models.ForeignKey("DistrictDisplayDataYDetailSet")
+    dimension_y_name = models.ForeignKey("dataimport.DimensionName")
+    dimension_x_name = models.ForeignKey("dataimport.DimensionFor")
+    new_dimension_y_name = models.CharField(max_length=100, blank=True)
+    new_dimension_x_name = models.CharField(max_length=100, blank=True)
+    order = models.IntegerField(default=1)
+
+    def __unicode__(self):
+        return "%s - %s"%(self.new_dimension_y_name, self.new_dimension_x_name)
+
+class DistrictDisplayDataYDetailSet(models.Model):
+    detail = models.ForeignKey("DistrictDisplayDataYDetail", blank=True, null=True)
+    name = models.CharField(max_length=100, blank=True)
+    title = models.CharField(max_length=100, blank=True)
+    order = models.IntegerField(default=1)
+    
+    @property
+    def detail_data(self):
+        return DistrictDisplayDataYDetailData.objects.filter(detail_set = self).order_by('order')
+    
+    
+    def __unicode__(self):
+        return self.name
+
+class DistrictDisplayDataYDetail(models.Model):
+    name = models.CharField(max_length=100, blank=True)
+    slug = models.SlugField(max_length=100, unique=True,db_index=True)
+    
+    def save(self, *args, **kwargs):
+        if self.slug == None or self.slug == '':
+            self.slug = slugify(self.name)
+        super(DistrictDisplayDataYDetail, self).save(*args, **kwargs)
+    
+    @property
+    def detail_set(self):
+        return DistrictDisplayDataYDetailSet.objects.filter(detail=self).order_by('order')
+
+    def __unicode__(self):
+        return self.name
+
 class DistrictDisplayDataY(models.Model):
     district_indicator = models.ForeignKey("DistrictIndicator", blank=True, null=True)
     display = models.ForeignKey("dataimport.DimensionName", blank=True, null=True)
     order = models.IntegerField(default=1)
+    detail = models.ForeignKey("DistrictDisplayDataYDetail", blank=True, null=True)
     
     def __unicode__(self):
         return "%s - %s"% (self.district_indicator, self.display)
@@ -286,6 +329,12 @@ class DistrictIndicatorDataSet(models.Model):
         #return [i["dimension_y"]  for i in y_names]
 
     @property
+    def have_detail(self):
+        for i in DistrictDisplayDataY.objects.filter(district_indicator=self.district_indicator):
+            print i
+            if i.detail != None:
+                return True
+    
     def get_objects(self, dimension_x, dimension_y):
         try:
            return DistrictIndicatorData.objects.get(district_indicator_dataset=self, dimension_x=dimension_x, dimension_y=dimension_y)
@@ -304,7 +353,7 @@ class DistrictIndicatorDataSet(models.Model):
                    data.append(DistrictIndicatorData.objects.get(district_indicator_dataset=self, dimension_x=x, dimension_y=y))
                 except:
                    data.append(None)
-            result.append({"dimension_y":y, "data":data})
+            result.append({"dimension_y":DistrictDisplayDataY.objects.get(display__name=y, district_indicator=self.district_indicator),"data":data})
         return result
 
     @property
@@ -347,8 +396,34 @@ class DistrictIndicatorDataSet(models.Model):
     
     def __unicode__(self):
         return "%s - %s"%(self.district_indicator, self.school_year)
+'''
+class DistrictIndicatorCustomIndex(models.Model):
+    district_indicator = models.ForeignKey("DistrictIndicator", blank=True, null=True)
+    district_indicator_custom_display_set = models.ForeignKey("DistrictIndicatorCustomDisplaySet", blank=True, null=True)
 
+    def __unicode__(self):
+        return "%s - %s "%(self.district_indicator.title.title, self.district_indicator_custom_display.name)
 
+class DistrictIndicatorCustomDisplaySet(models.Model):
+    district_indicator = models.ManyToManyField("DistrictIndicatorCustomIndex", blank=True, null=True)
+    name = models.CharField(max_length=100,blank=True)
+    
+    def __unicode__(self):
+        return "[Custom Display] %s"%self.name
+
+class DistrictIndicatorCustomDisplayCalculateField(models.Model):
+    
+
+class DistrictIndicatorCustomDisplayData(models.Model):
+    district_indicator_custom_display_set = models.ForeignKey("DistrictIndicatorCustomDisplaySet", blank=True, null=True)
+    dimension_x = models.CharField(max_length=100, blank=True)
+    dimension_y = models.CharField(max_length=100, blank=True)
+    calculate_value = models.ForeignKey("DistrictIndicatorCustomDisplaySet", blank=True, null=True)
+    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
+
+    def __unicode__(self):
+        return "%s - %s: %s"%(self.dimension_y, self.dimension_x, self.calculate_value)
+'''
 class DistrictIndicator(models.Model):
     district_indicator_set = models.ForeignKey('DistrictIndicatorSet', blank=True, null=True)
     title = models.ForeignKey(IndicatorTitle)

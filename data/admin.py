@@ -2,7 +2,8 @@ from django.contrib import admin
 from data.models import SchoolYear, IndicatorTitle, \
 District, DistrictDisplayData, DistrictIndicatorDataSet, DistrictIndicatorSet, DistrictIndicator, DistrictDisplayDataY, \
 School, SchoolIndicatorSet, SchoolIndicator, SchoolDisplayData, SchoolIndicatorDataSet, SchoolDisplayDataY, \
-State, StateIndicatorSet, StateIndicator, StateDisplayData, StateIndicatorDataSet, StateDisplayDataY
+State, StateIndicatorSet, StateIndicator, StateDisplayData, StateIndicatorDataSet, StateDisplayDataY, \
+DistrictDisplayDataYDetailData, DistrictDisplayDataYDetail, DistrictDisplayDataYDetailSet
 from django.contrib import messages
 
 #from data.form import StateDisplayDataYForm, DistrictDisplayDataYForm, SchoolDisplayDataYForm
@@ -171,6 +172,12 @@ def write_default_district_indicator(modeladmin, request, queryset):
     except:
         pass
 
+class DistrictDisplayDataYDetailDataInline(admin.TabularInline):
+    model = DistrictDisplayDataYDetailData
+
+class DistrictDisplayDataYDetailSetInline(admin.TabularInline):
+    model = DistrictDisplayDataYDetailSet
+
 class DistrictDisplayDataYInline(admin.TabularInline):
     model = DistrictDisplayDataY
     #form = DistrictDisplayDataYForm
@@ -189,6 +196,14 @@ class DistrictIndicatorDataSetInline(admin.TabularInline):
 
 class DistrictIndicatorInline(admin.TabularInline):
     model = DistrictIndicator
+
+class DistrictDisplayDataYDetailAdmin(admin.ModelAdmin):
+    inlines = [DistrictDisplayDataYDetailSetInline]
+admin.site.register(DistrictDisplayDataYDetail, DistrictDisplayDataYDetailAdmin)
+
+class DistrictDisplayDataYDetailSetAdmin(admin.ModelAdmin):
+    inlines = [DistrictDisplayDataYDetailDataInline]
+admin.site.register(DistrictDisplayDataYDetailSet, DistrictDisplayDataYDetailSetAdmin)
 
 class DistrictAdmin(admin.ModelAdmin):
     list_display = ('district_name', 'activate','slug', 'indicator_modified')

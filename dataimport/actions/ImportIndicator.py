@@ -1,10 +1,10 @@
 
 import csv
 from django.contrib import messages
-from dataimport.models import IndicatorFile, IndicatorField
+from dataimport.models import IndicatorFile, IndicatorField, DimensionName
 from data.models import SchoolIndicator, SchoolIndicatorDataSet, SchoolIndicatorData, \
 DistrictIndicator, DistrictIndicatorDataSet, DistrictIndicatorData, \
-StateIndicator, StateIndicatorDataSet, StateIndicatorData
+StateIndicator, StateIndicatorDataSet, StateIndicatorData, SchoolYear
 
 def get_or_none(objects, match_option):
     try:
@@ -38,7 +38,39 @@ def get_index(headers, dimension):
     return index
 
 
-
+def build_y_dimension_title(headers, row, add_on_01,add_on_02,add_on_03,add_on_04,add_on_05,add_on_06,add_on_07,add_on_08,add_on_09,add_on_10):
+    result = ""
+    if add_on_01 != None:
+        index = get_index_or_none(headers, add_on_01[0].name)
+        result = result + row[index] + " "
+    if add_on_02 != None:
+        index = get_index_or_none(headers, add_on_02[0].name)
+        result = result + headers[index] + " " + row[index] + " "
+    if add_on_03 != None:
+        index = get_index_or_none(headers, add_on_03[0].name)
+        result = result + row[index] + " "
+    if add_on_04 != None:
+        index = get_index_or_none(headers, add_on_04[0].name)
+        result = result + headers[index] + " " + row[index] + " "
+    if add_on_05 != None:
+        index = get_index_or_none(headers, add_on_05[0].name)
+        result = result + row[index] + " "
+    if add_on_06 != None:
+        index = get_index_or_none(headers, add_on_06[0].name)
+        result = result + headers[index] + " " + row[index] + " "
+    if add_on_07 != None:
+        index = get_index_or_none(headers, add_on_07[0].name)
+        result = result + row[index] + " "
+    if add_on_08 != None:
+        index = get_index_or_none(headers, add_on_08[0].name)
+        result = result + headers[index] + " " + row[index] + " "
+    if add_on_09 != None:
+        index = get_index_or_none(headers, add_on_09[0].name)
+        result = result + row[index] + " "
+    if add_on_10 != None:
+        index = get_index_or_none(headers, add_on_10[0].name)
+        result = result + headers[index] + " " + row[index] + " "
+    return result
 
 def import_indicator(modeladmin, request, queryset):
     for q in queryset:
@@ -48,7 +80,19 @@ def import_indicator(modeladmin, request, queryset):
         district_codes = get_or_none(fields, "DISTRICT_CODE") #queryset
         school_codes = get_or_none(fields,"SCHOOL_CODE") #queryset
         dimension = get_or_none(fields,"DIMENSION") #queryset
-        
+        school_year = get_or_none(fields, "SCHOOL_YEAR") #queryset
+        add_on_01 = get_or_none(fields, "01_ADD_ON") #queryset
+        add_on_02 = get_or_none(fields, "02_ADD_ON_WITH_HEADER") #queryset
+        add_on_03 = get_or_none(fields, "03_ADD_ON") #queryset
+        add_on_04 = get_or_none(fields, "04_ADD_ON_WITH_HEADER") #queryset
+        add_on_05 = get_or_none(fields, "05_ADD_ON") #queryset
+        add_on_06 = get_or_none(fields, "06_ADD_ON_WITH_HEADER") #queryset
+        add_on_07 = get_or_none(fields, "07_ADD_ON") #queryset
+        add_on_08 = get_or_none(fields, "08_ADD_ON_WITH_HEADER") #queryset
+        add_on_09 = get_or_none(fields, "09_ADD_ON") #queryset
+        add_on_10 = get_or_none(fields, "10_ADD_ON_WITH_HEADER") #queryset
+
+
         if q.indicator != None:
             indicators = all_indicator(q) #indicators queryset
         
@@ -72,6 +116,7 @@ def import_indicator(modeladmin, request, queryset):
                         state_indicator_dataset, created = StateIndicatorDataSet.objects.get_or_create(state_indicator=indicator, school_year=q.school_year)
                         for key, value in index.iteritems():
 
+                            
                             StateIndicatorData.objects.get_or_create(state_indicator_dataset=state_indicator_dataset,
                                                             dimension_x = q.indicator_for,
                                                             dimension_y = value["dimension_name"].name,
@@ -85,7 +130,13 @@ def import_indicator(modeladmin, request, queryset):
                 reader = csv.reader(f)
                 headers = reader.next()
                 district_code_index = get_index_or_none(headers, district_codes[0].name)
+                
+                
                 index = get_index(headers, dimension)
+                if school_year != None:
+                    school_year_index = get_index_or_none(headers, school_year[0].name)
+                else:
+                    school_year_index = None
                 
                 for row in reader:
                     try:
@@ -97,12 +148,22 @@ def import_indicator(modeladmin, request, queryset):
                     except:
                         indicator = None
                     if indicator != None: # if do have indicator
-                        district_indicator_dataset, created = DistrictIndicatorDataSet.objects.get_or_create(district_indicator=indicator, school_year=q.school_year)
-                        for key, value in index.iteritems():
+                        if q.school_year != None:
+                            district_indicator_dataset, created = DistrictIndicatorDataSet.objects.get_or_create(district_indicator=indicator, school_year=q.school_year)
+                        else:
+                            school_year_obj, created = SchoolYear.objects.get_or_create(school_year = row[school_year_index])
+                            district_indicator_dataset, created = DistrictIndicatorDataSet.objects.get_or_create(district_indicator=indicator, school_year=school_year_obj)
 
+                        dimension_y_add_on = build_y_dimension_title(headers,row,add_on_01,add_on_02,add_on_03,add_on_04,add_on_05,add_on_06,add_on_07,add_on_08,add_on_09,add_on_10)
+
+
+                        for key, value in index.iteritems():
+                            
+                            dimension_y_name = "%s%s"%(dimension_y_add_on, value["dimension_name"].name)
+                            DimensionName.objects.get_or_create(name=dimension_y_name)
                             DistrictIndicatorData.objects.get_or_create(district_indicator_dataset=district_indicator_dataset,
                                                             dimension_x = q.indicator_for,
-                                                            dimension_y = value["dimension_name"].name,
+                                                            dimension_y = dimension_y_name,
                                                             key_value = row[key],
                                                             data_type = value["data_type"],
                                                             import_job = q

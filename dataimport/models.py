@@ -178,15 +178,27 @@ class IndicatorField(models.Model):
     match_option = models.CharField(max_length=30, blank=True, null=True,
                    help_text='(required)',
                    choices=(
+                            ('SCHOOL_YEAR', 'school_year'),
                             ('STATE_CODE', 'state_code (required pick one)'),
                             ('DISTRICT_CODE', 'district_code (required pick one)'),
                             ('SCHOOL_CODE', 'school_code (required pick one)'),
                             ('DIMENSION', 'dimension'),
+                            ('01_ADD_ON', '1. add on "[data]"'),
+                            ('02_ADD_ON_WITH_HEADER', '1. add on with header "[header] [data]"'),
+                            ('03_ADD_ON', '2. add on "[data]"'),
+                            ('04_ADD_ON_WITH_HEADER', '2. add on with header "[header] [data]"'),
+                            ('05_ADD_ON', '3. add on "[data]"'),
+                            ('06_ADD_ON_WITH_HEADER', '3. add on with header "[header] [data]"'),
+                            ('07_ADD_ON', '4. add on "[data]"'),
+                            ('08_ADD_ON_WITH_HEADER', '4. add on with header "[header] [data]"'),
+                            ('09_ADD_ON', '5. add on "[data]"'),
+                            ('10_ADD_ON_WITH_HEADER', '5. add on with header "[header] [data]"'),
                             ))
     data_type = models.CharField(max_length=30, blank=True, null=True,
                     help_text='(required)',
                     choices=(('NUMERIC', 'numeric'),
-                            ('STRING', 'string')
+                            ('PERCENT','percent'),
+                            ('STRING', 'string'),
                             ))
     dimension_name = models.ForeignKey('DimensionName', blank=True, null=True)
     def save(self, *args, **kwargs):
@@ -198,7 +210,7 @@ class IndicatorField(models.Model):
 
 class IndicatorFile(models.Model):
     name = models.CharField(max_length=100)
-    school_year = models.ForeignKey(SchoolYear)
+    school_year = models.ForeignKey(SchoolYear, blank=True, null=True)
     file = models.FileField(upload_to="Indicator_Information", blank=True, null=True)
     state_indicator = models.BooleanField(default=False)
     district_indicator = models.BooleanField(default=False)
@@ -222,4 +234,4 @@ class IndicatorFile(models.Model):
                 pass
     
     def __unicode__(self):
-        return "%s - %s"% (self.name, self.school_year)
+        return "%s - %s - %s"% (self.name, self.indicator, self.indicator_for)

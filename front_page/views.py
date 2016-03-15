@@ -2,7 +2,10 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
 from django.template import RequestContext
-from data.models import School, District, State
+from data.models import School, District, State, \
+SchoolIndicator, DistrictIndicator, StateIndicator, \
+DistrictDisplayDataYDetailSet, DistrictDisplayDataYDetail, DistrictIndicatorSet, DistrictIndicatorDataSet,\
+SchoolYear
 from models import Dictionary, Category
 
 from django.core import exceptions
@@ -45,6 +48,56 @@ def district(request, slug):
     
     context = {"district": district}
     return render_to_response('front_page/district_report.html', context, context_instance=RequestContext(request))
+
+def district_detail(request, slug, indicator_id, school_year, detail_slug):
+    
+    
+    indicator = DistrictIndicator.objects.get(id=indicator_id)
+    school_year = SchoolYear.objects.get(school_year=school_year)
+    indicator_set = DistrictIndicatorDataSet.objects.get(district_indicator=indicator, school_year = school_year)
+    detail = DistrictDisplayDataYDetail.objects.get(slug=detail_slug)
+    context = {"detail": detail,
+               "school_year": school_year,
+               "indicator": indicator,
+               }
+
+    #table = [{"dimension_y":"", "names":[], "data":[]}]
+    table = {}
+    
+    
+    display_detail_set = [{"set_name":"", "data": table}]
+    
+    for detail_set in detail.detail_set:
+
+        for data in detail_set.detail_data:
+            try:
+                print data.new_dimension_y_name
+                table[data.new_dimension_y_name]
+            except KeyError, e:
+                table[data.new_dimension_y_name] = {"names":[], "data":[]}
+            
+            table[data.new_dimension_y_name]['names'].append(data.new_dimension_x_name)
+            table[data.new_dimension_y_name]['data'].append(indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name))
+            '''
+            table.append({"dimension_y":data.new_dimension_y_name, 
+                        "dimension_x": data.new_dimension_x_name, 
+                        "object": indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name)
+                        })
+            names_x.append(data.new_dimension_x_name)
+            data_y.append(indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name))
+            #print data.dimension_x_name,'-', data.dimension_y_name
+            #print indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name)
+            '''
+        print table
+        print "-"*4
+        
+        display_detail_set.append({"set_name":detail_set.title, "data": table})
+        
+
+    
+    
+    
+    return render_to_response('front_page/district_detail.html', context, context_instance=RequestContext(request))
 
 def state(request):
     try:
