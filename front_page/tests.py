@@ -1,7 +1,9 @@
 from django.test import TestCase, Client
 from django.core.urlresolvers import reverse
+from django.http import HttpRequest
 #from django.utils import timezone
 from models import Dictionary, Category
+from views import dictionary
 
 # Create your tests here.
 class DictionaryTermTest(TestCase):
@@ -87,3 +89,48 @@ class DictionaryViewTest(TestCase):
     #    self.assertTrue(str(story.pub_date.year) in response.content)
     #    self.assertTrue(story.pub_date.strftime('%b') in response.content)
     #    self.assertTrue(str(story.pub_date.day) in response.content)
+    
+class DictionarySeachFunctionTest(TestCase):
+    
+    def test_search(self):
+         #Create new dictionary term
+        term = Dictionary()
+        cat = Category()
+        #Add Dictionary term attributes
+        cat.category = "Student Achievement"
+        cat.save()
+        
+        term1 = Dictionary.objects.create(category=cat,term="Accountability",content="Rhode Island's School Accountability System")
+        term2 = Dictionary.objects.create(category=cat,term="PARCC",content="The PARCC Assessments are administered to children in Rhode Island schools")
+        
+        #Test Dictionary model
+        search1 = Dictionary.objects.get(content__contains='System')
+        self.assertEquals(search1,term1)
+        
+        search2 = Dictionary.objects.get(content__contains='children')
+        self.assertEquals(search2,term2)
+        
+        search3 = Dictionary.objects.filter(content__contains='school')
+        self.assertEquals(search3.count(),2)
+        
+class DictionarySearchPostTest(TestCase):
+    
+    def setUp(self):
+        self.client = Client()
+    
+    def home_page_can_save_a_POST_request(self):
+        request = HttpRequest()
+        request.method = 'POST'
+        request.POST['search_term'] = 'search for school'
+        
+        response = dictionary(request)
+        self.assertIn('search for school', response.content.decode())
+        
+    def test_home_page_can_receive_a_GET_request(self):
+        request = HttpRequest()
+        request.method = 'GET'
+        request.GET['search_term'] = 'search for school'
+        
+        response = dictionary(request)
+        self.assertTrue('search for school' in response.content)
+      

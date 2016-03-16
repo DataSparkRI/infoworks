@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
 from django.template import RequestContext
@@ -131,6 +131,22 @@ def landing_page(request):
     return render_to_response('front_page/landing_page.html', context, context_instance=RequestContext(request))
     
 def dictionary(request):
-    category = Category.objects.all()
-    context = {"category":category}
+#    if request.method == 'POST':
+#        search_result = Dictionary.objects.filter(content__contains='school')
+#        category = Category.objects.filter(category=search_result.category)
+#        context = {"category":category}
+#        return redirect('/')
+#        return HttpResponse(request.POST['search_term'])
+
+    if 'search_term' in request.GET and request.GET['search_term']:
+        terms = Dictionary.objects.filter(content__contains=request.GET['search_term'])
+    else:
+        terms = Dictionary.objects.all()
+        
+    category = []
+    for d in terms:
+        if d.category.category not in category:
+            category.append(d.category.category)
+    context = {"category":category,"terms":terms}
+        
     return render_to_response('front_page/dictionary.html', context, context_instance=RequestContext(request))
