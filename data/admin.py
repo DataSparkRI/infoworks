@@ -4,6 +4,7 @@ District, DistrictDisplayData, DistrictIndicatorDataSet, DistrictIndicatorSet, D
 School, SchoolIndicatorSet, SchoolIndicator, SchoolDisplayData, SchoolIndicatorDataSet, SchoolDisplayDataY, \
 State, StateIndicatorSet, StateIndicator, StateDisplayData, StateIndicatorDataSet, StateDisplayDataY, \
 DistrictDisplayDataYDetailData, DistrictDisplayDataYDetail, DistrictDisplayDataYDetailSet, \
+SchoolDisplayDataYDetailData, SchoolDisplayDataYDetail, SchoolDisplayDataYDetailSet, \
 CustomDimensionYName, CustomDimensionXName
 
 from django.contrib import messages
@@ -176,12 +177,14 @@ def write_default_district_indicator(modeladmin, request, queryset):
 
 class DistrictDisplayDataYDetailDataInline(admin.TabularInline):
     model = DistrictDisplayDataYDetailData
+    raw_id_fields = ("dimension_y_name",)
 
 class DistrictDisplayDataYDetailSetInline(admin.TabularInline):
     model = DistrictDisplayDataYDetailSet
 
 class DistrictDisplayDataYInline(admin.TabularInline):
     model = DistrictDisplayDataY
+    raw_id_fields = ("display",)
     #form = DistrictDisplayDataYForm
 
 class DistrictDisplayDataInline(admin.TabularInline):
@@ -230,7 +233,7 @@ admin.site.register(DistrictIndicator, DistrictIndicatorAdmin)
 #    list_display = ('district', 'school_year','student', 'teacher', 'school')
 #admin.site.register(DistrictNumberOfStudentAndTeacher, DistrictNumberOfStudentAndTeacherAdmin)
 
-
+############ School #############
 def write_default_school_indicator_set(modeladmin, request, queryset):
     for q in queryset:
         SchoolIndicatorSet.objects.get_or_create(title='Student Achievement' ,school=q, order=1)
@@ -241,12 +244,69 @@ def write_default_school_indicator_set(modeladmin, request, queryset):
         SchoolIndicatorSet.objects.get_or_create(title='Other' ,school=q, order=6)
     messages.add_message(request, messages.INFO, "Done")
 
+def write_default_school_indicator(modeladmin, request, queryset):
+    for q in queryset:
+        if q.title == "Student Achievement":
+            title, created = IndicatorTitle.objects.get_or_create(title="Accountability")
+            SchoolIndicator.objects.get_or_create(school_indicator_set=q, title=title, order=1)
+            title, created = IndicatorTitle.objects.get_or_create(title="PARCC Assessments")
+            SchoolIndicator.objects.get_or_create(school_indicator_set=q, title=title, order=2)
+            title, created = IndicatorTitle.objects.get_or_create(title="NECAP Assessments")
+            SchoolIndicator.objects.get_or_create(school_indicator_set=q, title=title, order=3)
+            title, created = IndicatorTitle.objects.get_or_create(title="SAT Exams (High School)")
+            SchoolIndicator.objects.get_or_create(school_indicator_set=q, title=title, order=4)
+            title, created = IndicatorTitle.objects.get_or_create(title="AP Exams (High School)")
+            SchoolIndicator.objects.get_or_create(school_indicator_set=q, title=title, order=5)
+            
+        elif q.title == "Teaching":
+            title, created = IndicatorTitle.objects.get_or_create(title="Qualifications and Teacher-Student Ratio")
+            SchoolIndicator.objects.get_or_create(school_indicator_set=q, title=title, order=1)
+            
+        elif q.title == "Families and Communities":
+            title, created = IndicatorTitle.objects.get_or_create(title="Student Characteristics")
+            SchoolIndicator.objects.get_or_create(school_indicator_set=q, title=title, order=1)
+        elif q.title == "Safe and Supportive Schools":
+            title, created = IndicatorTitle.objects.get_or_create(title="Attendance")
+            SchoolIndicator.objects.get_or_create(school_indicator_set=q, title=title, order=1)
+            title, created = IndicatorTitle.objects.get_or_create(title="Four Year Graduation Rate")
+            SchoolIndicator.objects.get_or_create(school_indicator_set=q, title=title, order=2)
+            title, created = IndicatorTitle.objects.get_or_create(title="Five Year Graduation Rate")
+            SchoolIndicator.objects.get_or_create(school_indicator_set=q, title=title, order=3)
+            title, created = IndicatorTitle.objects.get_or_create(title="Incidents of Suspension")
+            SchoolIndicator.objects.get_or_create(school_indicator_set=q, title=title, order=4)
+            title, created = IndicatorTitle.objects.get_or_create(title="Student Indicators")
+            SchoolIndicator.objects.get_or_create(school_indicator_set=q, title=title, order=5)
+
+        elif q.title == "Funding and Resources":
+            title, created = IndicatorTitle.objects.get_or_create(title="Uniform Chart of Accounts (UCOA)")
+            SchoolIndicator.objects.get_or_create(school_indicator_set=q, title=title, order=1)
+        elif q.title == "Other":
+            title, created = IndicatorTitle.objects.get_or_create(title="SurveyWorks Reports")
+            SchoolIndicator.objects.get_or_create(school_indicator_set=q, title=title, order=1)
+        else:
+            pass
+    try:
+        messages.add_message(request, messages.INFO, "Done")
+    except:
+        pass
+
+class SchoolDisplayDataYDetailDataInline(admin.TabularInline):
+    model = SchoolDisplayDataYDetailData
+    raw_id_fields = ("dimension_y_name",)
+
+class SchoolDisplayDataYDetailSetInline(admin.TabularInline):
+    model = SchoolDisplayDataYDetailSet
+
 class SchoolDisplayDataYInline(admin.TabularInline):
     model = SchoolDisplayDataY
+    raw_id_fields = ("display",)
     #form = SchoolDisplayDataYForm
 
-class SchoolIndicatorSetInline(admin.TabularInline):
-    model = SchoolIndicatorSet
+class SchoolDisplayDataInline(admin.TabularInline):
+    model = SchoolDisplayData
+    
+class SchoolDisplayDataInline(admin.TabularInline):
+    model = SchoolDisplayData
 
 class SchoolIndicatorSetInline(admin.TabularInline):
     model = SchoolIndicatorSet
@@ -257,24 +317,34 @@ class SchoolIndicatorDataSetInline(admin.TabularInline):
 class SchoolIndicatorInline(admin.TabularInline):
     model = SchoolIndicator
 
+class SchoolDisplayDataYDetailAdmin(admin.ModelAdmin):
+    inlines = [SchoolDisplayDataYDetailSetInline]
+admin.site.register(SchoolDisplayDataYDetail, SchoolDisplayDataYDetailAdmin)
+
+class SchoolDisplayDataYDetailSetAdmin(admin.ModelAdmin):
+    inlines = [SchoolDisplayDataYDetailDataInline]
+admin.site.register(SchoolDisplayDataYDetailSet, SchoolDisplayDataYDetailSetAdmin)
+
 class SchoolAdmin(admin.ModelAdmin):
-    list_display = ('district','school_name', 'activate','slug', 'indicator_modified')
+    list_display = ('school_name', 'activate','slug', 'indicator_modified')
     inlines = [SchoolIndicatorSetInline]
     actions = [write_default_school_indicator_set]
 admin.site.register(School, SchoolAdmin)
-
+    
 class SchoolIndicatorSetAdmin(admin.ModelAdmin):
     list_display = ('school', 'title')
     search_fields = ['school__school_name','title']
     inlines = [SchoolIndicatorInline]
+    actions = [write_default_school_indicator]
 admin.site.register(SchoolIndicatorSet, SchoolIndicatorSetAdmin)
 
 class SchoolIndicatorAdmin(admin.ModelAdmin):
     list_display = ('school_indicator_set','title','created','modified')
     raw_id_fields = ('school_indicator_set',)
-    #form = SchoolDisplayDataYForm
     inlines = [SchoolDisplayDataInline, SchoolDisplayDataYInline, SchoolIndicatorDataSetInline]
 admin.site.register(SchoolIndicator, SchoolIndicatorAdmin)
+
+
 admin.site.register(SchoolYear)
 admin.site.register(CustomDimensionXName)
 admin.site.register(CustomDimensionYName)

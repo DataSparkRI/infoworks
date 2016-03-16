@@ -141,6 +141,8 @@ def import_indicator(modeladmin, request, queryset):
                 for row in reader:
                     try:
                         district_code = row[district_code_index]
+                        if district_code == '' or district_code == ' ':
+                            continue
                     except:
                         break
                     try:
@@ -182,11 +184,19 @@ def import_indicator(modeladmin, request, queryset):
                 reader = csv.reader(f)
                 headers = reader.next()
                 school_code_index = get_index_or_none(headers, school_codes[0].name)
+                
+                
                 index = get_index(headers, dimension)
+                if school_year != None:
+                    school_year_index = get_index_or_none(headers, school_year[0].name)
+                else:
+                    school_year_index = None
                 
                 for row in reader:
                     try:
                         school_code = row[school_code_index]
+                        if school_code == '' or school_code == ' ':
+                            continue
                     except:
                         break
                     try:
@@ -194,27 +204,26 @@ def import_indicator(modeladmin, request, queryset):
                     except:
                         indicator = None
                     if indicator != None: # if do have indicator
-                        school_indicator_dataset, created = SchoolIndicatorDataSet.objects.get_or_create(school_indicator=indicator, school_year=q.school_year)
-                        for key, value in index.iteritems():
+                        if q.school_year != None:
+                            school_indicator_dataset, created = SchoolIndicatorDataSet.objects.get_or_create(school_indicator=indicator, school_year=q.school_year)
+                        else:
+                            school_year_obj, created = SchoolYear.objects.get_or_create(school_year = row[school_year_index])
+                            school_indicator_dataset, created = SchoolIndicatorDataSet.objects.get_or_create(school_indicator=indicator, school_year=school_year_obj)
 
+                        dimension_y_add_on = build_y_dimension_title(headers,row,add_on_01,add_on_02,add_on_03,add_on_04,add_on_05,add_on_06,add_on_07,add_on_08,add_on_09,add_on_10)
+
+
+                        for key, value in index.iteritems():
+                            
+                            dimension_y_name = "%s%s"%(dimension_y_add_on, value["dimension_name"].name)
+                            DimensionName.objects.get_or_create(name=dimension_y_name)
                             SchoolIndicatorData.objects.get_or_create(school_indicator_dataset=school_indicator_dataset,
                                                             dimension_x = q.indicator_for,
-                                                            dimension_y = value["dimension_name"].name,
+                                                            dimension_y = dimension_y_name,
                                                             key_value = row[key],
                                                             data_type = value["data_type"],
                                                             import_job = q
                             )
-                            #if created:
-                            #    SchoolIndicatorData.objects.get_or_create(school_indicator_dataset=school_indicator_dataset,
-                            #                                dimension_x = "School Year",
-                            #                                dimension_y = value["dimension_name"].name,
-                            #                                key_value = q.school_year.school_year,
-                            #                                data_type = "STRING",
-                            #                                import_job = q
-                            #    )
-
-
-    messages.add_message(request, messages.INFO, "Done")
             
         
             

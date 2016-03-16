@@ -44,10 +44,51 @@ class SchoolDisplayData(models.Model):
     def __unicode__(self):
         return "%s - %s"% (self.school_indicator, self.display)
 
+class SchoolDisplayDataYDetailData(models.Model):
+    detail_set = models.ForeignKey("SchoolDisplayDataYDetailSet")
+    dimension_y_name = models.ForeignKey("dataimport.DimensionName")
+    dimension_x_name = models.ForeignKey("dataimport.DimensionFor")
+    new_dimension_y_name = models.ForeignKey("CustomDimensionYName", blank=True, null=True)
+    new_dimension_x_name = models.ForeignKey("CustomDimensionXName", blank=True, null=True)
+    order = models.IntegerField(default=1)
+
+    def __unicode__(self):
+        return "%s - %s"%(self.new_dimension_y_name, self.new_dimension_x_name)
+
+class SchoolDisplayDataYDetailSet(models.Model):
+    detail = models.ForeignKey("SchoolDisplayDataYDetail", blank=True, null=True)
+    name = models.CharField(max_length=100, blank=True)
+    title = models.CharField(max_length=100, blank=True)
+    order = models.IntegerField(default=1)
+    
+    @property
+    def detail_data(self):
+        return SchoolDisplayDataYDetailData.objects.filter(detail_set = self).order_by('order')
+    
+    def __unicode__(self):
+        return "%s - %s"%(self.detail, self.name)
+
+class SchoolDisplayDataYDetail(models.Model):
+    name = models.CharField(max_length=100, blank=True)
+    slug = models.SlugField(max_length=100, unique=True,db_index=True, blank=True)
+    
+    def save(self, *args, **kwargs):
+        if self.slug == None or self.slug == '':
+            self.slug = slugify(self.name)
+        super(SchoolDisplayDataYDetail, self).save(*args, **kwargs)
+    
+    @property
+    def detail_set(self):
+        return SchoolDisplayDataYDetailSet.objects.filter(detail=self).order_by('order')
+
+    def __unicode__(self):
+        return self.name
+
 class SchoolDisplayDataY(models.Model):
     school_indicator = models.ForeignKey("SchoolIndicator", blank=True, null=True)
     display = models.ForeignKey("dataimport.DimensionName", blank=True, null=True)
     order = models.IntegerField(default=1)
+    detail = models.ForeignKey("SchoolDisplayDataYDetail", blank=True, null=True)
     
     def __unicode__(self):
         return "%s - %s"% (self.school_indicator, self.display)
@@ -67,7 +108,7 @@ class SchoolIndicatorDataSet(models.Model):
     school_indicator = models.ForeignKey("SchoolIndicator", blank=True, null=True)
     school_year = models.ForeignKey(SchoolYear)
     csv_file = models.FileField(upload_to="School_Indicator_Data", blank=True, null=True)
-    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
+    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES,default='STRING')
     import_file = models.BooleanField(default=False) #If True start import file, then mark False after
     
     @property
@@ -85,8 +126,18 @@ class SchoolIndicatorDataSet(models.Model):
 
         #y_names = data.values("dimension_y").annotate(Count("dimension_y"))
         #return [i["dimension_y"]  for i in y_names]
-
     @property
+    def get_objects(self, dimension_x, dimension_y):
+        try:
+           return SchoolIndicatorData.objects.get(school_indicator_dataset=self, dimension_x=dimension_x, dimension_y=dimension_y)
+        except:
+           return None
+    @property
+    def have_detail(self):
+        for i in SchoolDisplayDataY.objects.filter(school_indicator=self.school_indicator):
+            if i.detail != None:
+                return True
+
     def get_objects(self, dimension_x, dimension_y):
         try:
            return SchoolIndicatorData.objects.get(school_indicator_dataset=self, dimension_x=dimension_x, dimension_y=dimension_y)
@@ -105,7 +156,8 @@ class SchoolIndicatorDataSet(models.Model):
                    data.append(SchoolIndicatorData.objects.get(school_indicator_dataset=self, dimension_x=x, dimension_y=y))
                 except:
                    data.append(None)
-            result.append({"dimension_y":y, "data":data})
+                   
+            result.append({"dimension_y":SchoolDisplayDataY.objects.get(display__name=y, school_indicator=self.school_indicator), "data":data})
         return result
         
     @property
@@ -277,11 +329,11 @@ class DistrictDisplayDataYDetailSet(models.Model):
     
     
     def __unicode__(self):
-        return self.name
+        return "%s - %s"%(self.detail, self.name)
 
 class DistrictDisplayDataYDetail(models.Model):
     name = models.CharField(max_length=100, blank=True)
-    slug = models.SlugField(max_length=100, unique=True,db_index=True)
+    slug = models.SlugField(max_length=100, unique=True,db_index=True, blank=True)
     
     def save(self, *args, **kwargs):
         if self.slug == None or self.slug == '':
@@ -319,7 +371,7 @@ class DistrictIndicatorDataSet(models.Model):
     district_indicator = models.ForeignKey("DistrictIndicator", blank=True, null=True)
     school_year = models.ForeignKey(SchoolYear)
     csv_file = models.FileField(upload_to="District_Indicator_Data", blank=True, null=True)
-    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
+    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES,default='STRING')
     import_file = models.BooleanField(default=False) #If True start import file, then mark False after
 
     @property
@@ -341,7 +393,6 @@ class DistrictIndicatorDataSet(models.Model):
     @property
     def have_detail(self):
         for i in DistrictDisplayDataY.objects.filter(district_indicator=self.district_indicator):
-            print i
             if i.detail != None:
                 return True
     
@@ -548,7 +599,7 @@ class StateIndicatorDataSet(models.Model):
     state_indicator = models.ForeignKey("StateIndicator", blank=True, null=True)
     school_year = models.ForeignKey(SchoolYear)
     csv_file = models.FileField(upload_to="State_Indicator_Data", blank=True, null=True)
-    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
+    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES,default='STRING')
     import_file = models.BooleanField(default=False) #If True start import file, then mark False after
     
     @property

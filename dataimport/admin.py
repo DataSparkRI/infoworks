@@ -348,5 +348,7 @@ class IndicatorFileAdmin(admin.ModelAdmin):
     actions = [import_indicator]
 admin.site.register(IndicatorFile, IndicatorFileAdmin)
 
-admin.site.register(DimensionName)
+class DimensionNameAdmin(admin.ModelAdmin):
+    search_fields = ['name']
+admin.site.register(DimensionName, DimensionNameAdmin)
 admin.site.register(DimensionFor)
