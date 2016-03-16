@@ -7,7 +7,7 @@ SchoolIndicator, DistrictIndicator, StateIndicator, \
 DistrictDisplayDataYDetailSet, DistrictDisplayDataYDetail, DistrictIndicatorSet, DistrictIndicatorDataSet,\
 SchoolYear
 from models import Dictionary, Category
-
+import collections
 from django.core import exceptions
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -56,28 +56,20 @@ def district_detail(request, slug, indicator_id, school_year, detail_slug):
     school_year = SchoolYear.objects.get(school_year=school_year)
     indicator_set = DistrictIndicatorDataSet.objects.get(district_indicator=indicator, school_year = school_year)
     detail = DistrictDisplayDataYDetail.objects.get(slug=detail_slug)
-    context = {"detail": detail,
-               "school_year": school_year,
-               "indicator": indicator,
-               }
 
-    #table = [{"dimension_y":"", "names":[], "data":[]}]
-    table = {}
-    
-    
-    display_detail_set = [{"set_name":"", "data": table}]
+
+    display_detail_set = []
     
     for detail_set in detail.detail_set:
-
+        table = collections.OrderedDict()
         for data in detail_set.detail_data:
             try:
-                print data.new_dimension_y_name
-                table[data.new_dimension_y_name]
+                table[data.new_dimension_y_name.name]
             except KeyError, e:
-                table[data.new_dimension_y_name] = {"names":[], "data":[]}
+                table[data.new_dimension_y_name.name] = {"dimension_y":data.new_dimension_y_name.name, "names":[], "data":[]}
             
-            table[data.new_dimension_y_name]['names'].append(data.new_dimension_x_name)
-            table[data.new_dimension_y_name]['data'].append(indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name))
+            table[data.new_dimension_y_name.name]['names'].append(data.new_dimension_x_name)
+            table[data.new_dimension_y_name.name]['data'].append(indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name))
             '''
             table.append({"dimension_y":data.new_dimension_y_name, 
                         "dimension_x": data.new_dimension_x_name, 
@@ -88,15 +80,16 @@ def district_detail(request, slug, indicator_id, school_year, detail_slug):
             #print data.dimension_x_name,'-', data.dimension_y_name
             #print indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name)
             '''
-        print table
-        print "-"*4
-        
+            print data.new_dimension_y_name
         display_detail_set.append({"set_name":detail_set.title, "data": table})
-        
-
-    
-    
-    
+    print "--"*4
+    print display_detail_set
+    context = {"detail": detail,
+               "school_year": school_year,
+               "indicator": indicator,
+               "detail_set": display_detail_set,
+               }
+               
     return render_to_response('front_page/district_detail.html', context, context_instance=RequestContext(request))
 
 def state(request):

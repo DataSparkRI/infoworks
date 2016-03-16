@@ -2,54 +2,32 @@
 
 {% block body %}
       <div class="container body">
-            {% for i in detail.detail_set %}
-                  <h2>{{i.title}}</h2>
-                  {% for j in i.detail_data %}
-                        <h3>{{j}}</h3>
-                        {% comment %}
+            <h1>{{school_year}}</h1>
+            {% for i in detail_set %}
+                  <h2>{{i.set_name}}</h2>
                         <table class="table table-hover">
                           <thead> <tr><th></th>
-                                      <th>School Year</th>
-                                      {% for k in j.displaydata%}
-                                      <th>{{k.display.name}}</th>
+
+                                      {% for key, values in i.data.items %}
+                                      {% if forloop.first %}{% for j in values.names %}<th>{{j}}</th>{% endfor %}{% endif %}
                                       {% endfor %}
-                                      {% if j.dataset.0.have_detail %}
-                                      <th>Details</th>
-                                      {% endif %}
+
                                   </tr>
                           </thead>
                           <tbody> 
-                                  {% if j.dataset %}
-                                  {% for indicatordata in j.dataset.0.displaydata %}
-                                  <tr><th scope="row">{{indicatordata.dimension_y.display}}</th>
-                                      {% for row in indicatordata.data %}
-                                      {% if forloop.first %}<td>{{row.district_indicator_dataset.school_year}}</td>{% endif %}
-                                      {% if row %}<td>{{row.key_value}}{% if row.data_type == 'PERCENT' %}%{% endif %}</td>
-                                      {% else %}<td>No Data</td>{% endif %}
-                                      {% if indicatordata.dimension_y.detail %}
-                                      <td><a href="{% url 'district_detail' district.slug j.id row.district_indicator_dataset.school_year indicatordata.dimension_y.detail.slug %}">{{indicatordata.dimension_y.detail}}</a></td>
-                                      {% endif %}
+                                  {% for key, values in i.data.items %}
+                                  <tr><th scope="row">{{key}}</th>
+                                      {% for row in values.data %}
+
+                                      <td>{{row.key_value}}{% if row.data_type == 'PERCENT' %}%{% endif %}</td>
+
                                       {% endfor %}
                                       
                                   </tr>
                                   {% endfor %}
-                                  {% endif %}
-
-
                           </tbody>
                         </table>
-                        
-                        {% endcomment %}
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                  {% endfor %}
+
             {% endfor %}
       </div>
 {% endblock %}

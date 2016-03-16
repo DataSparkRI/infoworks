@@ -24,6 +24,16 @@ class SchoolYear(models.Model):
     def __unicode__(self):
         return "%s"% self.school_year
 
+class CustomDimensionYName(models.Model):
+    name = models.CharField(max_length=100)
+    def __unicode__(self):
+        return self.name
+        
+class CustomDimensionXName(models.Model):
+    name = models.CharField(max_length=100)
+    def __unicode__(self):
+        return self.name
+        
 ############# School #####################        
 
 class SchoolDisplayData(models.Model):
@@ -248,8 +258,8 @@ class DistrictDisplayDataYDetailData(models.Model):
     detail_set = models.ForeignKey("DistrictDisplayDataYDetailSet")
     dimension_y_name = models.ForeignKey("dataimport.DimensionName")
     dimension_x_name = models.ForeignKey("dataimport.DimensionFor")
-    new_dimension_y_name = models.CharField(max_length=100, blank=True)
-    new_dimension_x_name = models.CharField(max_length=100, blank=True)
+    new_dimension_y_name = models.ForeignKey("CustomDimensionYName", blank=True, null=True)
+    new_dimension_x_name = models.ForeignKey("CustomDimensionXName", blank=True, null=True)
     order = models.IntegerField(default=1)
 
     def __unicode__(self):
