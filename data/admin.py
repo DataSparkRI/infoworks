@@ -5,6 +5,7 @@ School, SchoolIndicatorSet, SchoolIndicator, SchoolDisplayData, SchoolIndicatorD
 State, StateIndicatorSet, StateIndicator, StateDisplayData, StateIndicatorDataSet, StateDisplayDataY, \
 DistrictDisplayDataYDetailData, DistrictDisplayDataYDetail, DistrictDisplayDataYDetailSet, \
 SchoolDisplayDataYDetailData, SchoolDisplayDataYDetail, SchoolDisplayDataYDetailSet, \
+StateDisplayDataYDetail, StateDisplayDataYDetailData, StateDisplayDataYDetailSet, \
 CustomDimensionYName, CustomDimensionXName
 
 from django.contrib import messages
@@ -77,16 +78,21 @@ def write_default_state_indicator(modeladmin, request, queryset):
     except:
         pass
 
+class StateDisplayDataYDetailDataInline(admin.TabularInline):
+    model = StateDisplayDataYDetailData
+    raw_id_fields = ("dimension_y_name",)
+
+class StateDisplayDataYDetailSetInline(admin.TabularInline):
+    model = StateDisplayDataYDetailSet
+
 class StateDisplayDataYInline(admin.TabularInline):
     model = StateDisplayDataY
+    raw_id_fields = ("display",)
     #form = StateDisplayDataYForm
 
 class StateDisplayDataInline(admin.TabularInline):
     model = StateDisplayData
     
-class SchoolDisplayDataInline(admin.TabularInline):
-    model = SchoolDisplayData
-
 class StateIndicatorSetInline(admin.TabularInline):
     model = StateIndicatorSet
 
@@ -95,6 +101,14 @@ class StateIndicatorDataSetInline(admin.TabularInline):
 
 class StateIndicatorInline(admin.TabularInline):
     model = StateIndicator
+
+class StateDisplayDataYDetailAdmin(admin.ModelAdmin):
+    inlines = [StateDisplayDataYDetailSetInline]
+admin.site.register(StateDisplayDataYDetail, StateDisplayDataYDetailAdmin)
+
+class StateDisplayDataYDetailSetAdmin(admin.ModelAdmin):
+    inlines = [StateDisplayDataYDetailDataInline]
+admin.site.register(StateDisplayDataYDetailSet, StateDisplayDataYDetailSetAdmin)
 
 class StateAdmin(admin.ModelAdmin):
     list_display = ('state_name', 'default_state', 'activate','slug', 'indicator_modified')
@@ -190,9 +204,6 @@ class DistrictDisplayDataYInline(admin.TabularInline):
 class DistrictDisplayDataInline(admin.TabularInline):
     model = DistrictDisplayData
     
-class SchoolDisplayDataInline(admin.TabularInline):
-    model = SchoolDisplayData
-
 class DistrictIndicatorSetInline(admin.TabularInline):
     model = DistrictIndicatorSet
 
@@ -301,9 +312,6 @@ class SchoolDisplayDataYInline(admin.TabularInline):
     model = SchoolDisplayDataY
     raw_id_fields = ("display",)
     #form = SchoolDisplayDataYForm
-
-class SchoolDisplayDataInline(admin.TabularInline):
-    model = SchoolDisplayData
     
 class SchoolDisplayDataInline(admin.TabularInline):
     model = SchoolDisplayData

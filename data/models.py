@@ -126,12 +126,7 @@ class SchoolIndicatorDataSet(models.Model):
 
         #y_names = data.values("dimension_y").annotate(Count("dimension_y"))
         #return [i["dimension_y"]  for i in y_names]
-    @property
-    def get_objects(self, dimension_x, dimension_y):
-        try:
-           return SchoolIndicatorData.objects.get(school_indicator_dataset=self, dimension_x=dimension_x, dimension_y=dimension_y)
-        except:
-           return None
+
     @property
     def have_detail(self):
         for i in SchoolDisplayDataY.objects.filter(school_indicator=self.school_indicator):
@@ -153,9 +148,9 @@ class SchoolIndicatorDataSet(models.Model):
             data = []
             for x in dim_x:
                 try:
-                   data.append(SchoolIndicatorData.objects.get(school_indicator_dataset=self, dimension_x=x, dimension_y=y))
+                    data.append(SchoolIndicatorData.objects.get(school_indicator_dataset=self, dimension_x=x, dimension_y=y))
                 except:
-                   data.append(None)
+                    data.append(None)
                    
             result.append({"dimension_y":SchoolDisplayDataY.objects.get(display__name=y, school_indicator=self.school_indicator), "data":data})
         return result
@@ -190,7 +185,6 @@ class SchoolIndicatorDataSet(models.Model):
                         data.key_value = value
                         data.data_type = self.data_type
                         data.save()
-                        print "%s - %s [%s]"%(headers[header_index], row[header_index],value)
             
             
             self.import_file = False
@@ -446,7 +440,6 @@ class DistrictIndicatorDataSet(models.Model):
                         data.key_value = value
                         data.data_type = self.data_type
                         data.save()
-                        print "%s - %s [%s]"%(headers[header_index], row[header_index],value)
             
             
             self.import_file = False
@@ -576,10 +569,52 @@ class StateDisplayData(models.Model):
     def __unicode__(self):
         return "%s - %s"% (self.state_indicator, self.display)
 
+class StateDisplayDataYDetailData(models.Model):
+    detail_set = models.ForeignKey("StateDisplayDataYDetailSet")
+    dimension_y_name = models.ForeignKey("dataimport.DimensionName")
+    dimension_x_name = models.ForeignKey("dataimport.DimensionFor")
+    new_dimension_y_name = models.ForeignKey("CustomDimensionYName", blank=True, null=True)
+    new_dimension_x_name = models.ForeignKey("CustomDimensionXName", blank=True, null=True)
+    order = models.IntegerField(default=1)
+
+    def __unicode__(self):
+        return "%s - %s"%(self.new_dimension_y_name, self.new_dimension_x_name)
+
+class StateDisplayDataYDetailSet(models.Model):
+    detail = models.ForeignKey("StateDisplayDataYDetail", blank=True, null=True)
+    name = models.CharField(max_length=100, blank=True)
+    title = models.CharField(max_length=100, blank=True)
+    order = models.IntegerField(default=1)
+    
+    @property
+    def detail_data(self):
+        return StateDisplayDataYDetailData.objects.filter(detail_set = self).order_by('order')
+    
+    
+    def __unicode__(self):
+        return "%s - %s"%(self.detail, self.name)
+
+class StateDisplayDataYDetail(models.Model):
+    name = models.CharField(max_length=100, blank=True)
+    slug = models.SlugField(max_length=100, unique=True,db_index=True, blank=True)
+    
+    def save(self, *args, **kwargs):
+        if self.slug == None or self.slug == '':
+            self.slug = slugify(self.name)
+        super(StateDisplayDataYDetail, self).save(*args, **kwargs)
+    
+    @property
+    def detail_set(self):
+        return StateDisplayDataYDetailSet.objects.filter(detail=self).order_by('order')
+
+    def __unicode__(self):
+        return self.name
+
 class StateDisplayDataY(models.Model):
     state_indicator = models.ForeignKey("StateIndicator", blank=True, null=True)
     display = models.ForeignKey("dataimport.DimensionName", blank=True, null=True)
     order = models.IntegerField(default=1)
+    detail = models.ForeignKey("StateDisplayDataYDetail", blank=True, null=True)
     
     def __unicode__(self):
         return "%s - %s"% (self.state_indicator, self.display)
@@ -611,7 +646,6 @@ class StateIndicatorDataSet(models.Model):
     def displaydata_y(self):
         index = StateDisplayDataY.objects.filter(state_indicator=self.state_indicator).values_list('display__name',flat=True).order_by("order")
         return index
-
         #index = StateDisplayData.objects.filter(state_indicator=self.state_indicator).values_list('display__name',flat=True).order_by("order")
         #data = StateIndicatorData.objects.filter(state_indicator_dataset=self, dimension_x__in=index)
         #result = []
@@ -620,6 +654,11 @@ class StateIndicatorDataSet(models.Model):
         #return [i["dimension_y"]  for i in y_names]
 
     @property
+    def have_detail(self):
+        for i in StateDisplayDataY.objects.filter(state_indicator=self.state_indicator):
+            if i.detail != None:
+                return True
+    
     def get_objects(self, dimension_x, dimension_y):
         try:
            return StateIndicatorData.objects.get(state_indicator_dataset=self, dimension_x=dimension_x, dimension_y=dimension_y)
@@ -638,7 +677,7 @@ class StateIndicatorDataSet(models.Model):
                    data.append(StateIndicatorData.objects.get(state_indicator_dataset=self, dimension_x=x, dimension_y=y))
                 except:
                    data.append(None)
-            result.append({"dimension_y":y, "data":data})
+            result.append({"dimension_y":StateDisplayDataY.objects.get(display__name=y, state_indicator=self.state_indicator),"data":data})
         return result
         
     @property
@@ -670,7 +709,6 @@ class StateIndicatorDataSet(models.Model):
                         data.key_value = value
                         data.data_type = self.data_type
                         data.save()
-                        print "%s - %s [%s]"%(headers[header_index], row[header_index],value)
             
             
             self.import_file = False

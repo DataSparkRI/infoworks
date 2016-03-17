@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^district/(?P<slug>[\w-]+)/(?P<indicator_id>[\w-]+)/(?P<school_year>[\w-]+)/(?P<detail_slug>[\w-]+)$', views.district_detail, name="district_detail"),
     url(r'^state$', views.state, name="state"),
     url(r'^state/(?P<slug>[\w-]+)$', views.states, name="states"),
+    url(r'^state/(?P<slug>[\w-]+)/(?P<indicator_id>[\w-]+)/(?P<school_year>[\w-]+)/(?P<detail_slug>[\w-]+)$', views.state_detail, name="state_detail"),
     url(r'^understanding-data/dictionary$',views.dictionary,name="dictionary"),
     ]
 

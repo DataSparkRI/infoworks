@@ -55,13 +55,15 @@
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
               {% for j in i.indicators %}
+              {% if j.dataset or request.user.is_active and request.user.is_staff %}
               <li role="presentation" {% if forloop.first %}class="active"{% endif %}><a href="#indicator_{{j.id}}" aria-controls="home" role="tab" data-toggle="tab">{{j.title.title}}</a></li>
-              {% endfor %}
+              {% endif %}{% endfor %}
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content">
               {% for j in i.indicators %}
+              {% if j.dataset or request.user.is_active and request.user.is_staff %}
               <div role="tabpanel" class="tab-pane fade{% if forloop.first %} in active{% endif %}" id="indicator_{{j.id}}">
                 <div class="row">
                   <div class="col-md-5">
@@ -123,6 +125,7 @@
                   </div>
                 </div>
               </div>
+              {% endif %}
               {% endfor %}
             </div>
           </div>

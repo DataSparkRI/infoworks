@@ -23,6 +23,8 @@ def get_index_or_none(headers, option):
         return None
 
 def all_indicator(q):
+    if q.state_indicator:
+        indicators = StateIndicator.objects.filter(title=q.indicator)
     if q.district_indicator:
         indicators = DistrictIndicator.objects.filter(title=q.indicator)
     if q.school_indicator:
@@ -36,40 +38,88 @@ def get_index(headers, dimension):
         index.update({get_index_or_none(headers, x.name):
                         {'name':x.match_option, 'data_type':x.data_type, 'dimension_name':x.dimension_name}})
     return index
+    
+def get_lookup_table(fields, header, file_code):
+    field = fields.get(name=header)
 
+    if field.lookup_table != None:
+        return field.lookup_table
+    else:
+        return None
+    
 
-def build_y_dimension_title(headers, row, add_on_01,add_on_02,add_on_03,add_on_04,add_on_05,add_on_06,add_on_07,add_on_08,add_on_09,add_on_10):
+def build_y_dimension_title(fields, headers, row, add_on_01,add_on_02,add_on_03,add_on_04,add_on_05,add_on_06,add_on_07,add_on_08,add_on_09,add_on_10):
     result = ""
     if add_on_01 != None:
         index = get_index_or_none(headers, add_on_01[0].name)
-        result = result + row[index] + " "
+        table = get_lookup_table(fields, headers[index], row[index])
+        if table != None:
+            result = result + table.get_code(row[index]) + " "
+        else:
+            result = result + row[index] + " "
     if add_on_02 != None:
         index = get_index_or_none(headers, add_on_02[0].name)
-        result = result + headers[index] + " " + row[index] + " "
+        table = get_lookup_table(fields, headers[index], row[index])
+        if table != None:
+            result = result + headers[index] + " " + table.get_code(row[index]) + " "
+        else:
+            result = result + headers[index] + " " + row[index] + " "
     if add_on_03 != None:
         index = get_index_or_none(headers, add_on_03[0].name)
-        result = result + row[index] + " "
+        table = get_lookup_table(fields, headers[index], row[index])
+        if table != None:
+            result = result + table.get_code(row[index]) + " "
+        else:
+            result = result + row[index] + " "
     if add_on_04 != None:
         index = get_index_or_none(headers, add_on_04[0].name)
-        result = result + headers[index] + " " + row[index] + " "
+        table = get_lookup_table(fields, headers[index], row[index])
+        if table != None:
+            result = result + headers[index] + " " + table.get_code(row[index]) + " "
+        else:
+            result = result + headers[index] + " " + row[index] + " "
     if add_on_05 != None:
         index = get_index_or_none(headers, add_on_05[0].name)
-        result = result + row[index] + " "
+        table = get_lookup_table(fields, headers[index], row[index])
+        if table != None:
+            result = result + table.get_code(row[index]) + " "
+        else:
+            result = result + row[index] + " "
     if add_on_06 != None:
         index = get_index_or_none(headers, add_on_06[0].name)
-        result = result + headers[index] + " " + row[index] + " "
+        table = get_lookup_table(fields, headers[index], row[index])
+        if table != None:
+            result = result + headers[index] + " " + table.get_code(row[index]) + " "
+        else:
+            result = result + headers[index] + " " + row[index] + " "
     if add_on_07 != None:
         index = get_index_or_none(headers, add_on_07[0].name)
-        result = result + row[index] + " "
+        table = get_lookup_table(fields, headers[index], row[index])
+        if table != None:
+            result = result + table.get_code(row[index]) + " "
+        else:
+            result = result + row[index] + " "
     if add_on_08 != None:
         index = get_index_or_none(headers, add_on_08[0].name)
-        result = result + headers[index] + " " + row[index] + " "
+        table = get_lookup_table(fields, headers[index], row[index])
+        if table != None:
+            result = result + headers[index] + " " + table.get_code(row[index]) + " "
+        else:
+            result = result + headers[index] + " " + row[index] + " "
     if add_on_09 != None:
         index = get_index_or_none(headers, add_on_09[0].name)
-        result = result + row[index] + " "
+        table = get_lookup_table(fields, headers[index], row[index])
+        if table != None:
+            result = result + table.get_code(row[index]) + " "
+        else:
+            result = result + row[index] + " "
     if add_on_10 != None:
         index = get_index_or_none(headers, add_on_10[0].name)
-        result = result + headers[index] + " " + row[index] + " "
+        table = get_lookup_table(fields, headers[index], row[index])
+        if table != None:
+            result = result + headers[index] + " " + table.get_code(row[index]) + " "
+        else:
+            result = result + headers[index] + " " + row[index] + " "
     return result
 
 def import_indicator(modeladmin, request, queryset):
@@ -77,6 +127,7 @@ def import_indicator(modeladmin, request, queryset):
         path = q.file.path
         fields = IndicatorField.objects.filter(indicator_file=q)
         
+        state_codes = get_or_none(fields, "STATE_CODE")
         district_codes = get_or_none(fields, "DISTRICT_CODE") #queryset
         school_codes = get_or_none(fields,"SCHOOL_CODE") #queryset
         dimension = get_or_none(fields,"DIMENSION") #queryset
@@ -101,25 +152,45 @@ def import_indicator(modeladmin, request, queryset):
                 reader = csv.reader(f)
                 headers = reader.next()
                 state_code_index = get_index_or_none(headers, state_codes[0].name)
+                
+                
                 index = get_index(headers, dimension)
+                if school_year != None:
+                    school_year_index = get_index_or_none(headers, school_year[0].name)
+                else:
+                    school_year_index = None
                 
                 for row in reader:
                     try:
                         state_code = row[state_code_index]
+                        if state_code == '' or state_code == ' ':
+                            continue
                     except:
                         break
                     try:
                         indicator = indicators.get(state_indicator_set__state__state_code=state_code)
                     except:
-                        indicator = None
+                        try:
+                            indicator = indicators.filter(state_indicator_set__state__default_state = True)[0]
+                        except:
+                            indicator = None
                     if indicator != None: # if do have indicator
-                        state_indicator_dataset, created = StateIndicatorDataSet.objects.get_or_create(state_indicator=indicator, school_year=q.school_year)
-                        for key, value in index.iteritems():
+                        if q.school_year != None:
+                            state_indicator_dataset, created = StateIndicatorDataSet.objects.get_or_create(state_indicator=indicator, school_year=q.school_year)
+                        else:
+                            school_year_obj, created = SchoolYear.objects.get_or_create(school_year = row[school_year_index])
+                            state_indicator_dataset, created = StateIndicatorDataSet.objects.get_or_create(state_indicator=indicator, school_year=school_year_obj)
 
+                        dimension_y_add_on = build_y_dimension_title(fields, headers,row,add_on_01,add_on_02,add_on_03,add_on_04,add_on_05,add_on_06,add_on_07,add_on_08,add_on_09,add_on_10)
+
+
+                        for key, value in index.iteritems():
                             
+                            dimension_y_name = "%s%s"%(dimension_y_add_on, value["dimension_name"].name)
+                            DimensionName.objects.get_or_create(name=dimension_y_name)
                             StateIndicatorData.objects.get_or_create(state_indicator_dataset=state_indicator_dataset,
                                                             dimension_x = q.indicator_for,
-                                                            dimension_y = value["dimension_name"].name,
+                                                            dimension_y = dimension_y_name,
                                                             key_value = row[key],
                                                             data_type = value["data_type"],
                                                             import_job = q
@@ -156,7 +227,7 @@ def import_indicator(modeladmin, request, queryset):
                             school_year_obj, created = SchoolYear.objects.get_or_create(school_year = row[school_year_index])
                             district_indicator_dataset, created = DistrictIndicatorDataSet.objects.get_or_create(district_indicator=indicator, school_year=school_year_obj)
 
-                        dimension_y_add_on = build_y_dimension_title(headers,row,add_on_01,add_on_02,add_on_03,add_on_04,add_on_05,add_on_06,add_on_07,add_on_08,add_on_09,add_on_10)
+                        dimension_y_add_on = build_y_dimension_title(fields, headers,row,add_on_01,add_on_02,add_on_03,add_on_04,add_on_05,add_on_06,add_on_07,add_on_08,add_on_09,add_on_10)
 
 
                         for key, value in index.iteritems():
@@ -210,7 +281,7 @@ def import_indicator(modeladmin, request, queryset):
                             school_year_obj, created = SchoolYear.objects.get_or_create(school_year = row[school_year_index])
                             school_indicator_dataset, created = SchoolIndicatorDataSet.objects.get_or_create(school_indicator=indicator, school_year=school_year_obj)
 
-                        dimension_y_add_on = build_y_dimension_title(headers,row,add_on_01,add_on_02,add_on_03,add_on_04,add_on_05,add_on_06,add_on_07,add_on_08,add_on_09,add_on_10)
+                        dimension_y_add_on = build_y_dimension_title(fields, headers,row,add_on_01,add_on_02,add_on_03,add_on_04,add_on_05,add_on_06,add_on_07,add_on_08,add_on_09,add_on_10)
 
 
                         for key, value in index.iteritems():

@@ -5,6 +5,33 @@ import csv
 from data.models import StateIndicator, DistrictIndicator, SchoolIndicator, IndicatorTitle, SchoolYear
 
 # Create your models here.
+class SystemCode(models.Model):
+    code = models.CharField(max_length=100, blank=True)
+    
+    def __unicode__(self):
+        return self.code
+
+class LookUpTableElement(models.Model):
+    table = models.ForeignKey('LookUpTable')
+    file_code = models.CharField(max_length=100, blank=True)
+    system_code = models.ForeignKey('SystemCode')
+    
+    def __unicode__(self):
+        return "%s - %s"%(self.file_code, self.system_code)
+
+class LookUpTable(models.Model):
+    name = models.CharField(max_length=100, blank=True)
+    
+    def get_code(self, file_code):
+        try:
+            return LookUpTableElement.objects.get(table=self, file_code=file_code).system_code.code
+        except:
+            return file_code
+    
+    def __unicode__(self):
+        return self.name
+
+
 class StateField(models.Model):
     state_file = models.ForeignKey('StateFile')
     name = models.CharField(max_length=50, blank=True)
@@ -201,6 +228,7 @@ class IndicatorField(models.Model):
                             ('STRING', 'string'),
                             ))
     dimension_name = models.ForeignKey('DimensionName', blank=True, null=True)
+    lookup_table = models.ForeignKey('LookUpTable', blank=True, null=True)
     def save(self, *args, **kwargs):
         if self.name != '':
             super(IndicatorField, self).save(*args, **kwargs)

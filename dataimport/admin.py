@@ -2,9 +2,18 @@ from django.contrib import admin
 from dataimport.models import DimensionFor,StateFile, StateField, DistrictFile, DistrictField, SchoolFile, SchoolField, IndicatorFile, IndicatorField, DimensionName
 from data.models import District, School, State
 from dataimport.actions.ImportIndicator import import_indicator
+from dataimport.models import LookUpTable, LookUpTableElement, SystemCode
 import csv
 from django.contrib import messages
 # Register your models here.
+class LookUpTableElementInline(admin.TabularInline):
+    model = LookUpTableElement
+
+class LookUpTableAdmin(admin.ModelAdmin):
+    inlines = [LookUpTableElementInline]
+admin.site.register(LookUpTable, LookUpTableAdmin)
+admin.site.register(SystemCode)
+
 def get_or_none(objects, match_option):
     try:
         return objects.get(match_option=match_option).name
@@ -342,6 +351,7 @@ admin.site.register(SchoolFile, SchoolFileAdmin)
 
 class IndicatorFieldInline(admin.TabularInline):
     model = IndicatorField
+    raw_id_fields = ("dimension_name",)
 
 class IndicatorFileAdmin(admin.ModelAdmin):
     inlines = [IndicatorFieldInline]
@@ -350,5 +360,6 @@ admin.site.register(IndicatorFile, IndicatorFileAdmin)
 
 class DimensionNameAdmin(admin.ModelAdmin):
     search_fields = ['name']
+    ordering = ('id',)
 admin.site.register(DimensionName, DimensionNameAdmin)
 admin.site.register(DimensionFor)
