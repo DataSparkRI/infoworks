@@ -7,7 +7,7 @@ SchoolIndicator, DistrictIndicator, StateIndicator, \
 DistrictDisplayDataYDetailSet, DistrictDisplayDataYDetail, DistrictIndicatorSet, DistrictIndicatorDataSet,\
 SchoolDisplayDataYDetailSet, SchoolDisplayDataYDetail, SchoolIndicatorSet, SchoolIndicatorDataSet,\
 StateIndicatorDataSet, StateDisplayDataYDetail, \
-SchoolYear
+SchoolYear, DistrictIndicatorDetailDataSet, SchoolIndicatorDetailDataSet, StateIndicatorDetailDataSet
 from models import Dictionary, Category
 import collections
 from django.core import exceptions

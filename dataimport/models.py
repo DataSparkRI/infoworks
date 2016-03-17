@@ -263,3 +263,32 @@ class IndicatorFile(models.Model):
     
     def __unicode__(self):
         return "%s - %s - %s"% (self.name, self.indicator, self.indicator_for)
+        
+        
+class IndicatorDetailFile(models.Model):
+    name = models.CharField(max_length=100)
+    school_year = models.ForeignKey(SchoolYear)
+    file = models.FileField(upload_to="Indicator_Detail_Information", blank=True, null=True)
+    state_indicator = models.BooleanField(default=False)
+    district_indicator = models.BooleanField(default=False)
+    school_indicator = models.BooleanField(default=False)
+    #indicator = models.ForeignKey(IndicatorTitle, blank=True, null=True)
+    #indicator_for = models.ForeignKey(DimensionFor, blank=True, null=True)
+    #def save(self, *args, **kwargs): 
+
+    #    super(IndicatorFile, self).save(*args, **kwargs)
+    #    if IndicatorField.objects.filter(indicator_file=self).count() == 0:
+    #        try:
+    #            f = open(self.file.path, 'rb')
+    #            reader = csv.reader(f)
+    #            headers = reader.next()
+    #            for i in headers:
+    #                try:
+    #                   IndicatorField.objects.get_or_create(indicator_file=self, name=i)
+    #                except:
+    #                   pass
+    #        except:
+    #            pass
+    
+    def __unicode__(self):
+        return "%s - %s"% (self.name, self.school_year)

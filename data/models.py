@@ -11,6 +11,15 @@ DATA_TYPE_CHOICES = (
     ('NUMERIC', 'numeric'),
     ('PERCENT','percent'),
     ('STRING', 'string'),
+    ('SUBDATASET','subdataset'),
+)
+
+DISPLAY_TYPE_CHOICES = (
+    ('BAR-CHART', 'Bar Chart'),
+    ('LINE-CHART', 'Line Chart'),
+    ('AREA-CHART','Area Chart'),
+    ('PIE-CHART', 'Pie Chart'),
+    ('TABLE','Table'),
 )
 
 # Create your models here.
@@ -34,6 +43,13 @@ class CustomDimensionXName(models.Model):
     def __unicode__(self):
         return self.name
         
+class DetailDataSetTitle(models.Model):
+    title = models.CharField(max_length=100)
+    short_description = models.CharField(max_length=200,blank=True)
+    
+    def __unicode__(self):
+        return "%s"% self.title
+
 ############# School #####################        
 
 class SchoolDisplayData(models.Model):
@@ -92,6 +108,26 @@ class SchoolDisplayDataY(models.Model):
     
     def __unicode__(self):
         return "%s - %s"% (self.school_indicator, self.display)
+
+class SchoolIndicatorDetailData(models.Model):
+    school_indicator_detail_dataset = models.ForeignKey("SchoolIndicatorDetailDataSet", blank=True, null=True)
+    dimension_x = models.CharField(max_length=100, blank=True)
+    dimension_y = models.CharField(max_length=100, blank=True)
+    key_value = models.CharField(max_length=100, db_index=True)
+    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
+    import_job = models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
+    
+    def __unicode__(self):
+        return "%s - %s: %s"%(self.dimension_y, self.dimension_x, self.key_value)    
+
+class SchoolIndicatorDetailDataSet(models.Model):
+    title = models.ForeignKey(DetailDataSetTitle)
+    display_type = models.CharField(max_length=20,choices=DISPLAY_TYPE_CHOICES)
+    order = models.IntegerField(default=1)
+    indicator_data = models.ForeignKey('SchoolIndicatorData')
+
+    def __unicode__(self):
+        return "%s - %s" %(self.indicator_data.dimension_x, self.title)
 
 class SchoolIndicatorData(models.Model):
     school_indicator_dataset = models.ForeignKey('SchoolIndicatorDataSet', blank=True, null=True)
@@ -350,8 +386,8 @@ class DistrictDisplayDataY(models.Model):
     def __unicode__(self):
         return "%s - %s"% (self.district_indicator, self.display)
 
-class DistrictIndicatorData(models.Model):
-    district_indicator_dataset = models.ForeignKey("DistrictIndicatorDataSet", blank=True, null=True)
+class DistrictIndicatorDetailData(models.Model):
+    district_indicator_detail_dataset = models.ForeignKey("DistrictIndicatorDetailDataSet", blank=True, null=True)
     dimension_x = models.CharField(max_length=100, blank=True)
     dimension_y = models.CharField(max_length=100, blank=True)
     key_value = models.CharField(max_length=100, db_index=True)
@@ -359,7 +395,64 @@ class DistrictIndicatorData(models.Model):
     import_job = models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
     
     def __unicode__(self):
-        return "%s - %s: %s"%(self.dimension_y, self.dimension_x, self.key_value)
+        return "%s - %s: %s"%(self.dimension_y, self.dimension_x, self.key_value)    
+
+class DistrictIndicatorDetailDataSet(models.Model):
+    indicator_data = models.ForeignKey('DistrictIndicatorData')
+    title = models.ForeignKey(DetailDataSetTitle)
+    order = models.IntegerField(default=1)
+    display_type = models.CharField(max_length=20,choices=DISPLAY_TYPE_CHOICES)
+
+    @property
+    def displaydata_x(self):
+        index = DistrictIndicatorDetailData.objects.filter(district_indicator_detail_dataset=self).values_list('dimension_x',flat=True)
+        return sorted(set(index))
+
+    @property
+    def displaydata_y(self):
+        index = DistrictIndicatorDetailData.objects.filter(district_indicator_detail_dataset=self).values_list('dimension_y',flat=True)
+        return sorted(set(index))
+
+    @property
+    def displaydata(self):
+        dim_x = self.displaydata_x
+        dim_y = self.displaydata_y
+        result = []
+        if len(dim_x) == 0 and len(dim_y) == 0:
+            return None
+        for y in dim_y:
+            data = []
+            for x in dim_x:
+                try:
+                   data.append(DistrictIndicatorDetailData.objects.get(district_indicator_detail_dataset=self, dimension_x=x, dimension_y=y))
+                except:
+                   data.append(None)
+            result.append({"dimension_y":y, "data":data})
+        print result
+        return result
+
+
+    def __unicode__(self):
+        return "%s - %s - %s" %(self.indicator_data.district_indicator_dataset.district_indicator, self.indicator_data.dimension_y, self.title)
+
+class DistrictIndicatorData(models.Model):
+    district_indicator_dataset = models.ForeignKey("DistrictIndicatorDataSet", blank=True, null=True)
+    dimension_x = models.CharField(max_length=100, blank=True)
+    dimension_y = models.CharField(max_length=100, blank=True)
+    key_value = models.CharField(max_length=100, db_index=True)
+    data_type = models.CharField(max_length=20,choices=DATA_TYPE_CHOICES)
+    import_job = models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
+    
+    @property
+    def log(self):
+        dataset = DistrictIndicatorDetailDataSet.objects.filter(indicator_data=self).order_by("order")
+        if dataset.count() > 0:
+            return dataset[0].display_type.lower()
+        else:
+            return None
+    
+    def __unicode__(self):
+        return "%s - %s - %s: %s"%(self.district_indicator_dataset.district_indicator, self.dimension_y, self.dimension_x, self.key_value)
 
 class DistrictIndicatorDataSet(models.Model):
     district_indicator = models.ForeignKey("DistrictIndicator", blank=True, null=True)
@@ -618,6 +711,26 @@ class StateDisplayDataY(models.Model):
     
     def __unicode__(self):
         return "%s - %s"% (self.state_indicator, self.display)
+
+class StateIndicatorDetailData(models.Model):
+    state_indicator_detail_dataset = models.ForeignKey("StateIndicatorDetailDataSet", blank=True, null=True)
+    dimension_x = models.CharField(max_length=100, blank=True)
+    dimension_y = models.CharField(max_length=100, blank=True)
+    key_value = models.CharField(max_length=100, db_index=True)
+    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
+    import_job = models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
+    
+    def __unicode__(self):
+        return "%s - %s: %s"%(self.dimension_y, self.dimension_x, self.key_value)    
+
+class StateIndicatorDetailDataSet(models.Model):
+    title = models.ForeignKey(DetailDataSetTitle)
+    display_type = models.CharField(max_length=20,choices=DISPLAY_TYPE_CHOICES)
+    order = models.IntegerField(default=1)
+    indicator_data = models.ForeignKey('StateIndicatorData')
+
+    def __unicode__(self):
+        return "%s - %s" %(self.indicator_data.dimension_x, self.title)
 
 class StateIndicatorData(models.Model):
     state_indicator_dataset = models.ForeignKey("StateIndicatorDataSet", blank=True, null=True)

@@ -42,14 +42,14 @@
       </div>
       {% for c in category %}
         <div class="row">
-            <div class="col-md-9" id={{c}}>
+            <div class="col-md-9" id="{{c}}">
                 <h4>{{ c }}</h4>
                 
                 {% for j in terms %}
                   {% if j.category.category == c %}
                   <div class="row">
                     <h5>{{ j.term }}</h5>
-                    <p>{{ j.content }}</p>
+                    <p>{{ j.content | safe}}</p>
                   </div>
                   {% endif %}
                 {% endfor %}

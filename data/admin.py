@@ -1,12 +1,12 @@
 from django.contrib import admin
-from data.models import SchoolYear, IndicatorTitle, \
+from data.models import SchoolYear, IndicatorTitle, DetailDataSetTitle, \
 District, DistrictDisplayData, DistrictIndicatorDataSet, DistrictIndicatorSet, DistrictIndicator, DistrictDisplayDataY, \
 School, SchoolIndicatorSet, SchoolIndicator, SchoolDisplayData, SchoolIndicatorDataSet, SchoolDisplayDataY, \
 State, StateIndicatorSet, StateIndicator, StateDisplayData, StateIndicatorDataSet, StateDisplayDataY, \
 DistrictDisplayDataYDetailData, DistrictDisplayDataYDetail, DistrictDisplayDataYDetailSet, \
 SchoolDisplayDataYDetailData, SchoolDisplayDataYDetail, SchoolDisplayDataYDetailSet, \
 StateDisplayDataYDetail, StateDisplayDataYDetailData, StateDisplayDataYDetailSet, \
-CustomDimensionYName, CustomDimensionXName
+CustomDimensionYName, CustomDimensionXName,DistrictIndicatorDetailDataSet,DistrictIndicatorData
 
 from django.contrib import messages
 
@@ -196,6 +196,9 @@ class DistrictDisplayDataYDetailDataInline(admin.TabularInline):
 class DistrictDisplayDataYDetailSetInline(admin.TabularInline):
     model = DistrictDisplayDataYDetailSet
 
+class DistrictIndicatorDetailDataSetInline(admin.TabularInline):
+    model = DistrictIndicatorDetailDataSet
+
 class DistrictDisplayDataYInline(admin.TabularInline):
     model = DistrictDisplayDataY
     raw_id_fields = ("display",)
@@ -221,6 +224,10 @@ class DistrictDisplayDataYDetailSetAdmin(admin.ModelAdmin):
     inlines = [DistrictDisplayDataYDetailDataInline]
 admin.site.register(DistrictDisplayDataYDetailSet, DistrictDisplayDataYDetailSetAdmin)
 
+class DistrictIndicatorDataAdmin(admin.ModelAdmin):
+    inlines = [DistrictIndicatorDetailDataSetInline]
+admin.site.register(DistrictIndicatorData, DistrictIndicatorDataAdmin)
+    
 class DistrictAdmin(admin.ModelAdmin):
     list_display = ('district_name', 'activate','slug', 'indicator_modified')
     inlines = [DistrictIndicatorSetInline]
@@ -356,6 +363,7 @@ admin.site.register(SchoolIndicator, SchoolIndicatorAdmin)
 admin.site.register(SchoolYear)
 admin.site.register(CustomDimensionXName)
 admin.site.register(CustomDimensionYName)
+admin.site.register(DetailDataSetTitle)
 #class SchoolNumberOfStudentAndTeacherAdmin(admin.ModelAdmin):
 #    list_display = ('school', 'school_year','student', 'teacher')
 #admin.site.register(SchoolNumberOfStudentAndTeacher, SchoolNumberOfStudentAndTeacherAdmin)
