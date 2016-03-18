@@ -357,7 +357,6 @@ class DistrictDisplayDataYDetailSet(models.Model):
     def detail_data(self):
         return DistrictDisplayDataYDetailData.objects.filter(detail_set = self).order_by('order')
     
-    
     def __unicode__(self):
         return "%s - %s"%(self.detail, self.name)
 
@@ -424,11 +423,10 @@ class DistrictIndicatorDetailDataSet(models.Model):
             data = []
             for x in dim_x:
                 try:
-                   data.append(DistrictIndicatorDetailData.objects.get(district_indicator_detail_dataset=self, dimension_x=x, dimension_y=y))
+                    data.append(DistrictIndicatorDetailData.objects.get(district_indicator_detail_dataset=self, dimension_x=x, dimension_y=y))
                 except:
-                   data.append(None)
+                    data.append(None)
             result.append({"dimension_y":y, "data":data})
-        print result
         return result
 
 
@@ -442,6 +440,10 @@ class DistrictIndicatorData(models.Model):
     key_value = models.CharField(max_length=100, db_index=True)
     data_type = models.CharField(max_length=20,choices=DATA_TYPE_CHOICES)
     import_job = models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
+    
+    @property
+    def school_year(self):
+        return self.district_indicator_dataset.school_year.school_year
     
     @property
     def log(self):
@@ -464,7 +466,13 @@ class DistrictIndicatorDataSet(models.Model):
     @property
     def displaydata_x(self):
         index = DistrictDisplayData.objects.filter(district_indicator=self.district_indicator).values_list('display__name',flat=True).order_by("order")
-        return index
+        d_x = ["School Year"]
+        for x in index:
+            d_x.append(x)
+        if self.have_detail:
+            d_x.append("Details")
+        
+        return d_x
 
     @property
     def displaydata_y(self):
@@ -485,22 +493,41 @@ class DistrictIndicatorDataSet(models.Model):
     
     def get_objects(self, dimension_x, dimension_y):
         try:
-           return DistrictIndicatorData.objects.get(district_indicator_dataset=self, dimension_x=dimension_x, dimension_y=dimension_y)
+            return DistrictIndicatorData.objects.get(district_indicator_dataset=self, dimension_x=dimension_x, dimension_y=dimension_y)
         except:
-           return None
+            return None
 
     @property
     def displaydata(self):
         dim_x = self.displaydata_x
         dim_y = self.displaydata_y
         result = []
+        
         for y in dim_y:
             data = []
             for x in dim_x:
-                try:
-                   data.append(DistrictIndicatorData.objects.get(district_indicator_dataset=self, dimension_x=x, dimension_y=y))
-                except:
-                   data.append(None)
+                if x == "School Year":
+                    data.append({"key_value":self.school_year})
+                elif x == "Details":
+                    detail = DistrictDisplayDataY.objects.filter(district_indicator = self.district_indicator, display__name=y)[0]
+                    data.append({"key_value":detail.detail, "school_year":self.school_year})
+                elif x == "Statewide":
+                    try:
+                        state = self.district_indicator.district_indicator_set.district.us_state
+                        indicator_title = self.district_indicator.title.title
+                        data.append(StateIndicatorData.objects.get(state_indicator_dataset__school_year=self.school_year, 
+                                                   state_indicator_dataset__state_indicator__title = self.district_indicator.title,
+                                                   state_indicator_dataset__state_indicator__state_indicator_set__title = self.district_indicator.district_indicator_set.title,
+                                                   state_indicator_dataset__state_indicator__state_indicator_set__state = state,
+                                                   dimension_x=x, dimension_y=y))
+                    except:
+                        data.append(None)
+                    #data.append(StateIndicatorData.objects.get(district_indicator_dataset=self, dimension_x=x, dimension_y=y))
+                else:
+                    try:
+                        data.append(DistrictIndicatorData.objects.get(district_indicator_dataset=self, dimension_x=x, dimension_y=y))
+                    except:
+                        data.append(None)
             result.append({"dimension_y":DistrictDisplayDataY.objects.get(display__name=y, district_indicator=self.district_indicator),"data":data})
         return result
 
@@ -543,34 +570,7 @@ class DistrictIndicatorDataSet(models.Model):
     
     def __unicode__(self):
         return "%s - %s"%(self.district_indicator, self.school_year)
-'''
-class DistrictIndicatorCustomIndex(models.Model):
-    district_indicator = models.ForeignKey("DistrictIndicator", blank=True, null=True)
-    district_indicator_custom_display_set = models.ForeignKey("DistrictIndicatorCustomDisplaySet", blank=True, null=True)
 
-    def __unicode__(self):
-        return "%s - %s "%(self.district_indicator.title.title, self.district_indicator_custom_display.name)
-
-class DistrictIndicatorCustomDisplaySet(models.Model):
-    district_indicator = models.ManyToManyField("DistrictIndicatorCustomIndex", blank=True, null=True)
-    name = models.CharField(max_length=100,blank=True)
-    
-    def __unicode__(self):
-        return "[Custom Display] %s"%self.name
-
-class DistrictIndicatorCustomDisplayCalculateField(models.Model):
-    
-
-class DistrictIndicatorCustomDisplayData(models.Model):
-    district_indicator_custom_display_set = models.ForeignKey("DistrictIndicatorCustomDisplaySet", blank=True, null=True)
-    dimension_x = models.CharField(max_length=100, blank=True)
-    dimension_y = models.CharField(max_length=100, blank=True)
-    calculate_value = models.ForeignKey("DistrictIndicatorCustomDisplaySet", blank=True, null=True)
-    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
-
-    def __unicode__(self):
-        return "%s - %s: %s"%(self.dimension_y, self.dimension_x, self.calculate_value)
-'''
 class DistrictIndicator(models.Model):
     district_indicator_set = models.ForeignKey('DistrictIndicatorSet', blank=True, null=True)
     title = models.ForeignKey(IndicatorTitle)
@@ -588,6 +588,8 @@ class DistrictIndicator(models.Model):
     @property
     def displaydata(self):
         return DistrictDisplayData.objects.filter(district_indicator=self).order_by("order")
+
+    
 
     def save(self, *args, **kwargs):
         ''' On save, update timestamps '''
@@ -739,6 +741,10 @@ class StateIndicatorData(models.Model):
     key_value = models.CharField(max_length=100, db_index=True)
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
     import_job = models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
+    
+    @property
+    def school_year(self):
+        return self.state_indicator_dataset.school_year.school_year
     
     def __unicode__(self):
         return "%s - %s: %s"%(self.dimension_y, self.dimension_x, self.key_value)

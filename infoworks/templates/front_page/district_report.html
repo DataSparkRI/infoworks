@@ -89,14 +89,9 @@
                         
                         <table class="table table-hover">
                           <thead> <tr><th></th>
-                                      <th>School Year</th>
-                                      {% for k in j.displaydata%}
-                                      <th>{{k.display.name}}</th>
-                                      
+                                      {% for k in j.dataset.0.displaydata_x%}
+                                      <th>{{k}}</th>
                                       {% endfor %}
-                                      {% if j.dataset.0.have_detail %}
-                                      <th>Details</th>
-                                      {% endif %}
                                   </tr>
                           </thead>
                           <tbody> 
@@ -104,12 +99,14 @@
                                   {% for indicatordata in j.dataset.0.displaydata %}
                                   <tr><th scope="row">{{indicatordata.dimension_y.display}}</th>
                                       {% for row in indicatordata.data %}
-                                      {% if forloop.first %}<td>{{row.district_indicator_dataset.school_year}}</td>{% endif %}
-                                      {% if row %}<td>{{row.key_value}}{% if row.data_type == 'PERCENT' %}%{% endif %}</td>
+                                      {% if row %}<td>
+                                      	{% if row.key_value.name %}
+											<a href="{% url 'district_detail' district.slug j.id row.school_year indicatordata.dimension_y.detail.slug %}">{{row.key_value}}</a>
+										{% elif row.key_value == None %}
+										{% else %}
+                                      		{{row.key_value}}
+                                      	{% endif %}{% if row.data_type == 'PERCENT' %}%{% endif %}</td>
                                       {% else %}<td>No Data</td>{% endif %}
-                                      {% if indicatordata.dimension_y.detail %}
-                                      <td><a href="{% url 'district_detail' district.slug j.id row.district_indicator_dataset.school_year indicatordata.dimension_y.detail.slug %}">{{indicatordata.dimension_y.detail}}</a></td>
-                                      {% endif %}
                                       {% endfor %}
                                       
                                   </tr>
