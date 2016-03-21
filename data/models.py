@@ -150,7 +150,13 @@ class SchoolIndicatorDataSet(models.Model):
     @property
     def displaydata_x(self):
         index = SchoolDisplayData.objects.filter(school_indicator=self.school_indicator).values_list('display__name',flat=True).order_by("order")
-        return index
+        d_x = ["School Year"]
+        for x in index:
+            d_x.append(x)
+        if self.have_detail:
+            d_x.append("Details")
+        
+        return d_x
 
     @property
     def displaydata_y(self):
@@ -180,15 +186,46 @@ class SchoolIndicatorDataSet(models.Model):
         dim_x = self.displaydata_x
         dim_y = self.displaydata_y
         result = []
+        
         for y in dim_y:
             data = []
             for x in dim_x:
-                try:
-                    data.append(SchoolIndicatorData.objects.get(school_indicator_dataset=self, dimension_x=x, dimension_y=y))
-                except:
-                    data.append(None)
-                   
-            result.append({"dimension_y":SchoolDisplayDataY.objects.get(display__name=y, school_indicator=self.school_indicator), "data":data})
+                if x == "School Year":
+                    data.append({"key_value":self.school_year})
+                elif x == "Details":
+                    detail = SchoolDisplayDataY.objects.filter(school_indicator = self.school_indicator, display__name=y)[0]
+                    data.append({"key_value":detail.detail, "school_year":self.school_year})
+                elif x == "This District":
+                    try:
+                        district = self.school_indicator.school_indicator_set.school.district                        
+                        data.append(DistrictIndicatorData.objects.get(district_indicator_dataset__school_year=self.school_year, 
+                                                   district_indicator_dataset__district_indicator__title = self.school_indicator.title,
+                                                   district_indicator_dataset__district_indicator__district_indicator_set__title = self.school_indicator.school_indicator_set.title,
+                                                   district_indicator_dataset__district_indicator__district_indicator_set__district = district,
+                                                   dimension_x=x, dimension_y=y))
+                    except:
+                        data.append(None)
+                    #data.append(DistrictIndicatorData.objects.get(school_indicator_dataset=self, dimension_x=x, dimension_y=y))
+                elif x == "Statewide":
+                    try:
+                        state = self.school_indicator.school_indicator_set.school.district.us_state
+                        
+                        data.append(StateIndicatorData.objects.get(state_indicator_dataset__school_year=self.school_year, 
+                                                   state_indicator_dataset__state_indicator__title = self.school_indicator.title,
+                                                   state_indicator_dataset__state_indicator__state_indicator_set__title = self.school_indicator.school_indicator_set.title,
+                                                   state_indicator_dataset__state_indicator__state_indicator_set__state = state,
+                                                   dimension_x=x, dimension_y=y))
+                    
+                    except:
+                        data.append(None)
+                    #data.append(DistrictIndicatorData.objects.get(school_indicator_dataset=self, dimension_x=x, dimension_y=y))                
+                
+                else:
+                    try:
+                        data.append(SchoolIndicatorData.objects.get(school_indicator_dataset=self, dimension_x=x, dimension_y=y))
+                    except:
+                        data.append(None)
+            result.append({"dimension_y":SchoolDisplayDataY.objects.get(display__name=y, school_indicator=self.school_indicator),"data":data})
         return result
         
     @property
