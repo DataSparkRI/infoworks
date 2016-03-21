@@ -55,6 +55,7 @@ class DetailDataSetTitle(models.Model):
 class SchoolDisplayData(models.Model):
     school_indicator = models.ForeignKey("SchoolIndicator", blank=True, null=True)
     display = models.ForeignKey("dataimport.DimensionFor")
+    display_name = models.CharField(max_length=100, blank=True)
     order = models.IntegerField(default=1)
     
     def __unicode__(self):
@@ -103,6 +104,7 @@ class SchoolDisplayDataYDetail(models.Model):
 class SchoolDisplayDataY(models.Model):
     school_indicator = models.ForeignKey("SchoolIndicator", blank=True, null=True)
     display = models.ForeignKey("dataimport.DimensionName", blank=True, null=True)
+    display_name = models.CharField(max_length=100, blank=True)
     order = models.IntegerField(default=1)
     detail = models.ForeignKey("SchoolDisplayDataYDetail", blank=True, null=True)
     
@@ -157,6 +159,19 @@ class SchoolIndicatorDataSet(models.Model):
             d_x.append("Details")
         
         return d_x
+
+    @property
+    def displaydata_x_display(self):
+        index = ["School Year"]
+        for i in SchoolDisplayData.objects.filter(school_indicator=self.school_indicator).order_by("order"):
+            if i.display_name == '' or i.display_name == None:
+                index.append(i.display.name)
+            else:
+                index.append(i.display_name)
+        #index = SchoolDisplayData.objects.filter(school_indicator=self.school_indicator).values_list('display_name',flat=True).order_by("order")
+        if self.have_detail:
+            index.append("Details")
+        return index
 
     @property
     def displaydata_y(self):
@@ -368,6 +383,7 @@ class School(models.Model):
 class DistrictDisplayData(models.Model):
     district_indicator = models.ForeignKey("DistrictIndicator", blank=True, null=True)
     display = models.ForeignKey("dataimport.DimensionFor")
+    display_name = models.CharField(max_length=100, blank=True)
     order = models.IntegerField(default=1)
     
     def __unicode__(self):
@@ -416,6 +432,7 @@ class DistrictDisplayDataYDetail(models.Model):
 class DistrictDisplayDataY(models.Model):
     district_indicator = models.ForeignKey("DistrictIndicator", blank=True, null=True)
     display = models.ForeignKey("dataimport.DimensionName", blank=True, null=True)
+    display_name = models.CharField(max_length=100, blank=True)
     order = models.IntegerField(default=1)
     detail = models.ForeignKey("DistrictDisplayDataYDetail", blank=True, null=True)
     
@@ -510,6 +527,19 @@ class DistrictIndicatorDataSet(models.Model):
             d_x.append("Details")
         
         return d_x
+
+    @property
+    def displaydata_x_display(self):
+        index = ["School Year"]
+        for i in DistrictDisplayData.objects.filter(district_indicator=self.district_indicator).order_by("order"):
+            if i.display_name == '' or i.display_name == None:
+                index.append(i.display.name)
+            else:
+                index.append(i.display_name)
+        #index = SchoolDisplayData.objects.filter(school_indicator=self.school_indicator).values_list('display_name',flat=True).order_by("order")
+        if self.have_detail:
+            index.append("Details")
+        return index
 
     @property
     def displaydata_y(self):
@@ -696,6 +726,7 @@ class District(models.Model):
 class StateDisplayData(models.Model):
     state_indicator = models.ForeignKey("StateIndicator", blank=True, null=True)
     display = models.ForeignKey("dataimport.DimensionFor")
+    display_name = models.CharField(max_length=100, blank=True)
     order = models.IntegerField(default=1)
     
     def __unicode__(self):
@@ -745,6 +776,7 @@ class StateDisplayDataYDetail(models.Model):
 class StateDisplayDataY(models.Model):
     state_indicator = models.ForeignKey("StateIndicator", blank=True, null=True)
     display = models.ForeignKey("dataimport.DimensionName", blank=True, null=True)
+    display_name = models.CharField(max_length=100, blank=True)
     order = models.IntegerField(default=1)
     detail = models.ForeignKey("StateDisplayDataYDetail", blank=True, null=True)
     
@@ -796,6 +828,19 @@ class StateIndicatorDataSet(models.Model):
     @property
     def displaydata_x(self):
         index = StateDisplayData.objects.filter(state_indicator=self.state_indicator).values_list('display__name',flat=True).order_by("order")
+        return index
+
+    @property
+    def displaydata_x_display(self):
+        index = ["School Year"]
+        for i in StateDisplayData.objects.filter(state_indicator=self.state_indicator).order_by("order"):
+            if i.display_name == '' or i.display_name == None:
+                index.append(i.display.name)
+            else:
+                index.append(i.display_name)
+        #index = SchoolDisplayData.objects.filter(school_indicator=self.school_indicator).values_list('display_name',flat=True).order_by("order")
+        if self.have_detail:
+            index.append("Details")
         return index
 
     @property
