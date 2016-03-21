@@ -136,6 +136,7 @@ STATIC_ROOT = BASE_DIR+'/static/'
 STATICFILES_DIRS = [
     BASE_DIR + "/infoworks/static_file/"
 ]
+FIXTURE_DIRS = (BASE_DIR + "/infoworks/",)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR+'/media/'
 CKEDITOR_UPLOAD_PATH = "uploads/"

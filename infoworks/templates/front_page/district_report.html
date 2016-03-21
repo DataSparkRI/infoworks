@@ -1,4 +1,4 @@
-{% extends "front_page/base.html" %}{% load staticfiles %}
+{% extends "front_page/base.html" %}{% load staticfiles %}{% load config %}
 
 {% block body %}
 
@@ -66,7 +66,7 @@
               {% if j.dataset or request.user.is_active and request.user.is_staff %}
               <div role="tabpanel" class="tab-pane fade{% if forloop.first %} in active{% endif %}" id="indicator_{{j.id}}">
                 <div class="row">
-                  <div class="col-md-5">
+                  <div class="col-md-{% if 'indicator-col-md-left'|get_config %}{{'indicator-col-md-left'|get_config}}{% else %}4{% endif %}">
                     <div class="media">
                       {% if request.user.is_active and request.user.is_staff %}
                       <div class="media-left">
@@ -83,7 +83,7 @@
                     </div>
                   </div>
 
-                  <div class="col-md-7">
+                  <div class="col-md-{% if 'indicator-col-md-right'|get_config %}{{'indicator-col-md-right'|get_config}}{% else %}8{% endif %}">
                     <div class="media">
                       <div class="media-body">
                         

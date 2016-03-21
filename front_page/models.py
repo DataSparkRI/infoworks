@@ -4,6 +4,13 @@ from django.db import models
 from ckeditor.fields import RichTextField
 
 # Create your models here.
+class Config(models.Model):
+    name = models.CharField(max_length=100)
+    value = models.CharField(max_length=200)
+    
+    def __unicode__(self):
+        return "%s : %s"%(self.name, self.value)
+
 class Category(models.Model):
     category = models.CharField(max_length=100)
     

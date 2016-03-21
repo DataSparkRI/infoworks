@@ -1,0 +1,1 @@
+[{"model": "front_page.config", "pk": 1, "fields": {"name": "indicator-col-md-left", "value": "4"}}, {"model": "front_page.config", "pk": 2, "fields": {"name": "indicator-col-md-right", "value": "8"}}]
