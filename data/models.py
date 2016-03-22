@@ -77,6 +77,7 @@ class SchoolDisplayDataYDetailSet(models.Model):
     name = models.CharField(max_length=100, blank=True)
     title = models.CharField(max_length=100, blank=True)
     order = models.IntegerField(default=1)
+    display_type = models.CharField(max_length=20,choices=DISPLAY_TYPE_CHOICES)
     
     @property
     def detail_data(self):
@@ -405,6 +406,7 @@ class DistrictDisplayDataYDetailSet(models.Model):
     name = models.CharField(max_length=100, blank=True)
     title = models.CharField(max_length=100, blank=True)
     order = models.IntegerField(default=1)
+    display_type = models.CharField(max_length=20,choices=DISPLAY_TYPE_CHOICES)
     
     @property
     def detail_data(self):
@@ -748,6 +750,7 @@ class StateDisplayDataYDetailSet(models.Model):
     name = models.CharField(max_length=100, blank=True)
     title = models.CharField(max_length=100, blank=True)
     order = models.IntegerField(default=1)
+    display_type = models.CharField(max_length=20,choices=DISPLAY_TYPE_CHOICES)
     
     @property
     def detail_data(self):

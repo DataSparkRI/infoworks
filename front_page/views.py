@@ -137,15 +137,11 @@ def states(request, slug):
     return render_to_response('front_page/state_report.html', context, context_instance=RequestContext(request))
 
 def state_detail(request, slug, indicator_id, school_year, detail_slug):
-    
     indicator = StateIndicator.objects.get(id=indicator_id)
     school_year = SchoolYear.objects.get(school_year=school_year)
     indicator_set = StateIndicatorDataSet.objects.get(state_indicator=indicator, school_year = school_year)
     detail = StateDisplayDataYDetail.objects.get(slug=detail_slug)
-
-
     display_detail_set = []
-    
     for detail_set in detail.detail_set:
         table = collections.OrderedDict()
         for data in detail_set.detail_data:
@@ -153,20 +149,24 @@ def state_detail(request, slug, indicator_id, school_year, detail_slug):
                 table[data.new_dimension_y_name.name]
             except KeyError, e:
                 table[data.new_dimension_y_name.name] = {"dimension_y":data.new_dimension_y_name.name, "names":[], "data":[]}
-            
             table[data.new_dimension_y_name.name]['names'].append(data.new_dimension_x_name)
             table[data.new_dimension_y_name.name]['data'].append(indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name))
-
         display_detail_set.append({"set_name":detail_set, "data": table})
-
     context = {"detail": detail,
                "school_year": school_year,
                "indicator": indicator,
                "detail_set": display_detail_set,
                }
-               
     return render_to_response('front_page/state_detail.html', context, context_instance=RequestContext(request))
 
+def state_summary(request, slug, indicator_id, school_year, detail_slug):
+    indicator = StateIndicator.objects.get(id=indicator_id)
+    school_year = SchoolYear.objects.get(school_year=school_year)
+    indicator_set = StateIndicatorDataSet.objects.get(state_indicator=indicator, school_year = school_year)
+    detail = StateDisplayDataYDetail.objects.get(slug=detail_slug)
+    context = {}
+    return render_to_response('front_page/state_summary.html', context, context_instance=RequestContext(request))
+    
 def state(request):
     try:
         state = State.objects.filter(default_state=True)[0]

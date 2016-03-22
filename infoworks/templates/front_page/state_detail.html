@@ -6,6 +6,7 @@
             <h1>{{school_year}}</h1>
             {% for i in detail_set %}
                   <h2>{{i.set_name.title}}{% if request.user.is_active and request.user.is_staff %} <a href="/admin/data/statedisplaydataydetailset/{{i.set_name.id}}/change/" target="_blank"><i class="fa fa-pencil"></i></a>{% endif %}</h2>
+                        {% if i.set_name.display_type == 'TABLE' %}
                         <table class="table table-hover">
                           <thead> <tr><th></th>
 
@@ -28,7 +29,7 @@
                                   {% endfor %}
                           </tbody>
                         </table>
-
+						{% endif %}
             {% endfor %}
       </div>
 {% endblock %}
