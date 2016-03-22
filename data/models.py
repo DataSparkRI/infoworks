@@ -22,6 +22,11 @@ DISPLAY_TYPE_CHOICES = (
     ('TABLE','Table'),
 )
 
+STATE_DISPLAY_TYPE_CHOICES = (
+    ('DETAILE','Show detail page'),
+    ('DISTRICT','Show district page'),
+    ('SCHOOL', 'Show school page')
+)
 # Create your models here.
 class IndicatorTitle(models.Model):
     title = models.CharField(max_length=100)
@@ -763,6 +768,7 @@ class StateDisplayDataYDetailSet(models.Model):
 class StateDisplayDataYDetail(models.Model):
     name = models.CharField(max_length=100, blank=True)
     slug = models.SlugField(max_length=100, unique=True,db_index=True, blank=True)
+    state_display_type = models.CharField(max_length=20,choices=STATE_DISPLAY_TYPE_CHOICES, default='SCHOOL')
     
     def save(self, *args, **kwargs):
         if self.slug == None or self.slug == '':
@@ -998,7 +1004,7 @@ class State(models.Model):
     
     @property
     def districts(self):
-        return District.objects.filter(state=self, activate=True).order_by("district_name")
+        return District.objects.filter(us_state=self, activate=True).order_by("district_name")
     
     def __unicode__(self):
         return "%s (State)"% self.state_name
