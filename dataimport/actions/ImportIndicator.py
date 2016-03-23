@@ -122,7 +122,7 @@ def build_y_dimension_title(fields, headers, row, add_on_01,add_on_02,add_on_03,
             result = result + headers[index] + " " + row[index] + " "
     return result
 
-def import_indicator(modeladmin, request, queryset):
+def import_indicator(queryset):
     for q in queryset:
         path = q.file.path
         fields = IndicatorField.objects.filter(indicator_file=q)
