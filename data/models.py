@@ -119,8 +119,8 @@ class SchoolDisplayDataY(models.Model):
 
 class SchoolIndicatorDetailData(models.Model):
     school_indicator_detail_dataset = models.ForeignKey("SchoolIndicatorDetailDataSet", blank=True, null=True)
-    dimension_x = models.CharField(max_length=100, blank=True)
-    dimension_y = models.CharField(max_length=100, blank=True)
+    dimension_x = models.CharField(max_length=200, blank=True)
+    dimension_y = models.CharField(max_length=200, blank=True)
     key_value = models.CharField(max_length=100, db_index=True)
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
     import_job = models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
@@ -139,8 +139,8 @@ class SchoolIndicatorDetailDataSet(models.Model):
 
 class SchoolIndicatorData(models.Model):
     school_indicator_dataset = models.ForeignKey('SchoolIndicatorDataSet', blank=True, null=True)
-    dimension_x = models.CharField(max_length=100, blank=True)
-    dimension_y = models.CharField(max_length=100, blank=True)
+    dimension_x = models.CharField(max_length=200, blank=True)
+    dimension_y = models.CharField(max_length=200, blank=True)
     key_value = models.CharField(max_length=100, db_index=True)
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
     import_job = models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
@@ -448,8 +448,8 @@ class DistrictDisplayDataY(models.Model):
 
 class DistrictIndicatorDetailData(models.Model):
     district_indicator_detail_dataset = models.ForeignKey("DistrictIndicatorDetailDataSet", blank=True, null=True)
-    dimension_x = models.CharField(max_length=100, blank=True)
-    dimension_y = models.CharField(max_length=100, blank=True)
+    dimension_x = models.CharField(max_length=200, blank=True)
+    dimension_y = models.CharField(max_length=200, blank=True)
     key_value = models.CharField(max_length=100, db_index=True)
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
     import_job = models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
@@ -496,8 +496,8 @@ class DistrictIndicatorDetailDataSet(models.Model):
 
 class DistrictIndicatorData(models.Model):
     district_indicator_dataset = models.ForeignKey("DistrictIndicatorDataSet", blank=True, null=True)
-    dimension_x = models.CharField(max_length=100, blank=True)
-    dimension_y = models.CharField(max_length=100, blank=True)
+    dimension_x = models.CharField(max_length=200, blank=True)
+    dimension_y = models.CharField(max_length=200, blank=True)
     key_value = models.CharField(max_length=100, db_index=True)
     data_type = models.CharField(max_length=20,choices=DATA_TYPE_CHOICES)
     import_job = models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
@@ -794,8 +794,8 @@ class StateDisplayDataY(models.Model):
 
 class StateIndicatorDetailData(models.Model):
     state_indicator_detail_dataset = models.ForeignKey("StateIndicatorDetailDataSet", blank=True, null=True)
-    dimension_x = models.CharField(max_length=100, blank=True)
-    dimension_y = models.CharField(max_length=100, blank=True)
+    dimension_x = models.CharField(max_length=200, blank=True)
+    dimension_y = models.CharField(max_length=200, blank=True)
     key_value = models.CharField(max_length=100, db_index=True)
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
     import_job = models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
@@ -814,8 +814,8 @@ class StateIndicatorDetailDataSet(models.Model):
 
 class StateIndicatorData(models.Model):
     state_indicator_dataset = models.ForeignKey("StateIndicatorDataSet", blank=True, null=True)
-    dimension_x = models.CharField(max_length=100, blank=True)
-    dimension_y = models.CharField(max_length=100, blank=True)
+    dimension_x = models.CharField(max_length=200, blank=True)
+    dimension_y = models.CharField(max_length=200, blank=True)
     key_value = models.CharField(max_length=100, db_index=True)
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
     import_job = models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
