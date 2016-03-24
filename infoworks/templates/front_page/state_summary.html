@@ -10,7 +10,7 @@
 	<div class="container body" ng-app = "mainApp" ng-controller = "tableCtrl">
 		<h1>{{detail}}{% if request.user.is_active and request.user.is_staff %} <a href="/admin/data/statedisplaydataydetail/{{detail.id}}/change/" target="_blank"><i class="fa fa-pencil"></i></a>{% endif %}</h1>
 		<div class="col-md-6 text-left">{{state.state_name}} {{y.0.display}}</div>
-		<div class="col-md-6 text-right">{% get_state_indicator_value state school_year y.0.display.name %}</div>
+		<div class="col-md-6 text-right">{% get_state_indicator_value state school_year y.0.display.name as value %}{{value.key_value}}{% if value.data_type == 'PERCENT' %}%{% endif %}</div>
 		
 		<table class="table table-hover" id="table" class="sortable-theme-bootstrap" data-sortable>
 			<thead> 
@@ -21,9 +21,9 @@
 	 		</thead>
 			<tbody>
 					<tr data-ng-repeat="row in data.data">
-					<th scope="row" ng-if="row.value != 'None'">{[{row.district}]}</th>
-					<td ng-if="row.value != 'None'">{[{row.school}]}</td>
-					<td ng-if="row.value != 'None'" style="text-align: right;">{[{row.value}]}</td>
+					<th scope="row" ng-if="row.value != ''">{[{row.district}]}</th>
+					<td ng-if="row.value != ''">{[{row.school}]}</td>
+					<td ng-if="row.value != ''" style="text-align: right;">{[{row.value}]}</td>
 					</tr>
 			</tbody>
 		</table>
@@ -32,7 +32,7 @@
 	<div class="container body" ng-app = "mainApp" ng-controller = "tableCtrl">
 		<h1>{{detail}}{% if request.user.is_active and request.user.is_staff %} <a href="/admin/data/statedisplaydataydetail/{{detail.id}}/change/" target="_blank"><i class="fa fa-pencil"></i></a>{% endif %}</h1>
 		<div class="col-md-6 text-left">{{state.state_name}} {{y.0.display}}</div>
-		<div class="col-md-6 text-right">{% get_state_indicator_value state school_year y.0.display.name %}</div>
+		<div class="col-md-6 text-right">{% get_state_indicator_value state school_year y.0.display.name as value %}{{value.key_value}}{% if value.data_type == 'PERCENT' %}%{% endif %}</div>
 		
 		<table class="table table-hover" id="table" class="sortable-theme-bootstrap" data-sortable>
 			<thead> 
@@ -42,8 +42,8 @@
 	 		</thead>
 			<tbody>
 					<tr data-ng-repeat="row in data.data">
-					<th scope="row" ng-if="row.value != 'None'">{[{row.district}]}</th>
-					<td ng-if="row.value != 'None'" style="text-align: right;">{[{row.value}]}</td>
+					<th scope="row" ng-if="row.value != ''">{[{row.district}]}</th>
+					<td ng-if="row.value != ''" style="text-align: right;">{[{row.value}]}</td>
 					</tr>
 			</tbody>
 		</table>
@@ -67,7 +67,8 @@
             $scope.data = {
                data:[
 				{% for district in state.districts %}{% for school in district.schools%}
-                  {district:'{{district.district_name}}',school:'{{school.school_name}}',value:'{% get_school_indicator_value school school_year y.0.display.name %}'},
+                  {district:'{{district.district_name}}',school:'{{school.school_name}}',
+                   value: {% get_school_indicator_value school school_year y.0.display.name as value %}{% if value.data_type == 'NUMERIC' %}{{value.key_value}}{% elif value.data_type == 'PERCENT' %}'{{value.key_value}}%'{% else %}'{{value.key_value}}'{% endif %} },
 				{% endfor %}{% endfor %}
                ]
             };
@@ -82,7 +83,8 @@
             $scope.data = {
                data:[
 				{% for district in state.districts %}
-                  {district:'{{district.district_name}}',value:'{% get_district_indicator_value district school_year y.0.display.name %}'},
+                  {district:'{{district.district_name}}',
+                   value: {% get_district_indicator_value district school_year y.0.display.name as value %}{% if value.data_type == 'NUMERIC' %}{{value.key_value}}{% elif value.data_type == 'PERCENT' %}'{{value.key_value}}%'{% else %}'{{value.key_value}}'{% endif %} },
 				{% endfor %}
                ]
             };

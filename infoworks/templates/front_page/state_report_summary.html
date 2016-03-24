@@ -1,0 +1,142 @@
+{% load staticfiles %}
+
+<div class="col-md-12 collapse" id="collapseExample">
+      <h4><b>Total Population of Students and Schools in Rhode Island</b></h4>
+      <p class="description">
+         Data summarizing the number of students and schools are
+         presented by education level — elementary, middle, or high
+         school. A small number of public schools have more than one level,
+         such as kindergarten through eighth grade, and are shown as
+         "elementary/middle schools". The schools data are also summarized by
+         "type of school" to show the number of traditional public schools,
+         public charters (either independently operated or by a district),
+         schools operated by the state and collaborative schools that involve
+         multiple districts.
+      </p>
+
+   <div class="col-md-12">
+      <div class="col-md-6">
+         <h5>
+            <img src="{% static "img/schools.png" %}">
+            Public Schools
+         </h5>
+         <table class="table table-bordered">
+            <tbody>
+               <tr>
+                  <td>
+                     Breakdown by level
+                  </td>
+               </tr>
+               <tr>
+                  <td>Schools, Elementary</td>
+                  <td>185</td>
+               </tr>
+               <tr>
+                  <td>Schools, Middle</td>
+                  <td>52</td>
+               </tr>
+               <tr>
+                  <td>Schools, High</td>
+                  <td>57</td>
+               </tr>
+               <tr>
+                  <td>Schools, Elementary/Middle</td>
+                  <td>5</td>
+               </tr>
+               <tr>
+                  <td>Schools, Middle/High</td>
+                  <td>1</td>
+               </tr>
+               <tr>
+                  <td>Schools, Elementary/Middle/High</td>
+                  <td>6</td>
+               </tr>
+               <tr>
+                  <td>Schools, Total</td>
+                  <td>306</td>
+               </tr>
+            </tbody>
+         </table>
+         <table class="table table-bordered">
+            <tbody>
+               <tr>
+                  <td>
+                     Breakdown by school type
+                  </td>
+               </tr>
+               <tr>
+                  <td>Public Schools, District Operated</td>
+                  <td>273</td>
+               </tr>
+               <tr>
+                  <td>Public Schools, State Operated</td>
+                  <td>3</td>
+               </tr>
+               <tr>
+                  <td>Public Charter Schools, District Operated</td>
+                  <td>3</td>
+               </tr>
+               <tr>
+                  <td>Public Charter Schools, Independently Operated</td>
+                  <td>26</td>
+               </tr>
+               <tr>
+                  <td>Collaboratives</td>
+                  <td>1</td>
+               </tr>
+               <tr>
+                  <td>Schools, Total</td>
+                  <td>306</td>
+               </tr>
+            </tbody>
+         </table>
+      </div>
+      <div class="col-md-6">
+         <h5>
+            <img src="{% static "img/students.png" %}">
+            Students
+         </h5>
+         <table class="table table-bordered">
+            <tbody>
+               <tr>
+                  <td>Students, Public Elementary</td>
+                  <td>66,334</td>
+               </tr>
+               <tr>
+                  <td>Students, Public Middle</td>
+                  <td>32,809</td>
+               </tr>
+               <tr>
+                  <td>Students, Public High</td>
+                  <td>42,871</td>
+               </tr>
+               <tr>
+                  <td>Students, Public Total</td>
+                  <td>142,014</td>
+               </tr>
+            </tbody>
+         </table>
+         <table class="table table-bordered">
+            <tbody>
+               <tr>
+                  <td>
+                     5.15% of Public School students attend Charters
+                  </td>
+               </tr>
+               <tr>
+                  <td>Students, Public Charter District</td>
+                  <td>1,046</td>
+               </tr>
+               <tr>
+                  <td>Students, Public Charter Independent</td>
+                  <td>6,264</td>
+               </tr>
+               <tr>
+                  <td>Students, Public Charter Total</td>
+                  <td>7,310</td>
+               </tr>
+            </tbody>
+         </table>
+      </div>
+   </div>
+</div>

@@ -423,6 +423,9 @@ class DistrictDisplayDataYDetailSet(models.Model):
 class DistrictDisplayDataYDetail(models.Model):
     name = models.CharField(max_length=100, blank=True)
     slug = models.SlugField(max_length=100, unique=True,db_index=True, blank=True)
+    district_display_type = models.CharField(max_length=20, default='DETAILE', choices=(('DETAILE','Show detail page'),
+                                                                                        ('SCHOOL', 'Show school page')
+                                                                                        ))
     
     def save(self, *args, **kwargs):
         if self.slug == None or self.slug == '':
