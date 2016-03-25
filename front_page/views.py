@@ -43,8 +43,14 @@ def school_detail(request, slug, indicator_id, school_year, detail_slug):
     indicator = SchoolIndicator.objects.get(id=indicator_id)
     school_year = SchoolYear.objects.get(school_year=school_year)
     school_indicator_set = SchoolIndicatorDataSet.objects.get(school_indicator=indicator, school_year = school_year)
-    district_indicator_set = DistrictIndicatorDataSet.objects.get(district_indicator__district_indicator_set__district=indicator.school_indicator_set.school.district, school_year = school_year)
-    state_indicator_set = StateIndicatorDataSet.objects.get(state_indicator__state_indicator_set__state=indicator.school_indicator_set.school.district.us_state, school_year = school_year)    
+    try:
+        district_indicator_set = DistrictIndicatorDataSet.objects.get(district_indicator__district_indicator_set__district=indicator.school_indicator_set.school.district, school_year = school_year)
+    except:
+        district_indicator_set = None
+    try:
+        state_indicator_set = StateIndicatorDataSet.objects.get(state_indicator__state_indicator_set__state=indicator.school_indicator_set.school.district.us_state, school_year = school_year)    
+    except:
+        state_indicator_set = None
     detail = SchoolDisplayDataYDetail.objects.get(slug=detail_slug)
 
 
@@ -61,9 +67,15 @@ def school_detail(request, slug, indicator_id, school_year, detail_slug):
             table[data.new_dimension_y_name.name]['names'].append(data.new_dimension_x_name)
             
             if data.dimension_x_name.name == "This District":
-                table[data.new_dimension_y_name.name]['data'].append(district_indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name))
+                if district_indicator_set != None:
+                    table[data.new_dimension_y_name.name]['data'].append(district_indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name))
+                else:
+                    table[data.new_dimension_y_name.name]['data'].append(None)
             elif data.dimension_x_name.name == "Statewide":
-                table[data.new_dimension_y_name.name]['data'].append(state_indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name))
+                if state_indicator_set != None:
+                    table[data.new_dimension_y_name.name]['data'].append(state_indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name))
+                else:
+                    table[data.new_dimension_y_name.name]['data'].append(None)
             else:
                 table[data.new_dimension_y_name.name]['data'].append(school_indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name))
 
@@ -76,7 +88,6 @@ def school_detail(request, slug, indicator_id, school_year, detail_slug):
                }
                
     return render_to_response('front_page/school_detail.html', context, context_instance=RequestContext(request))
-
 
 def district(request, slug):
     try:
@@ -101,7 +112,6 @@ def district_detail(request, slug, indicator_id, school_year, detail_slug):
     district_indicator_set = DistrictIndicatorDataSet.objects.get(district_indicator=indicator, school_year = school_year)
     state_indicator_set = StateIndicatorDataSet.objects.get(state_indicator__state_indicator_set__state=indicator.district_indicator_set.district.us_state, school_year = school_year)
     detail = DistrictDisplayDataYDetail.objects.get(slug=detail_slug)
-
 
     if detail.district_display_type == 'SCHOOL':
         district = indicator.district_indicator_set.district
@@ -187,7 +197,6 @@ def state_detail(request, slug, indicator_id, school_year, detail_slug):
                    "detail_set": display_detail_set,
                    }
         return render_to_response('front_page/state_detail.html', context, context_instance=RequestContext(request))
-
 
 def state(request):
     try:

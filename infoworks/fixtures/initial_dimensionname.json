@@ -1,0 +1,93 @@
+[
+   {  
+      "model":"dataimport.dimensionname",
+      "pk":1,
+      "fields":{  
+         "name":"Enrolled"
+      }
+   },
+   {  
+      "model":"dataimport.dimensionname",
+      "pk":2,
+      "fields":{  
+         "name":"Not Approved"
+      }
+   },
+   {  
+      "model":"dataimport.dimensionname",
+      "pk":3,
+      "fields":{  
+         "name":"Not Other"
+      }
+   },
+   {  
+      "model":"dataimport.dimensionname",
+      "pk":4,
+      "fields":{  
+         "name":"Tested"
+      }
+   },
+   {  
+      "model":"dataimport.dimensionname",
+      "pk":5,
+      "fields":{  
+         "name":"% Proficient With Distinction"
+      }
+   },
+   {  
+      "model":"dataimport.dimensionname",
+      "pk":6,
+      "fields":{  
+         "name":"# Proficient With Distinction"
+      }
+   },
+   {  
+      "model":"dataimport.dimensionname",
+      "pk":7,
+      "fields":{  
+         "name":"# Proficient"
+      }
+   },
+   {  
+      "model":"dataimport.dimensionname",
+      "pk":8,
+      "fields":{  
+         "name":"% Proficient"
+      }
+   },
+   {  
+      "model":"dataimport.dimensionname",
+      "pk":9,
+      "fields":{  
+         "name":"# Partially Proficient"
+      }
+   },
+   {  
+      "model":"dataimport.dimensionname",
+      "pk":10,
+      "fields":{  
+         "name":"% Partially Proficient"
+      }
+   },
+   {  
+      "model":"dataimport.dimensionname",
+      "pk":11,
+      "fields":{  
+         "name":"# Substantially Below Proficient"
+      }
+   },
+   {  
+      "model":"dataimport.dimensionname",
+      "pk":12,
+      "fields":{  
+         "name":"% Substantially Below Proficient"
+      }
+   },
+   {  
+      "model":"dataimport.dimensionname",
+      "pk":13,
+      "fields":{  
+         "name":"Scaled Score"
+      }
+   }
+]
