@@ -6,7 +6,7 @@ from data.models import School, District, State, \
 SchoolIndicator, DistrictIndicator, StateIndicator, \
 DistrictDisplayDataYDetailSet, DistrictDisplayDataYDetail, DistrictIndicatorSet, DistrictIndicatorDataSet,\
 SchoolDisplayDataYDetailSet, SchoolDisplayDataYDetail, SchoolIndicatorSet, SchoolIndicatorDataSet,\
-StateIndicatorDataSet, StateDisplayDataYDetail, \
+StateIndicatorDataSet, StateDisplayDataYDetail, StateDisplayDataY, \
 SchoolYear, DistrictIndicatorDetailDataSet, SchoolIndicatorDetailDataSet, StateIndicatorDetailDataSet
 from models import Dictionary, Category
 import collections
@@ -14,6 +14,9 @@ from django.core import exceptions
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
+def home(request):
+    context = {}
+    return render_to_response('front_page/home.html', context, context_instance=RequestContext(request))
 
 def search(request):
     context = {}
@@ -40,8 +43,14 @@ def school_detail(request, slug, indicator_id, school_year, detail_slug):
     indicator = SchoolIndicator.objects.get(id=indicator_id)
     school_year = SchoolYear.objects.get(school_year=school_year)
     school_indicator_set = SchoolIndicatorDataSet.objects.get(school_indicator=indicator, school_year = school_year)
-    district_indicator_set = DistrictIndicatorDataSet.objects.get(district_indicator__district_indicator_set__district=indicator.school_indicator_set.school.district, school_year = school_year)
-    state_indicator_set = StateIndicatorDataSet.objects.get(state_indicator__state_indicator_set__state=indicator.school_indicator_set.school.district.us_state, school_year = school_year)    
+    try:
+        district_indicator_set = DistrictIndicatorDataSet.objects.get(district_indicator__district_indicator_set__district=indicator.school_indicator_set.school.district, school_year = school_year)
+    except:
+        district_indicator_set = None
+    try:
+        state_indicator_set = StateIndicatorDataSet.objects.get(state_indicator__state_indicator_set__state=indicator.school_indicator_set.school.district.us_state, school_year = school_year)    
+    except:
+        state_indicator_set = None
     detail = SchoolDisplayDataYDetail.objects.get(slug=detail_slug)
 
 
@@ -58,9 +67,15 @@ def school_detail(request, slug, indicator_id, school_year, detail_slug):
             table[data.new_dimension_y_name.name]['names'].append(data.new_dimension_x_name)
             
             if data.dimension_x_name.name == "This District":
-                table[data.new_dimension_y_name.name]['data'].append(district_indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name))
+                if district_indicator_set != None:
+                    table[data.new_dimension_y_name.name]['data'].append(district_indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name))
+                else:
+                    table[data.new_dimension_y_name.name]['data'].append(None)
             elif data.dimension_x_name.name == "Statewide":
-                table[data.new_dimension_y_name.name]['data'].append(state_indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name))
+                if state_indicator_set != None:
+                    table[data.new_dimension_y_name.name]['data'].append(state_indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name))
+                else:
+                    table[data.new_dimension_y_name.name]['data'].append(None)
             else:
                 table[data.new_dimension_y_name.name]['data'].append(school_indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name))
 
@@ -73,7 +88,6 @@ def school_detail(request, slug, indicator_id, school_year, detail_slug):
                }
                
     return render_to_response('front_page/school_detail.html', context, context_instance=RequestContext(request))
-
 
 def district(request, slug):
     try:
@@ -92,40 +106,52 @@ def district(request, slug):
     return render_to_response('front_page/district_report.html', context, context_instance=RequestContext(request))
 
 def district_detail(request, slug, indicator_id, school_year, detail_slug):
-    
+    from data.models import DistrictDisplayDataY
     indicator = DistrictIndicator.objects.get(id=indicator_id)
     school_year = SchoolYear.objects.get(school_year=school_year)
     district_indicator_set = DistrictIndicatorDataSet.objects.get(district_indicator=indicator, school_year = school_year)
     state_indicator_set = StateIndicatorDataSet.objects.get(state_indicator__state_indicator_set__state=indicator.district_indicator_set.district.us_state, school_year = school_year)
     detail = DistrictDisplayDataYDetail.objects.get(slug=detail_slug)
 
+    if detail.district_display_type == 'SCHOOL':
+        district = indicator.district_indicator_set.district
+        district_display_data_y = DistrictDisplayDataY.objects.filter(district_indicator=indicator,detail=detail)
+        context = {"type":detail.district_display_type,
+                   "y":district_display_data_y,
+                   "indicator_set":district_indicator_set,
+                   "district":district,
+                   "detail": detail,
+                   "school_year": school_year,
+                   "indicator": indicator}
+        return render_to_response('front_page/district_summary.html', context, context_instance=RequestContext(request))
+    else:
 
-    display_detail_set = []
+        display_detail_set = []
+        
+        for detail_set in detail.detail_set:
+            table = collections.OrderedDict()
+            for data in detail_set.detail_data:
+                try:
+                    table[data.new_dimension_y_name.name]
+                except KeyError, e:
+                    table[data.new_dimension_y_name.name] = {"dimension_y":data.new_dimension_y_name.name, "names":[], "data":[]}
+                
+                table[data.new_dimension_y_name.name]['names'].append(data.new_dimension_x_name)
+                
+                if data.dimension_x_name.name == "Statewide":
+                    table[data.new_dimension_y_name.name]['data'].append(state_indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name))
+                else:
+                    table[data.new_dimension_y_name.name]['data'].append(district_indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name))
     
-    for detail_set in detail.detail_set:
-        table = collections.OrderedDict()
-        for data in detail_set.detail_data:
-            try:
-                table[data.new_dimension_y_name.name]
-            except KeyError, e:
-                table[data.new_dimension_y_name.name] = {"dimension_y":data.new_dimension_y_name.name, "names":[], "data":[]}
-            
-            table[data.new_dimension_y_name.name]['names'].append(data.new_dimension_x_name)
-            
-            if data.dimension_x_name.name == "Statewide":
-                table[data.new_dimension_y_name.name]['data'].append(state_indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name))
-            else:
-                table[data.new_dimension_y_name.name]['data'].append(district_indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name))
-
-        display_detail_set.append({"set_name":detail_set, "data": table})
-
-    context = {"detail": detail,
-               "school_year": school_year,
-               "indicator": indicator,
-               "detail_set": display_detail_set,
-               }
-               
-    return render_to_response('front_page/district_detail.html', context, context_instance=RequestContext(request))
+            display_detail_set.append({"set_name":detail_set, "data": table})
+    
+        context = {"detail": detail,
+                   "school_year": school_year,
+                   "indicator": indicator,
+                   "detail_set": display_detail_set,
+                   }
+                   
+        return render_to_response('front_page/district_detail.html', context, context_instance=RequestContext(request))
 
 def states(request, slug):
     try:
@@ -141,32 +167,37 @@ def state_detail(request, slug, indicator_id, school_year, detail_slug):
     school_year = SchoolYear.objects.get(school_year=school_year)
     indicator_set = StateIndicatorDataSet.objects.get(state_indicator=indicator, school_year = school_year)
     detail = StateDisplayDataYDetail.objects.get(slug=detail_slug)
-    display_detail_set = []
-    for detail_set in detail.detail_set:
-        table = collections.OrderedDict()
-        for data in detail_set.detail_data:
-            try:
-                table[data.new_dimension_y_name.name]
-            except KeyError, e:
-                table[data.new_dimension_y_name.name] = {"dimension_y":data.new_dimension_y_name.name, "names":[], "data":[]}
-            table[data.new_dimension_y_name.name]['names'].append(data.new_dimension_x_name)
-            table[data.new_dimension_y_name.name]['data'].append(indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name))
-        display_detail_set.append({"set_name":detail_set, "data": table})
-    context = {"detail": detail,
-               "school_year": school_year,
-               "indicator": indicator,
-               "detail_set": display_detail_set,
-               }
-    return render_to_response('front_page/state_detail.html', context, context_instance=RequestContext(request))
-
-def state_summary(request, slug, indicator_id, school_year, detail_slug):
-    indicator = StateIndicator.objects.get(id=indicator_id)
-    school_year = SchoolYear.objects.get(school_year=school_year)
-    indicator_set = StateIndicatorDataSet.objects.get(state_indicator=indicator, school_year = school_year)
-    detail = StateDisplayDataYDetail.objects.get(slug=detail_slug)
-    context = {}
-    return render_to_response('front_page/state_summary.html', context, context_instance=RequestContext(request))
     
+    if detail.state_display_type == 'SCHOOL' or detail.state_display_type == 'DISTRICT':
+        state = indicator.state_indicator_set.state
+        state_display_data_y = StateDisplayDataY.objects.filter(state_indicator=indicator,detail=detail)
+        context = {"type":detail.state_display_type,
+                   "y":state_display_data_y,
+                   "indicator_set":indicator_set,
+                   "state":state,
+                   "detail": detail,
+                   "school_year": school_year,
+                   "indicator": indicator}
+        return render_to_response('front_page/state_summary.html', context, context_instance=RequestContext(request))
+    else:
+        display_detail_set = []
+        for detail_set in detail.detail_set:
+            table = collections.OrderedDict()
+            for data in detail_set.detail_data:
+                try:
+                    table[data.new_dimension_y_name.name]
+                except KeyError, e:
+                    table[data.new_dimension_y_name.name] = {"dimension_y":data.new_dimension_y_name.name, "names":[], "data":[]}
+                table[data.new_dimension_y_name.name]['names'].append(data.new_dimension_x_name)
+                table[data.new_dimension_y_name.name]['data'].append(indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name))
+            display_detail_set.append({"set_name":detail_set, "data": table})
+        context = {"detail": detail,
+                   "school_year": school_year,
+                   "indicator": indicator,
+                   "detail_set": display_detail_set,
+                   }
+        return render_to_response('front_page/state_detail.html', context, context_instance=RequestContext(request))
+
 def state(request):
     try:
         state = State.objects.filter(default_state=True)[0]

@@ -1,0 +1,1 @@
+[{"model": "dataimport.lookuptable", "pk": 1, "fields": {"name": "2016 Grade Lookup Table"}}, {"model": "dataimport.lookuptable", "pk": 2, "fields": {"name": "2016 Subject Lookup Table"}}, {"model": "dataimport.lookuptable", "pk": 3, "fields": {"name": "2016 RepOrder Lookup Table"}}]

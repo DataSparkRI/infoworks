@@ -188,7 +188,7 @@ class SchoolFile(models.Model):
         return "%s"% self.school_year
 
 class DimensionName(models.Model):
-    name = models.CharField(max_length=50, blank=True)
+    name = models.CharField(max_length=200, blank=True)
     
     def __unicode__(self):
         return self.name

@@ -1,7 +1,6 @@
 from django.contrib import admin
 from dataimport.models import DimensionFor,StateFile, StateField, DistrictFile, DistrictField, SchoolFile, SchoolField, IndicatorFile, IndicatorField, DimensionName
 from data.models import District, School, State
-from dataimport.actions.ImportIndicator import import_indicator
 from dataimport.models import LookUpTable, LookUpTableElement, SystemCode
 import csv
 from django.contrib import messages
@@ -353,10 +352,20 @@ class IndicatorFieldInline(admin.TabularInline):
     model = IndicatorField
     raw_id_fields = ("dimension_name",)
 
+###################
+def ImportIndicator(modeladmin, request, queryset):
+    from dataimport.tasks import ImportIndicatorFile
+    ImportIndicatorFile.delay(queryset)
+    try:
+        messages.add_message(request, messages.INFO, "add to celery tasks.")
+    except:
+        pass
+
 class IndicatorFileAdmin(admin.ModelAdmin):
     inlines = [IndicatorFieldInline]
-    actions = [import_indicator]
+    actions = [ImportIndicator]
 admin.site.register(IndicatorFile, IndicatorFileAdmin)
+###################
 
 class DimensionNameAdmin(admin.ModelAdmin):
     search_fields = ['name']
