@@ -38,7 +38,8 @@
             <h4></h4>
             {% if district.number_of_student %}<p class="btn btn-red" style="cursor: text;">{{district.number_of_student}} Students</p>{% endif %}
 			      {% if district.number_of_teacher %}<p class="btn btn-red" style="cursor: text;">{{district.number_of_teacher}} Teachers</p>{% endif %}
-      
+            <h5></h5>
+            <a class="btn btn-primary" role="button" href="/district/{{district.slug}}/history">Historical Data</a>
           </div>
           <div class="col-md-5 hidden-xs">
             <img src="{% static "img/district.png" %}" class="rocket animated bounce">

@@ -40,6 +40,8 @@
 			      {% if state.number_of_teacher %}<p class="btn btn-red" style="cursor: text;">{{state.number_of_teacher}} Teachers</p>{% endif %}
 			      {% if state.number_of_school %}<p class="btn btn-red" style="cursor: text;">{{state.number_of_school}} Schools</p>{% endif %}
             <h5></h5>
+            <a class="btn btn-primary" role="button" href="/state/{{state.slug}}/history">Historical Data</a>
+            <h5></h5>
             <a class="btn btn-primary" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
   View details on Student and School counts in Rhode Island</a>
           </div>

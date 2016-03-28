@@ -49,11 +49,11 @@
             <p class="btn btn-red" style="cursor: text;" {% if school.grade_11 == False %}disabled="disabled"{% endif %}>11</p>
             <p class="btn btn-red" style="cursor: text;" {% if school.grade_12 == False %}disabled="disabled"{% endif %}>12</p>
 
-
             <h4></h4>
             {% if school.number_of_student %}<p class="btn btn-red" style="cursor: text;">{{school.number_of_student}} Students</p>{% endif %}
 			      {% if school.number_of_teacher %}<p class="btn btn-red" style="cursor: text;">{{school.number_of_teacher}} Teachers</p>{% endif %}
-      
+            <h5></h5>
+            <a class="btn btn-primary" role="button" href="/school/{{school.slug}}/history">Historical Data</a>
 
           </div>
           <div class="col-md-5 hidden-xs">

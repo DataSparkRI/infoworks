@@ -1,0 +1,34 @@
+{% extends "front_page/base.html" %}{% load staticfiles %}
+
+{% block body %}
+      <div class="container body">
+      <h1>{{state.state_name}}</h1>
+      <h2>{{indicator.title.title}} {{indicator_dataset.school_year.school_year}}</h2>
+                        <table class="table table-hover">
+                          <thead> <tr><th></th>
+                                      {% for k in indicator_dataset.displaydata_x_display%}
+                                      <th>{{k}}</th>
+                                      {% endfor %}
+                                  </tr>
+                          </thead>
+                          <tbody> 
+                                  {% if indicator.dataset %}
+                                  {% for indicatordata in indicator_dataset.displaydata %}
+                                  <tr><th scope="row">{% if indicatordata.dimension_y.display_name %}{{indicatordata.dimension_y.display_name}}{% else %}{{indicatordata.dimension_y.display}}{% endif %}</th>
+                                      {% for row in indicatordata.data %}
+                                      {% if forloop.first %}<td>{{row.state_indicator_dataset.school_year}}</td>{% endif %}
+                                      {% if row %}<td>{{row.key_value}}{% if row.data_type == 'PERCENT' %}%{% endif %}</td>
+                                      {% else %}<td>No Data</td>{% endif %}
+                                      {% if indicatordata.dimension_y.detail and row.state_indicator_dataset.school_year %}
+                                      <td><a href="{% url 'state_detail' state.slug indicator.id row.state_indicator_dataset.school_year indicatordata.dimension_y.detail.slug %}">{{indicatordata.dimension_y.detail}}</a></td>
+                                      {% endif %}
+                                      {% endfor %}
+                                  </tr>
+                                  {% endfor %}
+                                  {% endif %}
+
+                          </tbody>
+                        </table>            
+      </div>
+
+{% endblock %}

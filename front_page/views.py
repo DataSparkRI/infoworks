@@ -38,6 +38,30 @@ def school(request, slug):
     context = {"school": school}
     return render_to_response('front_page/school_report.html', context, context_instance=RequestContext(request))
     
+def schools_history(request, slug):
+    try:
+        school = School.objects.get(slug=slug)
+    except exceptions.ObjectDoesNotExist:
+        context = {"message": "Oops! The Page you requested was not found!"}
+        return render_to_response('404.html', context, context_instance=RequestContext(request))
+    context = {"school": school}
+    return render_to_response('front_page/school_history.html', context, context_instance=RequestContext(request))
+
+def schools_history_detail(request, slug, school_year):
+    
+    try:
+        school = School.objects.get(slug=slug)
+        category = request.GET.get("category")
+        indicator = SchoolIndicator.objects.get(school_indicator_set__school = school, title__title=category)
+        indicator_dataset = SchoolIndicatorDataSet.objects.get(school_indicator=indicator, school_year__school_year=school_year)
+    except exceptions.ObjectDoesNotExist:
+        context = {"message": "Oops! The Page you requested was not found!"}
+        return render_to_response('404.html', context, context_instance=RequestContext(request))
+    context = {"school": school,
+               "indicator":indicator,
+               "indicator_dataset":indicator_dataset}
+    return render_to_response('front_page/school_history_detail.html', context, context_instance=RequestContext(request))
+    
 def school_detail(request, slug, indicator_id, school_year, detail_slug):
     
     indicator = SchoolIndicator.objects.get(id=indicator_id)
@@ -105,6 +129,30 @@ def district(request, slug):
     context = {"district": district}
     return render_to_response('front_page/district_report.html', context, context_instance=RequestContext(request))
 
+def districts_history(request, slug):
+    try:
+        district = District.objects.get(slug=slug)
+    except exceptions.ObjectDoesNotExist:
+        context = {"message": "Oops! The Page you requested was not found!"}
+        return render_to_response('404.html', context, context_instance=RequestContext(request))
+    context = {"district": district}
+    return render_to_response('front_page/district_history.html', context, context_instance=RequestContext(request))
+
+def districts_history_detail(request, slug, school_year):
+    
+    try:
+        district = District.objects.get(slug=slug)
+        category = request.GET.get("category")
+        indicator = DistrictIndicator.objects.get(district_indicator_set__district = district, title__title=category)
+        indicator_dataset = DistrictIndicatorDataSet.objects.get(district_indicator=indicator, school_year__school_year=school_year)
+    except exceptions.ObjectDoesNotExist:
+        context = {"message": "Oops! The Page you requested was not found!"}
+        return render_to_response('404.html', context, context_instance=RequestContext(request))
+    context = {"district": district,
+               "indicator":indicator,
+               "indicator_dataset":indicator_dataset}
+    return render_to_response('front_page/district_history_detail.html', context, context_instance=RequestContext(request))
+
 def district_detail(request, slug, indicator_id, school_year, detail_slug):
     from data.models import DistrictDisplayDataY
     indicator = DistrictIndicator.objects.get(id=indicator_id)
@@ -157,10 +205,35 @@ def states(request, slug):
     try:
         state = State.objects.get(slug=slug)
     except exceptions.ObjectDoesNotExist:
-        context = {"message": "Please contacts administrator to select default state."}
+        context = {"message": "Oops! The Page you requested was not found!"}
         return render_to_response('404.html', context, context_instance=RequestContext(request))
     context = {"state": state}
     return render_to_response('front_page/state_report.html', context, context_instance=RequestContext(request))
+
+def states_history(request, slug):
+    try:
+        state = State.objects.get(slug=slug)
+    except exceptions.ObjectDoesNotExist:
+        context = {"message": "Oops! The Page you requested was not found!"}
+        return render_to_response('404.html', context, context_instance=RequestContext(request))
+    context = {"state": state}
+    return render_to_response('front_page/state_history.html', context, context_instance=RequestContext(request))
+
+def states_history_detail(request, slug, school_year):
+    
+    try:
+        state = State.objects.get(slug=slug)
+        category = request.GET.get("category")
+        indicator = StateIndicator.objects.get(state_indicator_set__state = state, title__title=category)
+        indicator_dataset = StateIndicatorDataSet.objects.get(state_indicator=indicator, school_year__school_year=school_year)
+    except exceptions.ObjectDoesNotExist:
+        context = {"message": "Oops! The Page you requested was not found!"}
+        return render_to_response('404.html', context, context_instance=RequestContext(request))
+    context = {"state": state,
+               "indicator":indicator,
+               "indicator_dataset":indicator_dataset}
+    return render_to_response('front_page/state_history_detail.html', context, context_instance=RequestContext(request))
+
 
 def state_detail(request, slug, indicator_id, school_year, detail_slug):
     indicator = StateIndicator.objects.get(id=indicator_id)

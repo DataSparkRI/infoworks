@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from data.models import DistrictIndicator, DistrictIndicatorData, SchoolIndicator, SchoolIndicatorData, SchoolYear, IndicatorTitle
+from data.models import State, District, School
+from data.models import SchoolYear
 # Create your views here.
 import json
 from django.core import serializers
@@ -117,4 +119,64 @@ def api(request):
                 return JsonResponse()
         elif request.method == 'POST':
                 return JsonResponse({"messages":"indicator does not exist"})
+
+def data(request):
+    state = None
+    district = None
+    school = None
+    dimension_y = [school.school_year for school in SchoolYear.objects.all().order_by("school_year")]
+    table = {"dimension_x": ["Topic","Category"] + dimension_y, "data":[]}
+    
+    def getData(obj):
+        result = []
+        for indicator_set in obj.indicatorset:
+            data = []
+            for indicator in indicator_set.indicators:
+                data = [indicator_set.title]
+                data.append(indicator.title.title)
+                for school_year in dimension_y:
+                    try:
+                        indicator.dataset.get(school_year__school_year=school_year)
+                        data.append(True)
+                    except:
+                        data.append(None)
+                result.append(data)
+        return result
+    
+    def returnDefaultState():
+        state = State.objects.get(default_state=True)
+        table["name"] = state.state_name
+        table["description"] = state.description
+        return getData(state)
+    
+    if request.method == 'GET':
+        type = request.GET.get("type")
+        get = request.GET.get("get")
+        if type == "state":
+            try:
+                state = State.objects.get(slug=get)
+                table["name"] = state.state_name
+                table["description"] = state.description
+                table["data"] = getData(state)
+            except:
+                table["data"] = returnDefaultState()
+        elif type == "district":
+            try:
+                district = District.objects.get(slug=get)
+                table["name"] = district.district_name
+                table["description"] = district.description
+                table["data"] = getData(district)
+            except:
+                table["data"] = returnDefaultState()
+        elif type == "school":
+            try:
+                school = School.objects.get(slug=get)
+                table["name"] = school.school_name
+                table["description"] = school.description
+                table["data"] = getData(school)
+            except:
+                table["data"] = returnDefaultState()
+        else:
+            table["data"] = returnDefaultState()
+    return JsonResponse(table, safe=False)
 

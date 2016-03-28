@@ -1,0 +1,57 @@
+{% extends "front_page/base.html" %}{% load staticfiles %}
+
+{% block body %}
+      <div class="container body" data-ng-app="myApp">
+      	<h1>{{state.state_name}}</h1>
+      	
+		  <div data-ng-controller="tableCtrl">		      
+		      <h4>{{state.description | safe}}</h4>
+		    
+		    <table class="table table-hover table-bordered">
+		      <tr>
+		          <td data-ng-repeat="row in data.dimension_x">{[{row}]}</td>
+		      </tr>
+		        
+		      <tr data-ng-repeat="row in data.data">
+		        <td data-ng-repeat="col in row track by $index">
+		        	<div ng-if="col == true" class="text-center"><a ng-href="{{request.path}}/{[{data.dimension_x[$index]}]}?category={[{row[1]}]}"><i class="fa fa-check-circle"></i></a></div>
+		        	<div ng-if="col != true">{[{col}]}</div>
+		        </td>
+		      </tr>
+		    </table>
+		  </div>      
+      </div>
+{% endblock %}
+
+{% block javascript %}
+{{block.super}}
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+    <script type="text/javascript">
+    var myApp = angular.module('myApp',[]).config(function($interpolateProvider) {
+        $interpolateProvider.startSymbol('{[{');
+        $interpolateProvider.endSymbol('}]}');
+    });
+      
+    myApp.controller('tableCtrl', ['$scope', '$http', function($scope, $http) {
+        $scope.empty = function(value) {
+          if (angular.equals({}, value)) {
+            return true;
+          } else {
+            return false;
+          }
+        };
+        
+        $scope.$watch('search', function() {
+            console.log($scope.search);
+            $http({method: 'GET', url: '/api/search/data?type=state&get={{state.slug}}'}).
+            success(function(data, status, headers, config) {
+                $scope.data = data;
+                console.log(data);
+            }).
+            error(function(data, status, headers, config) {});
+        });
+    }]);
+    </script>
+    
+{% endblock javascript %}
+
