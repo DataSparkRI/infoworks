@@ -1,4 +1,4 @@
-{% extends "front_page/base.html" %}{% load staticfiles %}{% load config %}
+{% extends "front_page/base.html" %}{% load staticfiles %}{% load config %}{% load humanize %}
 
 {% block body %}
       <nav class="side-menu">
@@ -51,8 +51,8 @@
 
 
             <h4></h4>
-            {% if school.number_of_student %}<p class="btn btn-red" style="cursor: text;">{{school.number_of_student}} Students</p>{% endif %}
-			      {% if school.number_of_teacher %}<p class="btn btn-red" style="cursor: text;">{{school.number_of_teacher}} Teachers</p>{% endif %}
+            {% if school.number_of_student %}<p class="btn btn-red" style="cursor: text;">{{school.number_of_student|intcomma}} Students</p>{% endif %}
+			      {% if school.number_of_teacher %}<p class="btn btn-red" style="cursor: text;">{{school.number_of_teacher|intcomma}} Teachers</p>{% endif %}
       
 
           </div>
@@ -121,7 +121,7 @@
 											<a href="{% url 'school_detail' school.slug j.id row.school_year indicatordata.dimension_y.detail.slug %}">{{row.key_value}}</a>
 										{% elif row.key_value == None %}
 										{% else %}
-                                      		{{row.key_value}}
+                                      		{{row.key_value|intcomma}}
                                       	{% endif %}{% if row.data_type == 'PERCENT' %}%{% endif %}</td>
                                       {% else %}<td>No Data</td>{% endif %}
                                       {% endfor %}

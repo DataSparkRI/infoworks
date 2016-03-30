@@ -1,4 +1,4 @@
-{% extends "front_page/base.html" %}{% load staticfiles %}{% load config %}
+{% extends "front_page/base.html" %}{% load staticfiles %}{% load config %}{% load humanize %}
 
 {% block body %}
 
@@ -36,9 +36,9 @@
             {% if state.website %}<h4 class='header-link'><i class="fa fa-globe"></i> <a href='{{state.website}}' target="_blank">{{state.website}}</a></h4>{% endif %}
             {% if state.commissioner %}<h4><i class="fa fa-user"></i> Commissioner {{state.commissioner}}</h4>{% endif %}
             <h4></h4>
-            {% if state.number_of_student %}<p class="btn btn-red" style="cursor: text;">{{state.number_of_student}} Students</p>{% endif %}
-			      {% if state.number_of_teacher %}<p class="btn btn-red" style="cursor: text;">{{state.number_of_teacher}} Teachers</p>{% endif %}
-			      {% if state.number_of_school %}<p class="btn btn-red" style="cursor: text;">{{state.number_of_school}} Schools</p>{% endif %}
+            {% if state.number_of_student %}<p class="btn btn-red" style="cursor: text;">{{state.number_of_student|intcomma}} Students</p>{% endif %}
+			      {% if state.number_of_teacher %}<p class="btn btn-red" style="cursor: text;">{{state.number_of_teacher|intcomma}} Teachers</p>{% endif %}
+			      {% if state.number_of_school %}<p class="btn btn-red" style="cursor: text;">{{state.number_of_school|intcomma}} Schools</p>{% endif %}
             <h5></h5>
             <a class="btn btn-primary" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
   View details on Student and School counts in Rhode Island</a>
@@ -104,7 +104,7 @@
                                   <tr><th scope="row">{% if indicatordata.dimension_y.display_name %}{{indicatordata.dimension_y.display_name}}{% else %}{{indicatordata.dimension_y.display}}{% endif %}</th>
                                       {% for row in indicatordata.data %}
                                       {% if forloop.first %}<td>{{row.state_indicator_dataset.school_year}}</td>{% endif %}
-                                      {% if row %}<td>{{row.key_value}}{% if row.data_type == 'PERCENT' %}%{% endif %}</td>
+                                      {% if row %}<td>{{row.key_value|intcomma}}{% if row.data_type == 'PERCENT' %}%{% endif %}</td>
                                       {% else %}<td>No Data</td>{% endif %}
                                       {% if indicatordata.dimension_y.detail %}
                                       <td><a href="{% url 'state_detail' state.slug j.id row.state_indicator_dataset.school_year indicatordata.dimension_y.detail.slug %}">{{indicatordata.dimension_y.detail}}</a></td>
