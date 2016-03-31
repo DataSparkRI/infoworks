@@ -95,6 +95,7 @@
                       <div class="media-body">
                         <h4 class="media-heading">{{j.short_title}}</h4>
                         {% if j.dataset %}<h3 class="text-right">{{j.dataset.0.school_year.school_year}}</h3>{% endif %}
+                        {% if j.over_time %}<a href = "{% url 'school_overtime' school.slug %}?category={{j.title.title}}"><h3>Over Time Data</h3></a>{% endif %}
                         <p>{{j.description|safe}}</p>
                       </div>
                     </div>

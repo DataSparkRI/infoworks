@@ -54,8 +54,39 @@ class DetailDataSetTitle(models.Model):
     
     def __unicode__(self):
         return "%s"% self.title
+    
 
 ############# School #####################        
+
+class SchoolOverTimeSelect(models.Model):
+    school_over_time = models.ForeignKey("SchoolOverTime")
+    lookup_table = models.ForeignKey("dataimport.LookupTable")
+    order = models.IntegerField(default=1)
+    
+    def __unicode__(self):
+        return "%s - %s"%(self.school_over_time.name, self.lookup_table.name)
+
+class SchoolOverTimeElement(models.Model):
+    school_over_time = models.ForeignKey("SchoolOverTime")
+    is_positive = models.BooleanField(default=True)
+    dimension_name = models.ForeignKey("dataimport.DimensionName")
+    
+    def __unicode__(self):
+        return "%s - %s"%(self.school_over_time.name, self.dimension_name.name)
+
+class SchoolOverTime(models.Model):
+    name = models.CharField(max_length=200)
+    
+    @property
+    def selects(self):
+        return SchoolOverTimeSelect.objects.filter(school_over_time=self).order_by('order')
+    
+    @property
+    def elements(self):
+        return SchoolOverTimeElement.objects.filter(school_over_time=self)
+    
+    def __unicode__(self):
+        return self.name
 
 class SchoolDisplayData(models.Model):
     school_indicator = models.ForeignKey("SchoolIndicator", blank=True, null=True)
@@ -297,6 +328,8 @@ class SchoolIndicator(models.Model):
     short_title = models.CharField(max_length=100,blank=True)
     description = RichTextField(blank=True)
     data_indicator = models.BooleanField(default=True)
+    switch_highchart_xy = models.BooleanField(default=True)
+    over_time = models.ForeignKey(SchoolOverTime, blank=True, null=True)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField(blank=True)
 
@@ -386,6 +419,38 @@ class School(models.Model):
         return "%s (School)"% self.school_name
 
 ############# District #####################
+
+    
+class DistrictOverTimeSelect(models.Model):
+    district_over_time = models.ForeignKey("DistrictOverTime")
+    lookup_table = models.ForeignKey("dataimport.LookupTable")
+    order = models.IntegerField(default=1)
+    
+    def __unicode__(self):
+        return "%s - %s"%(self.district_over_time.name, self.lookup_table.name)
+
+class DistrictOverTimeElement(models.Model):
+    district_over_time = models.ForeignKey("DistrictOverTime")
+    is_positive = models.BooleanField(default=True)
+    dimension_name = models.ForeignKey("dataimport.DimensionName")
+    
+    def __unicode__(self):
+        return "%s - %s"%(self.district_over_time.name, self.dimension_name.name)
+
+class DistrictOverTime(models.Model):
+    name = models.CharField(max_length=200)
+    
+    @property
+    def selects(self):
+        return DistrictOverTimeSelect.objects.filter(district_over_time=self).order_by('order')
+    
+    @property
+    def elements(self):
+        return DistrictOverTimeElement.objects.filter(district_over_time=self)
+    
+    def __unicode__(self):
+        return self.name
+
 class DistrictDisplayData(models.Model):
     district_indicator = models.ForeignKey("DistrictIndicator", blank=True, null=True)
     display = models.ForeignKey("dataimport.DimensionFor")
@@ -655,6 +720,8 @@ class DistrictIndicator(models.Model):
     short_title = models.CharField(max_length=100,blank=True)
     description = RichTextField(blank=True)
     data_indicator = models.BooleanField(default=True)
+    switch_highchart_xy = models.BooleanField(default=True)
+    over_time = models.ForeignKey(DistrictOverTime, blank=True, null=True)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField(blank=True)
 
@@ -732,6 +799,36 @@ class District(models.Model):
 
         
 ############# State #####################
+    
+class StateOverTimeSelect(models.Model):
+    state_over_time = models.ForeignKey("StateOverTime")
+    lookup_table = models.ForeignKey("dataimport.LookupTable")
+    order = models.IntegerField(default=1)
+    
+    def __unicode__(self):
+        return "%s - %s"%(self.state_over_time.name, self.lookup_table.name)
+
+class StateOverTimeElement(models.Model):
+    state_over_time = models.ForeignKey("StateOverTime")
+    is_positive = models.BooleanField(default=True)
+    dimension_name = models.ForeignKey("dataimport.DimensionName")
+    
+    def __unicode__(self):
+        return "%s - %s"%(self.state_over_time.name, self.dimension_name.name)
+
+class StateOverTime(models.Model):
+    name = models.CharField(max_length=200)
+    
+    @property
+    def selects(self):
+        return StateOverTimeSelect.objects.filter(state_over_time=self).order_by('order')
+    
+    @property
+    def elements(self):
+        return StateOverTimeElement.objects.filter(state_over_time=self)
+    
+    def __unicode__(self):
+        return self.name
 
 class StateDisplayData(models.Model):
     state_indicator = models.ForeignKey("StateIndicator", blank=True, null=True)
@@ -939,6 +1036,8 @@ class StateIndicator(models.Model):
     short_title = models.CharField(max_length=100,blank=True)
     description = RichTextField(blank=True)
     data_indicator = models.BooleanField(default=True)
+    switch_highchart_xy = models.BooleanField(default=True)
+    over_time = models.ForeignKey(StateOverTime, blank=True, null=True)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField(blank=True)
 

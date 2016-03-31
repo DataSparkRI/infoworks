@@ -1,0 +1,131 @@
+{% extends "front_page/base.html" %}{% load staticfiles %}
+
+{% block body %}
+    <div class="container body" ng-app = "mainApp" ng-controller = "tableCtrl">
+      
+	{% for select in indicator.over_time.selects %}
+		<div class="col-md-2">{{select.lookup_table.display_name}}:</div>
+		<div class="col-md-10"><select class="form-control" id="select{{select.id}}" ng-model="select{{select.id}}" {% if select.lookup_table.elements.0 %}ng-init="select{{select.id}}='{{select.lookup_table.elements.0.system_code.code}}'"{% endif %} ng-change="change()">
+		  {% for lookup_element in select.lookup_table.elements %}
+		  <option {% if forloop.first %}selected="selected" {% endif %}value = "{{lookup_element.system_code.code}}">{{lookup_element.system_code.code}}</option>
+		  {% endfor %}
+		</select></div>
+	{% endfor %}
+
+		<table class="table table-hover" id="table" class="sortable-theme-bootstrap" data-sortable>
+			<thead> 
+					<tr data-ng-repeat-start="row in data.school_year" ng-if="$first"><th></th><th>{[{row}]}</th></tr>
+					<tr data-ng-repeat-end ng-if="!$first"><th>{[{row}]}</th></tr>
+					
+	 		</thead>
+			<tbody>
+					<tr data-ng-repeat="row in data.data">
+					<th scope="row" ng-if="row.value != ''">{[{row}]}</th>
+					
+					</tr>
+			</tbody>
+		</table>
+
+
+
+      </div>
+{% endblock %}
+
+{% block javascript %}
+    {{block.super}}
+	<script src = "http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+<script>
+var data = [{% for element in indicator.over_time.elements %}"{{element.dimension_name.name}}",{% endfor %}]
+function getName(){
+	var result = "";
+	{% for select in indicator.over_time.selects %}
+	result = result + document.getElementById("select{{select.id}}").value + " ";
+	{% endfor %}
+	dataset = [];
+	for (i=0; i < data.length; i++){
+		dataset.push(result + data[i]);
+	}
+	console.log(dataset);
+	return dataset;
+}
+
+
+         var mainApp = angular.module('mainApp',[]).config(function($interpolateProvider) {
+					        $interpolateProvider.startSymbol('{[{');
+					        $interpolateProvider.endSymbol('}]}');
+					        
+					    });
+	
+	
+
+    mainApp.controller('tableCtrl', ['$scope', '$http', function($scope, $http) {
+		
+		$scope.change = function() {
+            $.ajax({method: 'POST', 
+            		url: '{% url 'overtime' %}', 
+            		data: {csrfmiddlewaretoken: "{{ csrf_token }}",
+            		type:"school", 
+            		slug:"{{indicator.school_indicator_set.school.slug}}", 
+            		category:"{{indicator.title.title}}", 
+            		school_year:[],
+            		dataset:JSON.stringify(getName())},
+            		headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+            		}).
+            success(function(data, status, headers, config) {
+                $scope.data = data;
+                console.log(data);
+            }).
+            error(function(data, status, headers, config) {});
+        };
+        
+        $scope.$watch('search', function() {
+            console.log($scope.search);
+			
+            $.ajax({method: 'POST', 
+            		url: '{% url 'overtime' %}', 
+            		data: {csrfmiddlewaretoken: "{{ csrf_token }}",
+            		type:"school", 
+            		slug:"{{indicator.school_indicator_set.school.slug}}", 
+            		category:"{{indicator.title.title}}", 
+            		school_year:[],
+            		dataset:JSON.stringify(getName())},
+            		headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+            		}).
+            success(function(data, status, headers, config) {
+                $scope.data = data;
+                console.log(data);
+            }).
+            error(function(data, status, headers, config) {});
+        });
+        
+        
+        
+        
+    }]);
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

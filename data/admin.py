@@ -7,6 +7,9 @@ DistrictDisplayDataYDetailData, DistrictDisplayDataYDetail, DistrictDisplayDataY
 SchoolDisplayDataYDetailData, SchoolDisplayDataYDetail, SchoolDisplayDataYDetailSet, \
 StateDisplayDataYDetail, StateDisplayDataYDetailData, StateDisplayDataYDetailSet, \
 CustomDimensionYName, CustomDimensionXName,DistrictIndicatorDetailDataSet,DistrictIndicatorData
+from data.models import SchoolOverTime, DistrictOverTime, StateOverTime, \
+SchoolOverTimeSelect, DistrictOverTimeSelect, StateOverTimeSelect, \
+SchoolOverTimeElement, DistrictOverTimeElement, StateOverTimeElement
 
 from django.contrib import messages
 
@@ -101,6 +104,17 @@ class StateIndicatorDataSetInline(admin.TabularInline):
 
 class StateIndicatorInline(admin.TabularInline):
     model = StateIndicator
+
+class StateOverTimeSelectInline(admin.TabularInline):
+    model = StateOverTimeSelect
+    
+class StateOverTimeElementInline(admin.TabularInline):
+    model = StateOverTimeElement
+    raw_id_fields = ("dimension_name",)
+
+class StateOverTimeAdmin(admin.ModelAdmin):
+    inlines = [StateOverTimeSelectInline,StateOverTimeElementInline]
+admin.site.register(StateOverTime, StateOverTimeAdmin)
 
 class StateDisplayDataYDetailAdmin(admin.ModelAdmin):
     inlines = [StateDisplayDataYDetailSetInline]
@@ -215,6 +229,17 @@ class DistrictIndicatorDataSetInline(admin.TabularInline):
 
 class DistrictIndicatorInline(admin.TabularInline):
     model = DistrictIndicator
+
+class DistrictOverTimeSelectInline(admin.TabularInline):
+    model = DistrictOverTimeSelect
+    
+class DistrictOverTimeElementInline(admin.TabularInline):
+    model = DistrictOverTimeElement
+    raw_id_fields = ("dimension_name",)
+
+class DistrictOverTimeAdmin(admin.ModelAdmin):
+    inlines = [DistrictOverTimeSelectInline,DistrictOverTimeElementInline]
+admin.site.register(DistrictOverTime, DistrictOverTimeAdmin)
 
 class DistrictDisplayDataYDetailAdmin(admin.ModelAdmin):
     inlines = [DistrictDisplayDataYDetailSetInline]
@@ -331,6 +356,17 @@ class SchoolIndicatorDataSetInline(admin.TabularInline):
 
 class SchoolIndicatorInline(admin.TabularInline):
     model = SchoolIndicator
+
+class SchoolOverTimeSelectInline(admin.TabularInline):
+    model = SchoolOverTimeSelect
+    
+class SchoolOverTimeElementInline(admin.TabularInline):
+    model = SchoolOverTimeElement
+    raw_id_fields = ("dimension_name",)
+
+class SchoolOverTimeAdmin(admin.ModelAdmin):
+    inlines = [SchoolOverTimeSelectInline,SchoolOverTimeElementInline]
+admin.site.register(SchoolOverTime, SchoolOverTimeAdmin)
 
 class SchoolDisplayDataYDetailAdmin(admin.ModelAdmin):
     inlines = [SchoolDisplayDataYDetailSetInline]
