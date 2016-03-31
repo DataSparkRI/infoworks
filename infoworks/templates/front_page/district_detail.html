@@ -1,4 +1,4 @@
-{% extends "front_page/base.html" %}{% load staticfiles %}
+{% extends "front_page/base.html" %}{% load staticfiles %}{% load humanize %}
 
 {% block body %}
       <div class="container body">
@@ -18,7 +18,7 @@
                                   {% for key, values in i.data.items %}
                                   <tr><th scope="row">{{key}}</th>
                                       {% for row in values.data %}
-                                      <td>{{row.key_value}}{% if row.data_type == 'PERCENT' %}%{% endif %}</td>
+                                      <td>{{row.key_value|intcomma}}{% if row.data_type == 'PERCENT' %}%{% endif %}</td>
                                       {% endfor %}
                                   </tr>
                                   {% endfor %}
