@@ -86,8 +86,16 @@ function highcharts(data){
 				        },
 				        yAxis: {
 				            title: {
-				                text: 'Total fruit consumption'
+				                text: 'Total'
 				            },
+				            gridLineColor: '#197F07',
+					        gridLineWidth: 0,
+					        lineWidth:1,
+					        plotLines: [{
+					            color: '#000000',
+					            width: 3,
+					            value: 0
+					        }],
 				            stackLabels: {
 				                enabled: true,
 				                formatter:function() {
