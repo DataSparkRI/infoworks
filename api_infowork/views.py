@@ -120,6 +120,41 @@ def api(request):
         elif request.method == 'POST':
                 return JsonResponse({"messages":"indicator does not exist"})
 
+def overtime(request):
+    result = {}
+    import ast
+    if request.method == 'POST':
+        type = request.POST.get("type")
+        slug = request.POST.get("slug")
+        indicator_title = request.POST.get("category")
+        school_year = request.POST.get("school_year")
+        dataset = ast.literal_eval(request.POST.get("dataset"))
+
+        
+        if type == "school":
+            indicator = SchoolIndicator.objects.get(title__title=indicator_title, school_indicator_set__school__slug=slug)            
+            if school_year == None:
+                school_year = [i.school_year.school_year for i in indicator.dataset ]
+                result.update({"school_year":school_year})
+                result.update({"school_name":indicator.school_indicator_set.school.school_name})
+                data = []
+                for i in dataset:
+                    current = {"name":i,"row":[]}
+                    for j in indicator.dataset:
+                        value = j.get_objects("This School",i)
+                        if value ==None:
+                            current["row"].append(None)
+                        else:
+                            current["row"].append(j.get_objects("This School", i).key_value)
+                    data.append(current)
+                result.update({"data":data})
+            return JsonResponse(result)
+        
+    return JsonResponse({"messages":"indicator does not exist"})
+    
+
+
+
 def data(request):
     state = None
     district = None

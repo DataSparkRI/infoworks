@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^school/(?P<slug>[\w-]+)/(?P<indicator_id>[\w-]+)/(?P<school_year>[\w-]+)/(?P<detail_slug>[\w-]+)$', views.school_detail, name="school_detail"),
     url(r'^school/(?P<slug>[\w-]+)/history$', views.schools_history, name="schools_history"),
     url(r'^school/(?P<slug>[\w-]+)/history/(?P<school_year>[\w-]+)$', views.schools_history_detail, name="schools_history_detail"),    url(r'^district/(?P<slug>[\w-]+)$', views.district, name="district"),
+    url(r'^school/(?P<slug>[\w-]+)/overtime$', views.school_overtime, name="school_overtime"),
     url(r'^district/(?P<slug>[\w-]+)/(?P<indicator_id>[\w-]+)/(?P<school_year>[\w-]+)/(?P<detail_slug>[\w-]+)$', views.district_detail, name="district_detail"),
     url(r'^district/(?P<slug>[\w-]+)/history$', views.districts_history, name="districts_history"),
     url(r'^district/(?P<slug>[\w-]+)/history/(?P<school_year>[\w-]+)$', views.districts_history_detail, name="districts_history_detail"),    url(r'^state$', views.state, name="state"),

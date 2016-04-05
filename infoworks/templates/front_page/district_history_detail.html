@@ -38,9 +38,29 @@
 
 {% block javascript %}
 {{block.super}}
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script>
+
+var categories = [{% for k in indicator_dataset.displaydata_x_display%}{% if k == 'School Year' or k == 'Details' %}{% else %}
+                '{{k}}',{% endif %}{% endfor %}]
+var series = [{% for indicatordata in indicator_dataset.displaydata %}{
+            name: '{% if indicatordata.dimension_y.display_name %}{{indicatordata.dimension_y.display_name}}{% else %}{{indicatordata.dimension_y.display}}{% endif %}',
+            data: [{% for row in indicatordata.data %}{% if row.data_type %}{{row.key_value}},{% endif %} {% endfor %}]
+        },{% endfor %}]
+{% if indicator.switch_highchart_xy %}
+var new_categories = []
+var new_series = []
+
+for (var i =0; i < categories.length; i++){
+    new_series.push({name:categories[i],data:[]})
+}
+for( var i = 0; i < series.length; i++){
+	new_categories.push(series[i].name);
+	for (var j =0; j <series[i].data.length; j++){
+		new_series[j].data.push(series[i].data[j]);
+	}
+}
+{% endif %}
+
 $(function () {
     $('#table1').highcharts({
         chart: {
@@ -53,10 +73,7 @@ $(function () {
             text: '{{indicator.title.title}} {{indicator_dataset.school_year.school_year}}'
         },
         xAxis: {
-            categories: [{% for k in indicator_dataset.displaydata_x_display%}{% if k == 'School Year' or k == 'Details' %}{% else %}
-                '{{k}}',{% endif %}{% endfor %}
-
-            ],
+        	categories: {% if indicator.switch_highchart_xy %}new_categories{% else %}categories{% endif %},
             crosshair: true
         },
         yAxis: {
@@ -79,10 +96,7 @@ $(function () {
                 borderWidth: 0
             }
         },
-        series: [{% for indicatordata in indicator_dataset.displaydata %}{
-            name: '{% if indicatordata.dimension_y.display_name %}{{indicatordata.dimension_y.display_name}}{% else %}{{indicatordata.dimension_y.display}}{% endif %}',
-            data: [{% for row in indicatordata.data %}{% if row.data_type %}{{row.key_value}},{% endif %} {% endfor %}]
-        },{% endfor %}]
+        series: {% if indicator.switch_highchart_xy %}new_series{% else %}series{% endif %},
     });
 });
 </script>

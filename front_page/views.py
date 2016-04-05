@@ -113,6 +113,17 @@ def school_detail(request, slug, indicator_id, school_year, detail_slug):
                
     return render_to_response('front_page/school_detail.html', context, context_instance=RequestContext(request))
 
+def school_overtime(request, slug):
+    
+    try:
+        category = request.GET.get("category")
+        indicator = SchoolIndicator.objects.get(school_indicator_set__school__slug=slug,title__title=category)
+    except:
+        context = {"message": "Oops! The Page you requested was not found!"}
+        return render_to_response('404.html', context, context_instance=RequestContext(request))
+    context = {"indicator":indicator}
+    return render_to_response('front_page/school_overtime.html', context, context_instance=RequestContext(request))
+
 def district(request, slug):
     try:
         district = District.objects.get(slug=slug.lower(), activate=True)

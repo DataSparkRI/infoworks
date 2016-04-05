@@ -21,12 +21,17 @@ class LookUpTableElement(models.Model):
 
 class LookUpTable(models.Model):
     name = models.CharField(max_length=100, blank=True)
+    display_name = models.CharField(max_length=100, blank=True)
     
     def get_code(self, file_code):
         try:
             return LookUpTableElement.objects.get(table=self, file_code=file_code).system_code.code
         except:
             return file_code
+    
+    @property
+    def elements(self):
+        return LookUpTableElement.objects.filter(table=self).order_by("system_code")
     
     def __unicode__(self):
         return self.name
