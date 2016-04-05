@@ -74,12 +74,21 @@ function getName(){
             success(function(data, status, headers, config) {
                 $scope.data = data;
                 console.log(data);
+                 var headers=data["school_year"];
+				  
+				  var rowHtml='<tr><th></th><th>'+headers.join('</th><th>')+'</th></tr>';
+				  
+				  for (var i =0; i<data["data"].length; i++){
+				  		rowHtml+='<tr><td>'+data["data"][i]["name"]+'</td>';
+				  		rowHtml +='<td>'+data["data"][i]["row"].join('</td><td>')+'</td></tr>';
+				  
+				  }
+				  $('#table').html(rowHtml);                
             }).
             error(function(data, status, headers, config) {});
         };
         
         $scope.$watch('search', function() {
-            console.log($scope.search);
 			
             $.ajax({method: 'POST', 
             		url: '{% url 'overtime' %}', 
@@ -93,7 +102,17 @@ function getName(){
             		}).
             success(function(data, status, headers, config) {
                 $scope.data = data;
-                console.log(data);
+                var headers=data["school_year"];
+                var rowHtml='<tr><th></th><th>'+headers.join('</th><th>')+'</th></tr>';
+				  
+				for (var i =0; i<data["data"].length; i++){
+				  		rowHtml+='<tr><td>'+data["data"][i]["name"]+'</td>';
+				  		rowHtml +='<td>'+data["data"][i]["row"].join('</td><td>')+'</td></tr>';
+				  
+				}
+				$('#table').html(rowHtml);
+                
+                
             }).
             error(function(data, status, headers, config) {});
         });
