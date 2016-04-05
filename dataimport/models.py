@@ -31,7 +31,7 @@ class LookUpTable(models.Model):
     
     @property
     def elements(self):
-        return LookUpTableElement.objects.filter(table=self)
+        return LookUpTableElement.objects.filter(table=self).order_by("system_code")
     
     def __unicode__(self):
         return self.name
