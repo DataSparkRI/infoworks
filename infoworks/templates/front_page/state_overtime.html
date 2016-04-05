@@ -2,7 +2,7 @@
 
 {% block body %}
     <div class="container body" ng-app = "mainApp" ng-controller = "tableCtrl">
-    <h1>{{indicator.school_indicator_set.school.school_name}} Over Time</h1>
+    <h1>{{indicator.state_indicator_set.state.state_name}} Over Time</h1>
       
 	{% for select in indicator.over_time.selects %}
 		<div class="col-md-2">{{select.lookup_table.display_name}}:</div>
@@ -44,6 +44,7 @@ function getName(){
 	return dataset;
 }
 
+
          var mainApp = angular.module('mainApp',[]).config(function($interpolateProvider) {
 					        $interpolateProvider.startSymbol('{[{');
 					        $interpolateProvider.endSymbol('}]}');
@@ -56,8 +57,8 @@ function getName(){
             $.ajax({method: 'POST', 
             		url: '{% url 'overtime' %}', 
             		data: {csrfmiddlewaretoken: "{{ csrf_token }}",
-            		type:"school", 
-            		slug:"{{indicator.school_indicator_set.school.slug}}", 
+            		type:"state", 
+            		slug:"{{indicator.state_indicator_set.state.slug}}", 
             		category:"{{indicator.title.title}}", 
             		school_year:[],
             		dataset:JSON.stringify(getName())},
@@ -97,8 +98,8 @@ function getName(){
             $.ajax({method: 'POST', 
             		url: '{% url 'overtime' %}', 
             		data: {csrfmiddlewaretoken: "{{ csrf_token }}",
-            		type:"school", 
-            		slug:"{{indicator.school_indicator_set.school.slug}}", 
+            		type:"state", 
+            		slug:"{{indicator.state_indicator_set.state.slug}}", 
             		category:"{{indicator.title.title}}", 
             		school_year:[],
             		dataset:JSON.stringify(getName())},

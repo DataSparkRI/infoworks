@@ -2,7 +2,7 @@
 
 {% block body %}
     <div class="container body" ng-app = "mainApp" ng-controller = "tableCtrl">
-    <h1>{{indicator.school_indicator_set.school.school_name}} Over Time</h1>
+    <h1>{{indicator.district_indicator_set.district.district_name}} District Over Time</h1>
       
 	{% for select in indicator.over_time.selects %}
 		<div class="col-md-2">{{select.lookup_table.display_name}}:</div>
@@ -12,7 +12,7 @@
 		  {% endfor %}
 		</select></div>
 	{% endfor %}
-
+		<div id="highchart" style="min-width: 310px; margin:0 auto"></div>
 		<table class="table table-hover" id="table" class="sortable-theme-bootstrap" data-sortable>
 
 		</table>
@@ -43,6 +43,98 @@ function getName(){
 	console.log(dataset);
 	return dataset;
 }
+function highcharts(data){
+	var title_text = ""
+	{% for select in indicator.over_time.selects %}
+	title_text = title_text +" "+ $("#select{{select.id}}").val();
+	{% endfor %}
+
+		        var series = []
+            	for (var i = 0; i < data["data"].length;i++){
+            		obj = {}
+            		obj["name"] = data["data"][i]["name"];
+            		obj["data"] = [];
+            		
+            		positive = true;
+				  	for (var j=0; j<negative.length; j++){
+						if (obj["name"].endsWith(negative[j])){
+			  				positive = false;
+			  			}
+			  		}
+            		
+            		for ( var j =0; j < data["data"][i]["row"].length; j++){
+            			if(positive)
+            				obj["data"].push(parseFloat(data["data"][i]["row"][j]));
+            			else
+            				obj["data"].push(parseFloat(data["data"][i]["row"][j])*-1);
+            		}
+            		series.push(obj);
+            	}
+            	
+            	console.log(series);
+            	
+            	$(function () {
+				    $('#highchart').highcharts({
+				        chart: {
+				            type: 'column'
+				        },
+				        title: {
+				            text: '{{indicator.district_indicator_set.district.district_name}}'+title_text
+				        },
+				        xAxis: {
+				            categories: data["school_year"]
+				        },
+				        yAxis: {
+				            title: {
+				                text: 'Total fruit consumption'
+				            },
+				            stackLabels: {
+				                enabled: true,
+				                formatter:function() {
+				                	if (this.total < 0){return "Total: "+this.total*-1;}
+				                	else{return "Total: "+this.total;}
+				                },
+				                style: {
+				                    fontWeight: 'bold',
+				                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+				                }
+				            }
+				        },
+				        tooltip: {
+				            headerFormat: '<b>{point.x}</b><br/>',
+				            //pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+				            formatter: function() {
+				            	if (this.point.y < 0){y=this.point.y*-1}
+				            	else{y=this.point.y}
+				            	if (this.point.stackTotal < 0){stackTotal=this.point.stackTotal*-1}
+				            	else{stackTotal=this.point.stackTotal}
+				            	
+				            	return this.series.name +": "+y+"<br />Total: "+stackTotal;
+    						}
+				        },
+				        plotOptions: {
+				            column: {
+				                stacking: 'normal',
+				                dataLabels: {
+				                    enabled: true,
+				                    
+				                    formatter:function() {
+							                    if (this.y < 0){var pcnt = this.y*-1;}
+							                    else{var pcnt = this.y;}
+							                    return pcnt;
+							        },
+				                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+				                    style: {
+				                        textShadow: '0 0 3px black'
+				                    }
+				                }
+				            }
+				        },
+				        series: series
+				    });
+				});
+
+}
 
          var mainApp = angular.module('mainApp',[]).config(function($interpolateProvider) {
 					        $interpolateProvider.startSymbol('{[{');
@@ -56,8 +148,8 @@ function getName(){
             $.ajax({method: 'POST', 
             		url: '{% url 'overtime' %}', 
             		data: {csrfmiddlewaretoken: "{{ csrf_token }}",
-            		type:"school", 
-            		slug:"{{indicator.school_indicator_set.school.slug}}", 
+            		type:"district", 
+            		slug:"{{indicator.district_indicator_set.district.slug}}", 
             		category:"{{indicator.title.title}}", 
             		school_year:[],
             		dataset:JSON.stringify(getName())},
@@ -65,7 +157,7 @@ function getName(){
             		}).
             success(function(data, status, headers, config) {
                 $scope.data = data;
-                console.log(data);
+                highcharts(data);
                  var headers=data["school_year"];
 				  var rowHtml='<tr><th></th><th>'+headers.join('</th><th>')+'</th></tr>';
 				  
@@ -97,15 +189,18 @@ function getName(){
             $.ajax({method: 'POST', 
             		url: '{% url 'overtime' %}', 
             		data: {csrfmiddlewaretoken: "{{ csrf_token }}",
-            		type:"school", 
-            		slug:"{{indicator.school_indicator_set.school.slug}}", 
+            		type:"district", 
+            		slug:"{{indicator.district_indicator_set.district.slug}}", 
             		category:"{{indicator.title.title}}", 
             		school_year:[],
             		dataset:JSON.stringify(getName())},
             		headers: {'Content-Type': 'application/x-www-form-urlencoded'}
             		}).
             success(function(data, status, headers, config) {
+            	
+            
                 $scope.data = data;
+                highcharts(data);
                 var headers=data["school_year"];
                 var rowHtml='<tr><th></th><th>'+headers.join('</th><th>')+'</th></tr>';
 				
@@ -121,6 +216,10 @@ function getName(){
         });        
         
     }]);
+
+
+
+
 
 </script>
 

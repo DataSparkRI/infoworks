@@ -212,6 +212,17 @@ def district_detail(request, slug, indicator_id, school_year, detail_slug):
                    
         return render_to_response('front_page/district_detail.html', context, context_instance=RequestContext(request))
 
+def district_overtime(request, slug):
+    
+    try:
+        category = request.GET.get("category")
+        indicator = DistrictIndicator.objects.get(district_indicator_set__district__slug=slug,title__title=category)
+    except:
+        context = {"message": "Oops! The Page you requested was not found!"}
+        return render_to_response('404.html', context, context_instance=RequestContext(request))
+    context = {"indicator":indicator}
+    return render_to_response('front_page/district_overtime.html', context, context_instance=RequestContext(request))
+
 def states(request, slug):
     try:
         state = State.objects.get(slug=slug)
@@ -281,6 +292,17 @@ def state_detail(request, slug, indicator_id, school_year, detail_slug):
                    "detail_set": display_detail_set,
                    }
         return render_to_response('front_page/state_detail.html', context, context_instance=RequestContext(request))
+
+def state_overtime(request, slug):
+    
+    try:
+        category = request.GET.get("category")
+        indicator = StateIndicator.objects.get(state_indicator_set__state__slug=slug,title__title=category)
+    except:
+        context = {"message": "Oops! The Page you requested was not found!"}
+        return render_to_response('404.html', context, context_instance=RequestContext(request))
+    context = {"indicator":indicator}
+    return render_to_response('front_page/state_overtime.html', context, context_instance=RequestContext(request))
 
 def state(request):
     try:

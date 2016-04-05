@@ -80,6 +80,7 @@
                       <div class="media-body">
                         <h4 class="media-heading">{{j.short_title}}</h4>
                         {% if j.dataset %}<h3 class="text-right">{{j.dataset.0.school_year.school_year}}</h3>{% endif %}
+                        {% if j.over_time %}<a href = "{% url 'district_overtime' district.slug %}?category={{j.title.title}}"><h3>Over Time Data</h3></a>{% endif %}
                         <p>{{j.description|safe}}</p>
                       </div>
                     </div>
@@ -105,9 +106,13 @@
                                       	{% if row.key_value.name %}
 											<a href="{% url 'district_detail' district.slug j.id row.school_year indicatordata.dimension_y.detail.slug %}">{{row.key_value}}</a>
 										{% elif row.key_value == None %}
-										{% else %}
+										{% elif row.data_type == 'NUMERIC' %}
                                       		{{row.key_value|intcomma}}
-                                      	{% endif %}{% if row.data_type == 'PERCENT' %}%{% endif %}</td>
+                                      	{% elif row.data_type == 'PERCENT' %}
+                                      		{{row.key_value}}%
+                                      	{% else %}
+                                      		{{row.key_value}}
+                                      	{% endif %}</td>
                                       {% else %}<td>No Data</td>{% endif %}
                                       {% endfor %}
                                       

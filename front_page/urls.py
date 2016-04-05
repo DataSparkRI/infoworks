@@ -13,10 +13,12 @@ urlpatterns = [
     url(r'^district/(?P<slug>[\w-]+)/(?P<indicator_id>[\w-]+)/(?P<school_year>[\w-]+)/(?P<detail_slug>[\w-]+)$', views.district_detail, name="district_detail"),
     url(r'^district/(?P<slug>[\w-]+)/history$', views.districts_history, name="districts_history"),
     url(r'^district/(?P<slug>[\w-]+)/history/(?P<school_year>[\w-]+)$', views.districts_history_detail, name="districts_history_detail"),    url(r'^state$', views.state, name="state"),
+    url(r'^district/(?P<slug>[\w-]+)/overtime$', views.district_overtime, name="district_overtime"),
     url(r'^state/(?P<slug>[\w-]+)$', views.states, name="states"),
     url(r'^state/(?P<slug>[\w-]+)/history$', views.states_history, name="states_history"),
     url(r'^state/(?P<slug>[\w-]+)/history/(?P<school_year>[\w-]+)$', views.states_history_detail, name="states_history_detail"),
     url(r'^state/(?P<slug>[\w-]+)/(?P<indicator_id>[\w-]+)/(?P<school_year>[\w-]+)/(?P<detail_slug>[\w-]+)$', views.state_detail, name="state_detail"),
+    url(r'^state/(?P<slug>[\w-]+)/overtime$', views.state_overtime, name="state_overtime"),
     url(r'^understanding-data/dictionary$',views.dictionary,name="dictionary"),
     ]
 

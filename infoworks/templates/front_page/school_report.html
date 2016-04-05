@@ -125,7 +125,8 @@
 											<a href="{% url 'school_detail' school.slug j.id row.school_year indicatordata.dimension_y.detail.slug %}">{{row.key_value}}</a>
 										{% elif row.key_value == None %}
 										{% else %}
-                                      		{{row.key_value|intcomma}}
+											{% if row.key_type == 'NUMERIC' %}{{row.key_value|intcomma}}
+                                      		{% else %}{{row.key_value}}{% endif %}
                                       	{% endif %}{% if row.data_type == 'PERCENT' %}%{% endif %}</td>
                                       {% else %}<td>No Data</td>{% endif %}
                                       {% endfor %}

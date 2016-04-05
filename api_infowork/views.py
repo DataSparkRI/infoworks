@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from data.models import DistrictIndicator, DistrictIndicatorData, SchoolIndicator, SchoolIndicatorData, SchoolYear, IndicatorTitle
+from data.models import StateIndicator, DistrictIndicator, DistrictIndicatorData, SchoolIndicator, SchoolIndicatorData, SchoolYear, IndicatorTitle
 from data.models import State, District, School
 from data.models import SchoolYear
 # Create your views here.
@@ -134,7 +134,7 @@ def overtime(request):
         if type == "school":
             indicator = SchoolIndicator.objects.get(title__title=indicator_title, school_indicator_set__school__slug=slug)            
             if school_year == None:
-                school_year = [i.school_year.school_year for i in indicator.dataset ]
+                school_year = [i.school_year.school_year for i in indicator.dataset.order_by('school_year') ]
                 result.update({"school_year":school_year})
                 result.update({"school_name":indicator.school_indicator_set.school.school_name})
                 data = []
@@ -146,6 +146,42 @@ def overtime(request):
                             current["row"].append(None)
                         else:
                             current["row"].append(j.get_objects("This School", i).key_value)
+                    data.append(current)
+                result.update({"data":data})
+            return JsonResponse(result)
+        elif type == "district":
+            indicator = DistrictIndicator.objects.get(title__title=indicator_title, district_indicator_set__district__slug=slug)            
+            if school_year == None:
+                school_year = [i.school_year.school_year for i in indicator.dataset.order_by('school_year') ]
+                result.update({"school_year":school_year})
+                result.update({"district_name":indicator.district_indicator_set.district.district_name})
+                data = []
+                for i in dataset:
+                    current = {"name":i,"row":[]}
+                    for j in indicator.dataset:
+                        value = j.get_objects("This District",i)
+                        if value ==None:
+                            current["row"].append(None)
+                        else:
+                            current["row"].append(j.get_objects("This District", i).key_value)
+                    data.append(current)
+                result.update({"data":data})
+            return JsonResponse(result)
+        elif type == "state":
+            indicator = StateIndicator.objects.get(title__title=indicator_title, state_indicator_set__state__slug=slug)            
+            if school_year == None:
+                school_year = [i.school_year.school_year for i in indicator.dataset.order_by('school_year') ]
+                result.update({"school_year":school_year})
+                result.update({"state_name":indicator.state_indicator_set.state.state_name})
+                data = []
+                for i in dataset:
+                    current = {"name":i,"row":[]}
+                    for j in indicator.dataset:
+                        value = j.get_objects("Statewide",i)
+                        if value ==None:
+                            current["row"].append(None)
+                        else:
+                            current["row"].append(j.get_objects("Statewide", i).key_value)
                     data.append(current)
                 result.update({"data":data})
             return JsonResponse(result)
