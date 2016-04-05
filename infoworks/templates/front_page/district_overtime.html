@@ -170,22 +170,22 @@ function highcharts(data){
 				  var rowHtml='<tr><th></th><th>'+headers.join('</th><th>')+'</th></tr>';
 				  
 				  for (var i =0; i<data["data"].length; i++){
-				  		positive = true;
-				  		for (var j=0; j<negative.length; j++){
-				  			if (data["data"][i]["name"].endsWith(negative[j])){
-				  				positive = false;
-				  			}
-				  		}
+				  		//positive = true;
+				  		//for (var j=0; j<negative.length; j++){
+				  		//	if (data["data"][i]["name"].endsWith(negative[j])){
+				  		//		positive = false;
+				  		//	}
+				  		//}
 				  		rowHtml+='<tr><td>'+data["data"][i]["name"]+'</td>';
-				  		if (positive){
+				  		//if (positive){
 				  			rowHtml +='<td>'+data["data"][i]["row"].join('</td><td>')+'</td></tr>';
-				  		}
-				  		else{
-				  			for(var j= 0; j < data["data"][i]["row"].length; j++){
-				  		    	data["data"][i]["row"][j]=data["data"][i]["row"][j]*-1;
-				  		    }
-				  			rowHtml +='<td>'+data["data"][i]["row"].join('</td><td>')+'</td></tr>';
-				  		}
+				  		//}
+				  		//else{
+				  		//	for(var j= 0; j < data["data"][i]["row"].length; j++){
+				  		//    	data["data"][i]["row"][j]=data["data"][i]["row"][j]*-1;
+				  		//    }
+				  		//	rowHtml +='<td>'+data["data"][i]["row"].join('</td><td>')+'</td></tr>';
+				  		//}
 				  }
 				  $('#table').html(rowHtml);                
             }).
