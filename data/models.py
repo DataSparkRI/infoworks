@@ -10,8 +10,7 @@ import csv
 DATA_TYPE_CHOICES = (
     ('NUMERIC', 'numeric'),
     ('PERCENT','percent'),
-    ('STRING', 'string'),
-    ('SUBDATASET','subdataset'),
+    ('STRING', 'string')
 )
 
 DISPLAY_TYPE_CHOICES = (
@@ -70,13 +69,17 @@ class SchoolOverTimeElement(models.Model):
     school_over_time = models.ForeignKey("SchoolOverTime")
     is_positive = models.BooleanField(default=True)
     dimension_name = models.ForeignKey("dataimport.DimensionName")
+    display_name = models.CharField(max_length=200, blank=True, null=True)
+    color_hex = models.CharField(max_length=200, blank=True, null=True)
     
     def __unicode__(self):
         return "%s - %s"%(self.school_over_time.name, self.dimension_name.name)
 
 class SchoolOverTime(models.Model):
     name = models.CharField(max_length=200)
-    
+    y_axis_title_text = models.CharField(max_length=200, blank=True, null=True)
+    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES,default='NUMERIC')
+        
     @property
     def selects(self):
         return SchoolOverTimeSelect.objects.filter(school_over_time=self).order_by('order')
@@ -433,12 +436,16 @@ class DistrictOverTimeElement(models.Model):
     district_over_time = models.ForeignKey("DistrictOverTime")
     is_positive = models.BooleanField(default=True)
     dimension_name = models.ForeignKey("dataimport.DimensionName")
+    display_name = models.CharField(max_length=200, blank=True, null=True)
+    color_hex = models.CharField(max_length=200, blank=True, null=True)
     
     def __unicode__(self):
         return "%s - %s"%(self.district_over_time.name, self.dimension_name.name)
 
 class DistrictOverTime(models.Model):
     name = models.CharField(max_length=200)
+    y_axis_title_text = models.CharField(max_length=200, blank=True, null=True)
+    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES,default='NUMERIC')
     
     @property
     def selects(self):
@@ -812,12 +819,16 @@ class StateOverTimeElement(models.Model):
     state_over_time = models.ForeignKey("StateOverTime")
     is_positive = models.BooleanField(default=True)
     dimension_name = models.ForeignKey("dataimport.DimensionName")
+    display_name = models.CharField(max_length=200, blank=True, null=True)
+    color_hex = models.CharField(max_length=200, blank=True, null=True)
     
     def __unicode__(self):
         return "%s - %s"%(self.state_over_time.name, self.dimension_name.name)
 
 class StateOverTime(models.Model):
     name = models.CharField(max_length=200)
+    y_axis_title_text = models.CharField(max_length=200, blank=True, null=True)
+    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES,default='NUMERIC')
     
     @property
     def selects(self):
