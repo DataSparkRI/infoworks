@@ -39,8 +39,13 @@ class SchoolYear(models.Model):
 
 class CustomDimensionYName(models.Model):
     name = models.CharField(max_length=100)
+    is_positive = models.BooleanField(default=True)
+    
     def __unicode__(self):
-        return self.name
+        chart = "+"
+        if self.is_positive == False:
+            chart = "-"
+        return "[%s] %s"% (chart, self.name)
         
 class CustomDimensionXName(models.Model):
     name = models.CharField(max_length=100)
@@ -117,6 +122,9 @@ class SchoolDisplayDataYDetailSet(models.Model):
     title = models.CharField(max_length=100, blank=True)
     order = models.IntegerField(default=1)
     display_type = models.CharField(max_length=20,choices=DISPLAY_TYPE_CHOICES)
+    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES,default='PERCENT')
+    y_axis_title_text = models.CharField(max_length=200, blank=True, null=True)
+
     
     @property
     def detail_data(self):
@@ -484,7 +492,10 @@ class DistrictDisplayDataYDetailSet(models.Model):
     title = models.CharField(max_length=100, blank=True)
     order = models.IntegerField(default=1)
     display_type = models.CharField(max_length=20,choices=DISPLAY_TYPE_CHOICES)
-    
+    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES,default='PERCENT')
+    y_axis_title_text = models.CharField(max_length=200, blank=True, null=True)
+
+
     @property
     def detail_data(self):
         return DistrictDisplayDataYDetailData.objects.filter(detail_set = self).order_by('order')
@@ -867,6 +878,9 @@ class StateDisplayDataYDetailSet(models.Model):
     title = models.CharField(max_length=100, blank=True)
     order = models.IntegerField(default=1)
     display_type = models.CharField(max_length=20,choices=DISPLAY_TYPE_CHOICES)
+    data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES,default='PERCENT')
+    y_axis_title_text = models.CharField(max_length=200, blank=True, null=True)
+
     
     @property
     def detail_data(self):

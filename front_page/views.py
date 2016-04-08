@@ -193,7 +193,7 @@ def district_detail(request, slug, indicator_id, school_year, detail_slug):
                 try:
                     table[data.new_dimension_y_name.name]
                 except KeyError, e:
-                    table[data.new_dimension_y_name.name] = {"dimension_y":data.new_dimension_y_name.name, "names":[], "data":[]}
+                    table[data.new_dimension_y_name.name] = {"dimension_y":data.new_dimension_y_name, "names":[], "data":[]}
                 
                 table[data.new_dimension_y_name.name]['names'].append(data.new_dimension_x_name)
                 
@@ -209,7 +209,7 @@ def district_detail(request, slug, indicator_id, school_year, detail_slug):
                    "indicator": indicator,
                    "detail_set": display_detail_set,
                    }
-                   
+        print display_detail_set
         return render_to_response('front_page/district_detail.html', context, context_instance=RequestContext(request))
 
 def district_overtime(request, slug):

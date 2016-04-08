@@ -6,8 +6,12 @@
             <h1>{{school_year}}</h1>
             {% for i in detail_set %}
                   <h2>{{i.set_name.title}}{% if request.user.is_active and request.user.is_staff %} <a href="/admin/data/districtdisplaydataydetailset/{{i.set_name.id}}/change/" target="_blank"><i class="fa fa-pencil"></i></a>{% endif %}</h2>
-                        {% if i.set_name.display_type == 'TABLE' %}
-                        <table class="table table-hover">
+                        {% comment %}{% if i.set_name.display_type == 'TABLE' %}{% endcomment %}
+                        {% if i.set_name.display_type == 'BAR-CHART' %}
+                        <div id="{{i.set_name.display_type}}{{forloop.counter}}" value="{{i.set_name.title}}" style="min-width: 310px; max-width: 800px; height: 400px; margin: 0 auto"></div>
+                        {% else %}
+						{% endif %}
+						<table class="table table-hover">
                           <thead> <tr><th></th>
                                       {% for key, values in i.data.items %}
                                       {% if forloop.first %}{% for j in values.names %}<th>{{j}}</th>{% endfor %}{% endif %}
@@ -16,18 +20,14 @@
                           </thead>
                           <tbody> 
                                   {% for key, values in i.data.items %}
-                                  <tr><th scope="row">{{key}}</th>
+                                  <tr><th scope="row">{{values.dimension_y.name}}</th>
                                       {% for row in values.data %}
-                                      <td>{{row.key_value|intcomma}}{% if row.data_type == 'PERCENT' %}%{% endif %}</td>
+                                      <td>{% if row.data_type == 'NUMERIC' %}{{row.key_value|intcomma}}{% elif row.data_type == 'PERCENT' %}{{row.key_value}}%{%else%}{{row.key_value}}{% endif %}</td>
                                       {% endfor %}
                                   </tr>
                                   {% endfor %}
                           </tbody>
                         </table>
-                        {% elif i.set_name.display_type == 'BAR-CHART' %}
-                        <div id="{{i.set_name.display_type}}{{forloop.counter}}" value="{{i.set_name.title}}" style="min-width: 310px; max-width: 800px; height: 400px; margin: 0 auto"></div>
-                        {% else %}
-						{% endif %}
             {% endfor %}
       </div>
 {% endblock %}
