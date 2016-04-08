@@ -4,6 +4,7 @@
 
 	<script type="text/javascript">
 	{% for i in detail_set %}
+	    {% if i.set_name.display_type == 'BAR-CHART' %}
 		$(function () {
 			categories = [{% for key, values in i.data.items %}{% if forloop.first %}{% for j in values.names %}'{{j}}',{% endfor %}{% endif %}{% endfor %}]
 			
@@ -94,7 +95,8 @@
 		        {% if values.dimension_y.is_positive %}data:[{% for row in values.data %}{{row.key_value}},{% endfor %}]}
 		        {%else%}data:[{% for row in values.data %}-{{row.key_value}},{% endfor %}]}{% endif %},{% endfor %}]
 		    });
-		});	
+		});
+	{% endif %}
 	{% endfor %}
 	
 	</script>
