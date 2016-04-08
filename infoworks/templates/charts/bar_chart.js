@@ -1,3 +1,4 @@
+    {% load staticfiles %}
     <script src = "{% static "highcharts-4.2.3/highcharts.js" %}"></script>
     <script src = "{% static "highcharts-4.2.3/modules/exporting.js" %}"></script>
 
@@ -45,8 +46,8 @@
 				                enabled: true,
 				                formatter:function() {
 				                	data_type = '{{i.set_name.data_type}}';
-				                	if (this.total < 0){if(data_type=='PERCENT')return "Total: "+(this.total*-1)+"%";
-				                	return "Total: "+this.total*-1;}
+				                	if (this.total < 0){if(data_type=='PERCENT')return "";
+				                	return "";}
 				                	else{if(data_type=='PERCENT')return "Total: "+this.total+"%";
 				                	return "Total: "+this.total;}
 				                },
@@ -64,8 +65,7 @@
 				            	else{y=this.point.y}
 				            	if (this.point.stackTotal < 0){stackTotal=this.point.stackTotal*-1}
 				            	else{stackTotal=this.point.stackTotal}
-				            	
-				            	return this.series.name +": "+y+"<br />Total: "+stackTotal;
+				            	return this.series.name +": "+y;
     				}
 		        },
 				plotOptions: {
@@ -90,7 +90,9 @@
 				                }
 				            }
 				},
-		        series: [{% for key, values in i.data.items %}{name:'{{values.dimension_y.name}}',{% if values.dimension_y.is_positive %}data:[{% for row in values.data %}{{row.key_value}},{% endfor %}]}{%else%}data:[{% for row in values.data %}-{{row.key_value}},{% endfor %}]}{% endif %},{% endfor %}]
+		        series: [{% for key, values in i.data.items %}{name:'{{key}}',
+		        {% if values.dimension_y.is_positive %}data:[{% for row in values.data %}{{row.key_value}},{% endfor %}]}
+		        {%else%}data:[{% for row in values.data %}-{{row.key_value}},{% endfor %}]}{% endif %},{% endfor %}]
 		    });
 		});	
 	{% endfor %}

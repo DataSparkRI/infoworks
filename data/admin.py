@@ -397,8 +397,12 @@ admin.site.register(SchoolIndicator, SchoolIndicatorAdmin)
 
 
 admin.site.register(SchoolYear)
-admin.site.register(CustomDimensionXName)
-admin.site.register(CustomDimensionYName)
+class CustomDimensionXNameAdmin(admin.ModelAdmin):
+    ordering = ('name',)
+admin.site.register(CustomDimensionXName,CustomDimensionXNameAdmin)
+class CustomDimensionYNameAdmin(admin.ModelAdmin):
+    ordering = ('-is_positive','name',)
+admin.site.register(CustomDimensionYName, CustomDimensionYNameAdmin)
 admin.site.register(DetailDataSetTitle)
 #class SchoolNumberOfStudentAndTeacherAdmin(admin.ModelAdmin):
 #    list_display = ('school', 'school_year','student', 'teacher')

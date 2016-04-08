@@ -86,7 +86,7 @@ def school_detail(request, slug, indicator_id, school_year, detail_slug):
             try:
                 table[data.new_dimension_y_name.name]
             except KeyError, e:
-                table[data.new_dimension_y_name.name] = {"dimension_y":data.new_dimension_y_name.name, "names":[], "data":[]}
+                table[data.new_dimension_y_name.name] = {"dimension_y":data.new_dimension_y_name, "names":[], "data":[]}
             
             table[data.new_dimension_y_name.name]['names'].append(data.new_dimension_x_name)
             
@@ -282,7 +282,7 @@ def state_detail(request, slug, indicator_id, school_year, detail_slug):
                 try:
                     table[data.new_dimension_y_name.name]
                 except KeyError, e:
-                    table[data.new_dimension_y_name.name] = {"dimension_y":data.new_dimension_y_name.name, "names":[], "data":[]}
+                    table[data.new_dimension_y_name.name] = {"dimension_y":data.new_dimension_y_name, "names":[], "data":[]}
                 table[data.new_dimension_y_name.name]['names'].append(data.new_dimension_x_name)
                 table[data.new_dimension_y_name.name]['data'].append(indicator_set.get_objects(data.dimension_x_name, data.dimension_y_name))
             display_detail_set.append({"set_name":detail_set, "data": table})
