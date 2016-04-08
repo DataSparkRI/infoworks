@@ -209,7 +209,6 @@ def district_detail(request, slug, indicator_id, school_year, detail_slug):
                    "indicator": indicator,
                    "detail_set": display_detail_set,
                    }
-        print display_detail_set
         return render_to_response('front_page/district_detail.html', context, context_instance=RequestContext(request))
 
 def district_overtime(request, slug):

@@ -352,6 +352,10 @@ class SchoolIndicator(models.Model):
     def displaydata(self):
         return SchoolDisplayData.objects.filter(school_indicator=self).order_by("order")
 
+    @property
+    def displaydatay_have_detail(self):
+        return SchoolDisplayDataY.objects.filter(school_indicator=self, detail__isnull=False).order_by("order")
+
     def save(self, *args, **kwargs):
         ''' On save, update timestamps '''
         if not self.id:
@@ -751,7 +755,9 @@ class DistrictIndicator(models.Model):
     def displaydata(self):
         return DistrictDisplayData.objects.filter(district_indicator=self).order_by("order")
 
-    
+    @property
+    def displaydatay_have_detail(self):
+        return DistrictDisplayDataY.objects.filter(district_indicator=self, detail__isnull=False).order_by("order")
 
     def save(self, *args, **kwargs):
         ''' On save, update timestamps '''
@@ -1073,6 +1079,10 @@ class StateIndicator(models.Model):
     @property
     def displaydata(self):
         return StateDisplayData.objects.filter(state_indicator=self).order_by("order")
+
+    @property
+    def displaydatay_have_detail(self):
+        return StateDisplayDataY.objects.filter(state_indicator=self, detail__isnull=False).order_by("order")
 
     def save(self, *args, **kwargs):
         ''' On save, update timestamps '''

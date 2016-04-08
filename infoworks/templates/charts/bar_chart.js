@@ -19,6 +19,7 @@
 		            categories: categories
 		        },
 		        yAxis: {
+		            {% if i.set_name.data_type == 'PERCENT' %}min: -100, max: 100,{% endif %}
 		            title: {
 		                text: '{{i.set_name.y_axis_title_text}}'
 		            },

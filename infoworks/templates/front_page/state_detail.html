@@ -3,6 +3,15 @@
 {% block body %}
       <div class="container body">
       <h1>{{detail}}{% if request.user.is_active and request.user.is_staff %} <a href="/admin/data/statedisplaydataydetail/{{detail.id}}/change/" target="_blank"><i class="fa fa-pencil"></i></a>{% endif %}</h1>
+        <div class="dropdown">
+		  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{detail}}
+		  <span class="caret"></span></button>
+		  <ul class="dropdown-menu">
+		  	{% for display_detail in indicator.displaydatay_have_detail %}
+		    <li><a href="{% url 'state_detail' indicator.state_indicator_set.state.slug indicator.id school_year.school_year display_detail.detail.slug %}">{{display_detail.detail.name}}</a></li>
+		    {% endfor %}
+		  </ul>
+		</div>
             <h1>{{school_year}}</h1>
             {% for i in detail_set %}
                   <h2>{{i.set_name.title}}{% if request.user.is_active and request.user.is_staff %} <a href="/admin/data/statedisplaydataydetailset/{{i.set_name.id}}/change/" target="_blank"><i class="fa fa-pencil"></i></a>{% endif %}</h2>

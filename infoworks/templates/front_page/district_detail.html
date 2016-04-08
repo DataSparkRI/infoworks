@@ -2,11 +2,20 @@
 
 {% block body %}
       <div class="container body">
+      <h1>{{indicator}}</h1>
       <h1>{{detail}}{% if request.user.is_active and request.user.is_staff %} <a href="/admin/data/districtdisplaydataydetail/{{detail.id}}/change/" target="_blank"><i class="fa fa-pencil"></i></a>{% endif %}</h1>
+      <div class="dropdown">
+		  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{detail}}
+		  <span class="caret"></span></button>
+		  <ul class="dropdown-menu">
+		  	{% for display_detail in indicator.displaydatay_have_detail %}
+		    <li><a href="{% url 'district_detail' indicator.district_indicator_set.district.slug indicator.id school_year.school_year display_detail.detail.slug %}">{{display_detail.detail.name}}</a></li>
+		    {% endfor %}
+		  </ul>
+		</div>
             <h1>{{school_year}}</h1>
             {% for i in detail_set %}
                   <h2>{{i.set_name.title}}{% if request.user.is_active and request.user.is_staff %} <a href="/admin/data/districtdisplaydataydetailset/{{i.set_name.id}}/change/" target="_blank"><i class="fa fa-pencil"></i></a>{% endif %}</h2>
-                        {% comment %}{% if i.set_name.display_type == 'TABLE' %}{% endcomment %}
                         {% if i.set_name.display_type == 'BAR-CHART' %}
                         <div id="{{i.set_name.display_type}}{{forloop.counter}}" value="{{i.set_name.title}}" style="min-width: 310px; max-width: 800px; height: 400px; margin: 0 auto"></div>
                         {% else %}
