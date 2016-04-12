@@ -75,13 +75,16 @@
 				                stacking: 'normal',
 				                dataLabels: {
 				                    enabled: true,
-				                    
 				                    formatter:function() {
 				                    			data_type = '{{i.set_name.data_type}}';
 							                    if (this.y < 0){var pcnt = this.y*-1;}
 							                    else{var pcnt = this.y;}
-							                    if(data_type=='PERCENT')
-							                    	return pcnt+'%';
+							                    if(data_type=='PERCENT'){
+							                    	if (pcnt < 9)
+							                    		return "";
+							                    	else
+							                    		return pcnt+'%';
+							                    }
 							                    else
 							                    	return pcnt;
 							        },
@@ -92,7 +95,7 @@
 				                }
 				            }
 				},
-		        series: [{% for key, values in i.data.items %}{name:'{{key}}',
+		        series: [{% for key, values in i.data.items %}{name:'{{values.dimension_y.name}}',{% if values.dimension_y.color_hex %}color: '{{values.dimension_y.color_hex}}',{% endif %}
 		        {% if values.dimension_y.is_positive %}data:[{% for row in values.data %}{{row.key_value}},{% endfor %}]}
 		        {%else%}data:[{% for row in values.data %}-{{row.key_value}},{% endfor %}]}{% endif %},{% endfor %}]
 		    });

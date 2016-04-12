@@ -40,12 +40,14 @@ class SchoolYear(models.Model):
 class CustomDimensionYName(models.Model):
     name = models.CharField(max_length=100)
     is_positive = models.BooleanField(default=True)
+    color_hex = models.CharField(max_length=100,blank=True, help_text="You can user http://www.color-hex.com/")
+    color_note = models.CharField(max_length=100,blank=True)
     
     def __unicode__(self):
         chart = "+"
         if self.is_positive == False:
             chart = "-"
-        return "[%s] %s"% (chart, self.name)
+        return "[%s] %s [%s - %s]"% (chart, self.name, self.color_note, self.color_hex)
         
 class CustomDimensionXName(models.Model):
     name = models.CharField(max_length=100)
