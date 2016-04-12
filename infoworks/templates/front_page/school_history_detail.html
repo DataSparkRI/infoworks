@@ -37,6 +37,9 @@
 
 {% block javascript %}
 {{block.super}}
+<script src = "{% static "highcharts-4.2.3/highcharts.js" %}"></script>
+<script src = "{% static "highcharts-4.2.3/modules/exporting.js" %}"></script>
+
 <script>
 
 var categories = [{% for k in indicator_dataset.displaydata_x_display%}{% if k == 'School Year' or k == 'Details' %}{% else %}
