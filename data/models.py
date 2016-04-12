@@ -15,9 +15,9 @@ DATA_TYPE_CHOICES = (
 
 DISPLAY_TYPE_CHOICES = (
     ('BAR-CHART', 'Bar Chart'),
-    ('LINE-CHART', 'Line Chart'),
-    ('AREA-CHART','Area Chart'),
-    ('PIE-CHART', 'Pie Chart'),
+    ('LINE-CHART', 'Line Chart (under construction)'),
+    ('AREA-CHART','Area Chart (under construction)'),
+    ('PIE-CHART', 'Pie Chart (under construction)'),
     ('TABLE','Table'),
 )
 

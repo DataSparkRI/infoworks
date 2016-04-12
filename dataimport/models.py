@@ -7,9 +7,10 @@ from data.models import StateIndicator, DistrictIndicator, SchoolIndicator, Indi
 # Create your models here.
 class SystemCode(models.Model):
     code = models.CharField(max_length=100, blank=True)
+    display_name = models.CharField(max_length=100, blank=True)
     
     def __unicode__(self):
-        return self.code
+        return "%s - %s"%(self.code, self.display_name)
 
 class LookUpTableElement(models.Model):
     table = models.ForeignKey('LookUpTable')

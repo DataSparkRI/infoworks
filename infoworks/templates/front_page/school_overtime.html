@@ -8,7 +8,7 @@
 		<div class="col-md-2">{{select.lookup_table.display_name}}:</div>
 		<div class="col-md-10"><select class="form-control" id="select{{select.id}}" ng-model="select{{select.id}}" {% if select.lookup_table.elements.0 %}ng-init="select{{select.id}}='{{select.lookup_table.elements.0.system_code.code}}'"{% endif %} ng-change="change()">
 		  {% for lookup_element in select.lookup_table.elements %}
-		  <option {% if forloop.first %}selected="selected" {% endif %}value = "{{lookup_element.system_code.code}}">{{lookup_element.system_code.code}}</option>
+		  <option {% if forloop.first %}selected="selected" {% endif %}value = "{{lookup_element.system_code.code}}">{% if lookup_element.system_code.display_name%}{{lookup_element.system_code.display_name}}{% else %}{{lookup_element.system_code.code}}{% endif %}</option>
 		  {% endfor %}
 		</select></div>
 	{% endfor %}
@@ -55,7 +55,7 @@ function getName(){
 function highcharts(data){
 	var title_text = ""
 	{% for select in indicator.over_time.selects %}
-	title_text = title_text +" "+ $("#select{{select.id}}").val();
+	title_text = title_text +" "+ $("#select{{select.id}} option:selected").text();
 	{% endfor %}
 
 		        var series = []
