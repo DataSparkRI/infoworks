@@ -95,9 +95,9 @@
 				                }
 				            }
 				},
-		        series: [{% for key, values in i.data.items %}{name:'{{values.dimension_y.name}}',{% if values.dimension_y.color_hex %}color: '{{values.dimension_y.color_hex}}',{% endif %}
-		        {% if values.dimension_y.is_positive %}data:[{% for row in values.data %}{{row.key_value}},{% endfor %}]}
-		        {%else%}data:[{% for row in values.data %}-{{row.key_value}},{% endfor %}]}{% endif %},{% endfor %}]
+                        series: [{% for key, values in i.data.items %}{name:'{{values.dimension_y.name}}',{% if values.dimension_y.color_hex %}color: '{{values.dimension_y.color_hex}}',{% endif %}
+                        {% if values.dimension_y.is_positive %}data:[{% for row in values.data %}{% if row.key_value %}{{row.key_value}},{% else %}null,{% endif %}{% endfor %}]}
+                        {%else%}data:[{% for row in values.data %}{% if row.key_value %}-{{row.key_value}},{% else %}null,{% endif %}{% endfor %}]}{% endif %},{% endfor %}]
 		    });
 		});
 	{% endif %}
