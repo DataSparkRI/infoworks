@@ -152,7 +152,7 @@ def overtime(request):
         elif type == "district":
             indicator = DistrictIndicator.objects.get(title__title=indicator_title, district_indicator_set__district__slug=slug)            
             if school_year == None:
-                school_year = [i.school_year.school_year for i in indicator.dataset.order_by('school_year') ]
+                school_year = [i.school_year.school_year for i in indicator.dataset.order_by('-school_year') ]
                 result.update({"school_year":school_year})
                 result.update({"district_name":indicator.district_indicator_set.district.district_name})
                 data = []
