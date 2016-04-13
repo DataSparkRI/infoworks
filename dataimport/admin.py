@@ -10,6 +10,7 @@ class LookUpTableElementInline(admin.TabularInline):
 
 class LookUpTableAdmin(admin.ModelAdmin):
     inlines = [LookUpTableElementInline]
+    ordering = ('-name',)
 admin.site.register(LookUpTable, LookUpTableAdmin)
 admin.site.register(SystemCode)
 
