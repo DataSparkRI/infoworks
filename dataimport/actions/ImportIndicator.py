@@ -4,7 +4,7 @@ from django.contrib import messages
 from dataimport.models import IndicatorFile, IndicatorField, DimensionName
 from data.models import SchoolIndicator, SchoolIndicatorDataSet, SchoolIndicatorData, \
 DistrictIndicator, DistrictIndicatorDataSet, DistrictIndicatorData, \
-StateIndicator, StateIndicatorDataSet, StateIndicatorData, SchoolYear
+StateIndicator, StateIndicatorDataSet, StateIndicatorData, SchoolYear, State
 
 def get_or_none(objects, match_option):
     try:
@@ -151,8 +151,10 @@ def import_indicator(queryset):
             with open(path) as f:
                 reader = csv.reader(f)
                 headers = reader.next()
-                state_code_index = get_index_or_none(headers, state_codes[0].name)
-                
+                try:
+                    state_code_index = get_index_or_none(headers, state_codes[0].name)
+                except:
+                    state_code_index = None
                 
                 index = get_index(headers, dimension)
                 if school_year != None:
@@ -161,12 +163,15 @@ def import_indicator(queryset):
                     school_year_index = None
                 
                 for row in reader:
-                    try:
-                        state_code = row[state_code_index]
-                        if state_code == '' or state_code == ' ':
-                            continue
-                    except:
-                        break
+                    if state_code_index == None:
+                        state_code = State.objects.filter(default_state=True)[0].state_code
+                    else:
+                        try:
+                            state_code = row[state_code_index]
+                            if state_code == '' or state_code == ' ':
+                                continue
+                        except:
+                            break
                     try:
                         indicator = indicators.get(state_indicator_set__state__state_code=state_code)
                     except:
