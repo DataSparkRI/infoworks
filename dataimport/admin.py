@@ -365,6 +365,8 @@ def ImportIndicator(modeladmin, request, queryset):
 class IndicatorFileAdmin(admin.ModelAdmin):
     inlines = [IndicatorFieldInline]
     actions = [ImportIndicator]
+    list_display = ('name','indicator','state_indicator','district_indicator','school_indicator','indicator_for','school_year')
+    list_filter = ('indicator','indicator_for')
 admin.site.register(IndicatorFile, IndicatorFileAdmin)
 ###################
 
