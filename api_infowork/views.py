@@ -123,24 +123,24 @@ def api(request):
 def overtime(request):
     result = {}
     import ast
+    order_by = '-school_year__school_year'
     if request.method == 'POST':
         type = request.POST.get("type")
         slug = request.POST.get("slug")
         indicator_title = request.POST.get("category")
         school_year = request.POST.get("school_year")
         dataset = ast.literal_eval(request.POST.get("dataset"))
-
         
         if type == "school":
             indicator = SchoolIndicator.objects.get(title__title=indicator_title, school_indicator_set__school__slug=slug)            
             if school_year == None:
-                school_year = [i.school_year.school_year for i in indicator.dataset.order_by('school_year') ]
+                school_year = [i.school_year.school_year for i in indicator.dataset.order_by(order_by)]
                 result.update({"school_year":school_year})
                 result.update({"school_name":indicator.school_indicator_set.school.school_name})
                 data = []
                 for i in dataset:
                     current = {"name":i,"row":[]}
-                    for j in indicator.dataset:
+                    for j in indicator.dataset.order_by(order_by):
                         value = j.get_objects("This School",i)
                         if value ==None:
                             current["row"].append(None)
@@ -152,13 +152,13 @@ def overtime(request):
         elif type == "district":
             indicator = DistrictIndicator.objects.get(title__title=indicator_title, district_indicator_set__district__slug=slug)            
             if school_year == None:
-                school_year = [i.school_year.school_year for i in indicator.dataset.order_by('-school_year') ]
+                school_year = [i.school_year.school_year for i in indicator.dataset.order_by(order_by) ]
                 result.update({"school_year":school_year})
                 result.update({"district_name":indicator.district_indicator_set.district.district_name})
                 data = []
                 for i in dataset:
                     current = {"name":i,"row":[]}
-                    for j in indicator.dataset:
+                    for j in indicator.dataset.order_by(order_by):
                         value = j.get_objects("This District",i)
                         if value ==None:
                             current["row"].append(None)
@@ -170,13 +170,13 @@ def overtime(request):
         elif type == "state":
             indicator = StateIndicator.objects.get(title__title=indicator_title, state_indicator_set__state__slug=slug)            
             if school_year == None:
-                school_year = [i.school_year.school_year for i in indicator.dataset.order_by('school_year') ]
+                school_year = [i.school_year.school_year for i in indicator.dataset.order_by(order_by) ]
                 result.update({"school_year":school_year})
                 result.update({"state_name":indicator.state_indicator_set.state.state_name})
                 data = []
                 for i in dataset:
                     current = {"name":i,"row":[]}
-                    for j in indicator.dataset:
+                    for j in indicator.dataset.order_by(order_by):
                         value = j.get_objects("Statewide",i)
                         if value ==None:
                             current["row"].append(None)
@@ -188,8 +188,6 @@ def overtime(request):
         
     return JsonResponse({"messages":"indicator does not exist"})
     
-
-
 
 def data(request):
     state = None
