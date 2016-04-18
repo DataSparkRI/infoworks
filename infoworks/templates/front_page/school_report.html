@@ -111,26 +111,33 @@
                         <table class="table table-hover">
                           <thead> <tr><th></th>
                                       {% for k in j.dataset.0.displaydata_x_display%}
-                                      <th>{{k}}</th>
+                                      <th>{% if k.display_name %}{{k.display_name}}{% elif k.display.name %}{{k.display.name}}{% else %}{{k}}{% endif %}</th>
                                       {% endfor %}
                                   </tr>
                           </thead>
                           <tbody> 
                                   {% if j.dataset %}
                                   {% for indicatordata in j.dataset.0.displaydata %}
-                                  <tr><th scope="row">{% if indicatordata.dimension_y.display_name %}{{indicatordata.dimension_y.display_name}}{% else %}{{indicatordata.dimension_y.display}}{% endif %}</th>
-                                      {% for row in indicatordata.data %}
-                                      {% if row %}<td>
-                                      	{% if row.key_value.name %}
-											<a href="{% url 'school_detail' school.slug j.id row.school_year indicatordata.dimension_y.detail.slug %}">{{row.key_value}}</a>
-										{% elif row.key_value == None %}
-										{% else %}
-											{% if row.key_type == 'NUMERIC' %}{{row.key_value|intcomma}}
-                                      		{% else %}{{row.key_value}}{% endif %}
-                                      	{% endif %}{% if row.data_type == 'PERCENT' %}%{% endif %}</td>
-                                      {% else %}<td>No Data</td>{% endif %}
-                                      {% endfor %}
-                                  </tr>
+                                  <tr><th scope="row">{% if indicatordata.dimension_y.display_name %}{{indicatordata.dimension_y.display_name}}{% else %}{{indicatordata.dimension_y.display}}{% endif %}</th>	
+										{% with indicatordata.dimension_y.display as data_name %}
+										{% for k in j.dataset.0.displaydata_x_display %}
+											{% if forloop.first %}
+											{% elif forloop.counter == 2 %}
+												{% get_school_history_value j data_name k.display.name as row %}
+												<td>{{row.school_indicator_dataset.school_year.school_year}}</td>
+												{% get_school_value j row.school_indicator_dataset.school_year.school_year data_name k.display.name as data%}
+												<td>{{data.key_value|intcomma}}{% if data.data_type == 'PERCENT' %}%{% endif %}</td>
+											{% else %}
+												{% if k == 'Details' %}
+													{% if indicatordata.dimension_y.detail %}<td><a href="{% url 'school_detail' school.slug j.id row.school_indicator_dataset.school_year indicatordata.dimension_y.detail.slug %}">{{indicatordata.dimension_y.detail}}</a></td>{% else %}<td></td>{% endif %}
+												{% else %}
+											    	{% get_school_value j row.school_indicator_dataset.school_year.school_year data_name k.display.name as data%}
+													<td>{{data.key_value|intcomma}}{% if data.data_type == 'PERCENT' %}%{% endif %}</td>
+												{% endif %}
+											{% endif %}
+										{% endfor %}
+										{% endwith %}
+								  </tr>
                                   {% endfor %}
                                   {% endif %}
                           </tbody>

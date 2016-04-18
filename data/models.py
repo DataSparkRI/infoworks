@@ -214,10 +214,7 @@ class SchoolIndicatorDataSet(models.Model):
     def displaydata_x_display(self):
         index = ["School Year"]
         for i in SchoolDisplayData.objects.filter(school_indicator=self.school_indicator).order_by("order"):
-            if i.display_name == '' or i.display_name == None:
-                index.append(i.display.name)
-            else:
-                index.append(i.display_name)
+            index.append(i)
         #index = SchoolDisplayData.objects.filter(school_indicator=self.school_indicator).values_list('display_name',flat=True).order_by("order")
         if self.have_detail:
             index.append("Details")
@@ -631,10 +628,7 @@ class DistrictIndicatorDataSet(models.Model):
     def displaydata_x_display(self):
         index = ["School Year"]
         for i in DistrictDisplayData.objects.filter(district_indicator=self.district_indicator).order_by("order"):
-            if i.display_name == '' or i.display_name == None:
-                index.append(i.display.name)
-            else:
-                index.append(i.display_name)
+            index.append(i)
         #index = SchoolDisplayData.objects.filter(school_indicator=self.school_indicator).values_list('display_name',flat=True).order_by("order")
         if self.have_detail:
             index.append("Details")
@@ -976,10 +970,7 @@ class StateIndicatorDataSet(models.Model):
     def displaydata_x_display(self):
         index = ["School Year"]
         for i in StateDisplayData.objects.filter(state_indicator=self.state_indicator).order_by("order"):
-            if i.display_name == '' or i.display_name == None:
-                index.append(i.display.name)
-            else:
-                index.append(i.display_name)
+            index.append(i)
         #index = SchoolDisplayData.objects.filter(school_indicator=self.school_indicator).values_list('display_name',flat=True).order_by("order")
         if self.have_detail:
             index.append("Details")
