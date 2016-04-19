@@ -268,7 +268,7 @@ class SchoolIndicatorDataSet(models.Model):
                     except:
                         data.append(None)
                     #data.append(DistrictIndicatorData.objects.get(school_indicator_dataset=self, dimension_x=x, dimension_y=y))
-                elif x == "Statewide":
+                elif x == "Statewide" or x == "Nationwide":
                     try:
                         state = self.school_indicator.school_indicator_set.school.district.us_state
                         
@@ -671,7 +671,7 @@ class DistrictIndicatorDataSet(models.Model):
                 elif x == "Details":
                     detail = DistrictDisplayDataY.objects.filter(district_indicator = self.district_indicator, display__name=y)[0]
                     data.append({"key_value":detail.detail, "school_year":self.school_year})
-                elif x == "Statewide":
+                elif x == "Statewide" or x == "Nationwide":
                     try:
                         state = self.district_indicator.district_indicator_set.district.us_state
                         indicator_title = self.district_indicator.title.title
