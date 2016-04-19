@@ -68,11 +68,11 @@ def school_detail(request, slug, indicator_id, school_year, detail_slug):
     school_year = SchoolYear.objects.get(school_year=school_year)
     school_indicator_set = SchoolIndicatorDataSet.objects.get(school_indicator=indicator, school_year = school_year)
     try:
-        district_indicator_set = DistrictIndicatorDataSet.objects.get(district_indicator__district_indicator_set__district=indicator.school_indicator_set.school.district, school_year = school_year)
+        district_indicator_set = DistrictIndicatorDataSet.objects.get(district_indicator__title = indicator.title, district_indicator__district_indicator_set__district=indicator.school_indicator_set.school.district, school_year = school_year)
     except:
         district_indicator_set = None
     try:
-        state_indicator_set = StateIndicatorDataSet.objects.get(state_indicator__state_indicator_set__state=indicator.school_indicator_set.school.district.us_state, school_year = school_year)    
+        state_indicator_set = StateIndicatorDataSet.objects.get(state_indicator__title = indicator.title, state_indicator__state_indicator_set__state=indicator.school_indicator_set.school.district.us_state, school_year = school_year)    
     except:
         state_indicator_set = None
     detail = SchoolDisplayDataYDetail.objects.get(slug=detail_slug)
@@ -169,7 +169,7 @@ def district_detail(request, slug, indicator_id, school_year, detail_slug):
     indicator = DistrictIndicator.objects.get(id=indicator_id)
     school_year = SchoolYear.objects.get(school_year=school_year)
     district_indicator_set = DistrictIndicatorDataSet.objects.get(district_indicator=indicator, school_year = school_year)
-    state_indicator_set = StateIndicatorDataSet.objects.get(state_indicator__state_indicator_set__state=indicator.district_indicator_set.district.us_state, school_year = school_year)
+    state_indicator_set = StateIndicatorDataSet.objects.get(state_indicator__title =indicator.title, state_indicator__state_indicator_set__state=indicator.district_indicator_set.district.us_state, school_year = school_year)
     detail = DistrictDisplayDataYDetail.objects.get(slug=detail_slug)
 
     if detail.district_display_type == 'SCHOOL':
