@@ -1,6 +1,7 @@
-{% extends "front_page/base.html" %}{% load staticfiles %}{% load config %}{% load humanize %}
+{% extends "front_page/base.html" %}{% load staticfiles %}{% load config %}{% load humanize %}{% load cache %}
 
 {% block body %}
+     {% cache 35000 school request.path school.id %}
       <nav class="side-menu">
         <ul>
           <li class="hidden active">
@@ -157,5 +158,5 @@
       </section>
       {% endfor %}
       <!-- End: Schedule -->
-
+      {% endcache %}
 {% endblock body %}

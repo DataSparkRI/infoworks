@@ -7,6 +7,8 @@ from data.models import SchoolYear
 import json
 from django.core import serializers
 from django.db.models import Count
+from django.shortcuts import redirect
+from django.contrib.admin.views.decorators import staff_member_required
 
 '''
 https://infoworks-yangxu.c9users.io/api/?indicator_type=school&indicator_id=2&school_year=2015-2016
@@ -36,6 +38,12 @@ https://infoworks-yangxu.c9users.io/api/?indicator_type=school&school_code=1104&
         }]
 }
 '''
+
+@staff_member_required
+def clean_memcached(request):
+    from django.core.cache import cache
+    cache.clear()
+    return redirect('/admin/')
 
 def api(request):
         if request.method == 'GET':

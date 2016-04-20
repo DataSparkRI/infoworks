@@ -3,6 +3,7 @@ from api_infowork import views
 
 urlpatterns = [
     url(r'^$', views.api, name="api_infowork"),
+    url(r'^clean_memcached', views.clean_memcached, name="clean_memcached"),
     url(r'^search/data', views.data, name="data"),
     url(r'^search/overtime', views.overtime, name="overtime"),
     ]

@@ -4,6 +4,7 @@ django-jenkins==0.18.0
 django-celery==3.1.17
 django-ckeditor==5.0.3
 redis==2.10.5
+python-memcached==1.57
 pep8
 pyflakes
 Pylint
