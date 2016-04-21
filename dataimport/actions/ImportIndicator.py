@@ -193,13 +193,14 @@ def import_indicator(queryset):
                             
                             dimension_y_name = "%s%s"%(dimension_y_add_on, value["dimension_name"].name)
                             DimensionName.objects.get_or_create(name=dimension_y_name)
-                            StateIndicatorData.objects.get_or_create(state_indicator_dataset=state_indicator_dataset,
+                            state_data, created = StateIndicatorData.objects.get_or_create(state_indicator_dataset=state_indicator_dataset,
                                                             dimension_x = q.indicator_for,
                                                             dimension_y = dimension_y_name,
                                                             key_value = row[key],
-                                                            data_type = value["data_type"],
-                                                            import_job = q
+                                                            data_type = value["data_type"]
                             )
+                            state_data.import_job = q
+                            state_data.save()
         
         if q.district_indicator:
             with open(path) as f:
@@ -239,13 +240,14 @@ def import_indicator(queryset):
                             
                             dimension_y_name = "%s%s"%(dimension_y_add_on, value["dimension_name"].name)
                             DimensionName.objects.get_or_create(name=dimension_y_name)
-                            DistrictIndicatorData.objects.get_or_create(district_indicator_dataset=district_indicator_dataset,
+                            district_data, created = DistrictIndicatorData.objects.get_or_create(district_indicator_dataset=district_indicator_dataset,
                                                             dimension_x = q.indicator_for,
                                                             dimension_y = dimension_y_name,
                                                             key_value = row[key],
-                                                            data_type = value["data_type"],
-                                                            import_job = q
+                                                            data_type = value["data_type"]
                             )
+                            district_data.import_job = q
+                            district_data.save()
                             #if created:
                             #    DistrictIndicatorData.objects.get_or_create(district_indicator_dataset=district_indicator_dataset,
                             #                                dimension_x = "School Year",
@@ -293,13 +295,12 @@ def import_indicator(queryset):
                             
                             dimension_y_name = "%s%s"%(dimension_y_add_on, value["dimension_name"].name)
                             DimensionName.objects.get_or_create(name=dimension_y_name)
-                            SchoolIndicatorData.objects.get_or_create(school_indicator_dataset=school_indicator_dataset,
+                            school_data, created = SchoolIndicatorData.objects.get_or_create(school_indicator_dataset=school_indicator_dataset,
                                                             dimension_x = q.indicator_for,
                                                             dimension_y = dimension_y_name,
                                                             key_value = row[key],
-                                                            data_type = value["data_type"],
-                                                            import_job = q
+                                                            data_type = value["data_type"]
                             )
-            
-        
+                            school_data.import_job = q
+                            school_data.save()        
             

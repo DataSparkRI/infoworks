@@ -354,17 +354,27 @@ class IndicatorFieldInline(admin.TabularInline):
     raw_id_fields = ("dimension_name",)
 
 ###################
-def ImportIndicator(modeladmin, request, queryset):
-    from dataimport.tasks import ImportIndicatorFile
-    ImportIndicatorFile.delay(queryset)
+def ImportIndicatorData(modeladmin, request, queryset):
+    from dataimport.tasks import ImportIndicatorFileData
+    ImportIndicatorFileData.delay(queryset)
     try:
-        messages.add_message(request, messages.INFO, "add to celery tasks.")
+        messages.add_message(request, messages.INFO, "Import Indicator Data add to celery tasks.")
     except:
         pass
+ImportIndicatorData.short_description = "Import selected Indicator data"
+
+def RemoveIndicatorData(modeladmin, request, queryset):
+    from dataimport.tasks import RemoveIndicatorFileData
+    RemoveIndicatorFileData.delay(queryset)
+    try:
+        messages.add_message(request, messages.INFO, "Remove Indicator Data add to celery tasks.")
+    except:
+        pass
+RemoveIndicatorData.short_description = "Remove selected Indicator data"
 
 class IndicatorFileAdmin(admin.ModelAdmin):
     inlines = [IndicatorFieldInline]
-    actions = [ImportIndicator]
+    actions = [ImportIndicatorData, RemoveIndicatorData]
     list_display = ('name','indicator','state_indicator','district_indicator','school_indicator','indicator_for','school_year')
     list_filter = ('indicator','indicator_for')
 admin.site.register(IndicatorFile, IndicatorFileAdmin)

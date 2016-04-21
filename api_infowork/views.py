@@ -9,6 +9,7 @@ from django.core import serializers
 from django.db.models import Count
 from django.shortcuts import redirect
 from django.contrib.admin.views.decorators import staff_member_required
+from django.core.cache import cache
 
 '''
 https://infoworks-yangxu.c9users.io/api/?indicator_type=school&indicator_id=2&school_year=2015-2016
@@ -43,7 +44,7 @@ https://infoworks-yangxu.c9users.io/api/?indicator_type=school&school_code=1104&
 def clean_memcached(request):
     from django.core.cache import cache
     cache.clear()
-    return redirect('/admin/')
+    return redirect(request.META["HTTP_REFERER"])
 
 def api(request):
         if request.method == 'GET':
@@ -202,6 +203,11 @@ def data(request):
     district = None
     school = None
     dimension_y = [school.school_year for school in SchoolYear.objects.all().order_by("school_year")]
+    table = cache.get(request.get_full_path())
+    if not table:
+        pass
+    else:
+        return JsonResponse(table, safe=False)
     table = {"dimension_x": ["Topic","Category"] + dimension_y, "data":[]}
     
     def getData(obj):
@@ -255,5 +261,6 @@ def data(request):
                 table["data"] = returnDefaultState()
         else:
             table["data"] = returnDefaultState()
+    cache.set(request.get_full_path(), table)
     return JsonResponse(table, safe=False)
 
