@@ -113,67 +113,65 @@ class Command(BaseCommand):
         from dataimport.models import DimensionFor, DimensionName
         title = IndicatorTitle.objects.get(title='NECAP Assessments')
         district_indicators = DistrictIndicator.objects.filter(title=title)
+        
+        #clean
+        for indicator in district_indicators:
+            DistrictDisplayData.objects.filter(district_indicator = indicator).delete()
+            DistrictDisplayDataY.objects.filter(district_indicator = indicator).delete()
+        
+        
         for indicator in district_indicators:
             
             display, created = DimensionFor.objects.get_or_create(name = "This District")
-            print display
             DistrictDisplayData.objects.get_or_create(district_indicator = indicator, display = display, order=1)
             display, created = DimensionFor.objects.get_or_create(name = "Statewide")
             DistrictDisplayData.objects.get_or_create(district_indicator = indicator, display = display, order=2)
             
             display, created = DimensionName.objects.get_or_create(name="3rd Grade Math All Students: All Students % Proficient")
-            DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display = display, order =1, display_name="3rd Grade Math")
+            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display = display, order =1, display_name="3rd Grade Math")
             display, created = DimensionName.objects.get_or_create(name="3rd Grade Reading All Students: All Students % Proficient")
             district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display = display, order =2, display_name="3rd Grade Reading")
-            display, created = DimensionName.objects.get_or_create(name="3rd Grade Science All Students: All Students % Proficient")
-            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display = display, order =3, display_name="3rd Grade Science")
       
             display, created = DimensionName.objects.get_or_create(name="4th Grade Math All Students: All Students % Proficient")
-            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =4, display_name="4th Grade Math")
+            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =3, display_name="4th Grade Math")
             display, created = DimensionName.objects.get_or_create(name="4th Grade Reading All Students: All Students % Proficient")
-            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =5, display_name="4th Grade Reading")
+            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =4, display_name="4th Grade Reading")
             display, created = DimensionName.objects.get_or_create(name="4th Grade Science All Students: All Students % Proficient")
-            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =6, display_name="4th Grade Science")
+            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =5, display_name="4th Grade Science")
            
             display, created = DimensionName.objects.get_or_create(name="5th Grade Math All Students: All Students % Proficient")
-            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =7, display_name="5th Grade Math")
+            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =6, display_name="5th Grade Math")
             display, created = DimensionName.objects.get_or_create(name="5th Grade Reading All Students: All Students % Proficient")
-            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =8, display_name="5th Grade Reading")
+            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =7, display_name="5th Grade Reading")
             display, created = DimensionName.objects.get_or_create(name="5th Grade Writing All Students: All Students % Proficient")
-            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =9, display_name="5th Grade Writing")
-            display, created = DimensionName.objects.get_or_create(name="5th Grade Science All Students: All Students % Proficient")
-            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =10, display_name="5th Grade Science")
+            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =8, display_name="5th Grade Writing")
 
             display, created = DimensionName.objects.get_or_create(name="6th Grade Math All Students: All Students % Proficient")
-            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =11, display_name="6th Grade Math")
+            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =9, display_name="6th Grade Math")
             display, created = DimensionName.objects.get_or_create(name="6th Grade Reading All Students: All Students % Proficient")
-            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =12, display_name="6th Grade Reading")
-            display, created = DimensionName.objects.get_or_create(name="6th Grade Science All Students: All Students % Proficient")
-            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =13, display_name="6th Grade Science")
+            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =10, display_name="6th Grade Reading")
             
             display, created = DimensionName.objects.get_or_create(name="7th Grade Math All Students: All Students % Proficient")
-            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =14, display_name="7th Grade Math")
+            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =11, display_name="7th Grade Math")
             display, created = DimensionName.objects.get_or_create(name="7th Grade Reading All Students: All Students % Proficient")
-            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =15, display_name="7th Grade Reading")
-            display, created = DimensionName.objects.get_or_create(name="7th Grade Science All Students: All Students % Proficient")
-            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =16, display_name="7th Grade Science")
+            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =12, display_name="7th Grade Reading")
 
             display, created = DimensionName.objects.get_or_create(name="8th Grade Math All Students: All Students % Proficient")
-            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =17, display_name="8th Grade Math")
+            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =13, display_name="8th Grade Math")
             display, created = DimensionName.objects.get_or_create(name="8th Grade Reading All Students: All Students % Proficient")
-            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =18, display_name="8th Grade Reading")
+            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =14, display_name="8th Grade Reading")
             display, created = DimensionName.objects.get_or_create(name="8th Grade Writing All Students: All Students % Proficient")
-            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =19, display_name="8th Grade Writing")
+            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =15, display_name="8th Grade Writing")
             display, created = DimensionName.objects.get_or_create(name="8th Grade Science All Students: All Students % Proficient")
-            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =20, display_name="8th Grade Science")
+            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =16, display_name="8th Grade Science")
 
             display, created = DimensionName.objects.get_or_create(name="11th Grade Math All Students: All Students % Proficient")
-            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =21, display_name="11th Grade Math")
+            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =17, display_name="11th Grade Math")
             display, created = DimensionName.objects.get_or_create(name="11th Grade Reading All Students: All Students % Proficient")
-            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =22, display_name="11th Grade Reading")
+            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =18, display_name="11th Grade Reading")
             display, created = DimensionName.objects.get_or_create(name="11th Grade Writing All Students: All Students % Proficient")
-            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =23, display_name="11th Grade Writing")
+            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =19, display_name="11th Grade Writing")
             display, created = DimensionName.objects.get_or_create(name="11th Grade Science All Students: All Students % Proficient")
-            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =24, display_name="11th Grade Science")
+            district, created = DistrictDisplayDataY.objects.get_or_create(district_indicator = indicator, display=display, order =20, display_name="11th Grade Science")
             
             
