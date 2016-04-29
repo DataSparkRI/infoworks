@@ -13,9 +13,9 @@ def get_config(config_name):
         return None
 
 @register.simple_tag
-def get_school_indicator_value(school, school_year, dimension_y):
+def get_school_indicator_value(school, indicator, school_year, dimension_y):
     try:
-        school_indicator_dataset = SchoolIndicatorDataSet.objects.get(school_indicator__school_indicator_set__school=school, school_year__school_year=school_year)
+        school_indicator_dataset = SchoolIndicatorDataSet.objects.get(school_indicator__school_indicator_set__school=school, school_indicator__title=indicator.title, school_year__school_year=school_year)
         return school_indicator_dataset.get_objects('This School', dimension_y)
     except:
         return None
@@ -65,9 +65,9 @@ def get_school_value(school_indicator, str_school_year, dimension_y, dimension_x
         return data
 
 @register.simple_tag
-def get_district_indicator_value(district, school_year, dimension_y):
+def get_district_indicator_value(district, indicator, school_year, dimension_y):
     try:
-        district_indicator_dataset = DistrictIndicatorDataSet.objects.get(district_indicator__district_indicator_set__district=district, school_year__school_year=school_year)
+        district_indicator_dataset = DistrictIndicatorDataSet.objects.get(district_indicator__district_indicator_set__district=district, district_indicator__title=indicator.title, school_year__school_year=school_year)
         return district_indicator_dataset.get_objects('This District', dimension_y)
     except:
         return None
@@ -106,9 +106,9 @@ def get_district_value(district_indicator, str_school_year, dimension_y, dimensi
         return data
 
 @register.simple_tag
-def get_state_indicator_value(state, school_year, dimension_y):
+def get_state_indicator_value(state, indicator, school_year, dimension_y):
     try:
-        state_indicator_dataset = StateIndicatorDataSet.objects.get(state_indicator__state_indicator_set__state=state, school_year__school_year=school_year)
+        state_indicator_dataset = StateIndicatorDataSet.objects.get(state_indicator__state_indicator_set__state=state, state_indicator__title=indicator.title, school_year__school_year=school_year)
         return state_indicator_dataset.get_objects('Statewide', dimension_y)
     except:
         return None

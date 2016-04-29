@@ -19,7 +19,7 @@
 		  </ul>
 		</div>		
 		<div class="col-md-6 text-left">{{district.district_name}} {{y.0.display}}</div>
-		<div class="col-md-6 text-right">{% get_district_indicator_value district school_year y.0.display.name as value %}{{value.key_value}}</div>
+		<div class="col-md-6 text-right">{% get_district_indicator_value district indicator school_year y.0.display.name as value %}{{value.key_value}}</div>
 		
 		<table class="table table-hover" id="table" class="sortable-theme-bootstrap" data-sortable>
 			<thead> 
@@ -57,7 +57,7 @@
                data:[
 				{% for school in district.schools%}
                   {district:'{{district.district_name}}',school:'{{school.school_name}}',
-                      value: {% get_school_indicator_value school school_year y.0.display.name as value%}{% if value.data_type == 'NUMERIC' %}{{value.key_value}}{% elif value.data_type == 'PERCENT' %}'{{value.key_value}}%'{% else %}'{{value.key_value}}'{% endif %} },
+                      value: {% get_school_indicator_value school indicator school_year y.0.display.name as value%}{% if value.data_type == 'NUMERIC' %}{{value.key_value}}{% elif value.data_type == 'PERCENT' %}'{{value.key_value}}%'{% else %}'{{value.key_value}}'{% endif %} },
 				{% endfor %}
                ]
             };
