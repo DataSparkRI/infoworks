@@ -20,7 +20,7 @@
                         <div id="{{i.set_name.display_type}}{{forloop.counter}}" value="{{i.set_name.title}}" style="min-width: 310px; max-width: 800px; height: 400px; margin: 0 auto"></div>
                         {% else %}
                         {% endif %}
-                        {% if i.set_name.display_type == 'BAR-CHART' or i.set_name.display_type == 'HORZ-BAR-CHART' %}                        
+                        {% if i.set_name.display_type == 'BAR-CHART' or i.set_name.display_type == 'HORZ-BAR-CHART' or i.set_name.display_type == 'TABLE' %}                        
                         <table class="table table-hover">
                           <thead> <tr><th></th>
                                       {% for key, values in i.data.items %}
