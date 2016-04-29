@@ -4,13 +4,17 @@
 
 	<script type="text/javascript">
 	{% for i in detail_set %}
-	    {% if i.set_name.display_type == 'BAR-CHART' or i.set_name.display_type == 'BAR-CHART-ONLY' %}
+	    {% if i.set_name.display_type == 'BAR-CHART' or i.set_name.display_type == 'BAR-CHART-ONLY' or i.set_name.display_type == 'HORZ-BAR-CHART' or i.set_name.display_type == 'HORZ-BAR-CHART-ONLY'%}
 		$(function () {
 			categories = [{% for key, values in i.data.items %}{% if forloop.first %}{% for j in values.names %}'{{j}}',{% endfor %}{% endif %}{% endfor %}]
 			
 		    $('#'+'{{i.set_name.display_type}}'+'{{forloop.counter}}').highcharts({
 		        chart: {
+		            {% if i.set_name.display_type == 'HORZ-BAR-CHART' or i.set_name.display_type == 'HORZ-BAR-CHART-ONLY'%}
+		            type: 'bar'
+		            {% else %}
 		            type: 'column'
+		            {% endif %}
 		        },
 		        title: {
 		            text: '{{i.set_name.title}}'
@@ -95,11 +99,16 @@
     				}
 		        },
 				plotOptions: {
-				            column: {
-				                stacking: 'normal',
-				                dataLabels: {
-				                    enabled: true,
-				                    formatter:function() {
+		            {% if i.set_name.display_type == 'HORZ-BAR-CHART' or i.set_name.display_type == 'HORZ-BAR-CHART-ONLY'%}					
+					series: {
+                    	stacking: 'normal'
+                    },
+					{% endif %}
+				    column: {
+				            stacking: 'normal',
+				            dataLabels: {
+				                 enabled: true,
+				                 formatter:function() {
 				                    			data_type = '{{i.set_name.data_type}}';
 							                    if (this.y < 0){var pcnt = this.y*-1;}
 							                    else{var pcnt = this.y;}
@@ -111,13 +120,13 @@
 							                    }
 							                    else
 							                    	return pcnt;
-							        },
-				                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
-				                    style: {
+							     },
+				                 color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+				                 style: {
 				                        textShadow: '0 0 3px black'
-				                    }
 				                }
 				            }
+				    }
 				},
                         series: [{% for key, values in i.data.items %}{name:'{{values.dimension_y.name}}',{% if values.dimension_y.color_hex %}color: '{{values.dimension_y.color_hex}}',{% endif %}
                         {% if values.dimension_y.is_positive %}data:[{% for row in values.data %}{% if row.key_value %}{{row.key_value}},{% else %}null,{% endif %}{% endfor %}]}

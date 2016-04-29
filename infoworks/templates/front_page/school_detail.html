@@ -16,10 +16,11 @@
             <h1>{{school_year}}</h1>
             {% for i in detail_set %}
                   <h2>{{i.set_name.title}}{% if request.user.is_active and request.user.is_staff %} <a href="/admin/data/schooldisplaydataydetailset/{{i.set_name.id}}/change/" target="_blank"><i class="fa fa-pencil"></i></a>{% endif %}</h2>
-                        {% if i.set_name.display_type == 'BAR-CHART' %}
+                        {% if i.set_name.display_type == 'BAR-CHART' or i.set_name.display_type == 'BAR-CHART-ONLY' or i.set_name.display_type == 'HORZ-BAR-CHART' or i.set_name.display_type == 'HORZ-BAR-CHART-ONLY' %}
                         <div id="{{i.set_name.display_type}}{{forloop.counter}}" value="{{i.set_name.title}}" style="min-width: 310px; max-width: 800px; height: 400px; margin: 0 auto"></div>
                         {% else %}
                         {% endif %}
+                        {% if i.set_name.display_type == 'BAR-CHART' or i.set_name.display_type == 'HORZ-BAR-CHART' %}                        
                         <table class="table table-hover">
                           <thead> <tr><th></th>
                                       {% for key, values in i.data.items %}
@@ -37,6 +38,7 @@
                                   {% endfor %}
                           </tbody>
                         </table>
+                        {% endif %}
             {% endfor %}
       </div>
 {% endblock %}
