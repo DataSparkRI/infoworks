@@ -42,6 +42,8 @@
 {% endblock body %}
 
 {% block javascript %}
+    {% cache 35000 district request.path indicator.id school_year detail.slug %}
+
 	{{block.super}}
 	<script src="{% static "sortable-0.8.0/js/sortable.min.js" %}"></script>
 	<script src = "{% static "angular-1.3.14/angular.min.js" %}"></script>
@@ -66,4 +68,6 @@
          
          
     </script>
+    {% endcache %}
+    
 {% endblock %}

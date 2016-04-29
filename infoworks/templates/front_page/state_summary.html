@@ -58,10 +58,11 @@
 		</table>
 	</div>
     {% endif %}
-         
 {% endblock body %}
 
 {% block javascript %}
+    {% cache 35000 sate request.path indicator.id school_year detail.slug %}
+
 	{{block.super}}
 	
 	<script src="{% static "sortable-0.8.0/js/sortable.min.js" %}"></script>
@@ -84,6 +85,7 @@
             };
          });
          {% elif type == "DISTRICT" %}
+         
          var mainApp = angular.module('mainApp',[]).config(function($interpolateProvider) {
 					        $interpolateProvider.startSymbol('{[{');
 					        $interpolateProvider.endSymbol('}]}');
@@ -102,4 +104,5 @@
          {% endif %}
                   
     </script>
+    {% endcache %}
 {% endblock javascript %}
