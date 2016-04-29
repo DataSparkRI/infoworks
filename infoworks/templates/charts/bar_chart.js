@@ -16,7 +16,31 @@
 		            text: '{{i.set_name.title}}'
 		        },
 		        xAxis: {
-		            categories: categories
+		            categories: categories,
+		            {% if i.set_name.plot_setting %}
+		              {% if i.set_name.plot_setting.band %}
+                      plotBands: [{% for b in i.set_name.plot_setting.band %}{
+                        {% if b.background_color %}color:'{{b.background_color}}',{% endif %}
+                        from: {{b.setting_from}}, // Start of the plot band
+                        to: {{b.setting_to}}, // End of the plot band
+                        label: {
+                            text: '{{b.label_text|safe}}',
+                            style: {
+                                color: '{{b.label_color}}'
+                            },
+                            y: {{b.y_position}}
+                        }
+                      },{% endfor %}],
+                      {% endif %}
+                      {% if i.set_name.plot_setting.line %}
+                      plotLines: [{% for l in i.set_name.plot_setting.line %}{
+                        color: '{{l.line_color}}', // Color value
+                        dashStyle: '{{l.dash_style}}', // Style of the plot line. Default to solid
+                        value: {{l.value}}, // Value of where the line will appear
+                        width: {{l.width}} // Width of the line
+                      },{% endfor %}]
+                      {% endif %}
+		            {% endif %}		            
 		        },
 		        yAxis: {
 		            {% if i.set_name.data_type == 'PERCENT' %}min: -100, max: 100,{% endif %}

@@ -6,7 +6,8 @@ State, StateIndicatorSet, StateIndicator, StateDisplayData, StateIndicatorDataSe
 DistrictDisplayDataYDetailData, DistrictDisplayDataYDetail, DistrictDisplayDataYDetailSet, \
 SchoolDisplayDataYDetailData, SchoolDisplayDataYDetail, SchoolDisplayDataYDetailSet, \
 StateDisplayDataYDetail, StateDisplayDataYDetailData, StateDisplayDataYDetailSet, \
-CustomDimensionYName, CustomDimensionXName,DistrictIndicatorDetailDataSet,DistrictIndicatorData
+CustomDimensionYName, CustomDimensionXName,DistrictIndicatorDetailDataSet,DistrictIndicatorData, \
+PlotSetting, PlotLine, PlotBand
 from data.models import SchoolOverTime, DistrictOverTime, StateOverTime, \
 SchoolOverTimeSelect, DistrictOverTimeSelect, StateOverTimeSelect, \
 SchoolOverTimeElement, DistrictOverTimeElement, StateOverTimeElement
@@ -80,6 +81,12 @@ def write_default_state_indicator(modeladmin, request, queryset):
         messages.add_message(request, messages.INFO, "Done")
     except:
         pass
+
+class PlotLineInline(admin.TabularInline):
+    model = PlotLine
+     
+class PlotBandInline(admin.TabularInline):
+    model = PlotBand
 
 class StateDisplayDataYDetailDataInline(admin.TabularInline):
     model = StateDisplayDataYDetailData
@@ -404,6 +411,11 @@ class CustomDimensionYNameAdmin(admin.ModelAdmin):
     ordering = ('-is_positive','name',)
 admin.site.register(CustomDimensionYName, CustomDimensionYNameAdmin)
 admin.site.register(DetailDataSetTitle)
+
+class PlotSettingAdmin(admin.ModelAdmin):
+    inlines = [PlotLineInline, PlotBandInline]
+    
+admin.site.register(PlotSetting, PlotSettingAdmin)
 #class SchoolNumberOfStudentAndTeacherAdmin(admin.ModelAdmin):
 #    list_display = ('school', 'school_year','student', 'teacher')
 #admin.site.register(SchoolNumberOfStudentAndTeacher, SchoolNumberOfStudentAndTeacherAdmin)

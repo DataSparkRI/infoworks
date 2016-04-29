@@ -27,6 +27,42 @@ STATE_DISPLAY_TYPE_CHOICES = (
     ('SCHOOL', 'Show school page')
 )
 # Create your models here.
+class PlotBand(models.Model):
+    plot_set = models.ForeignKey("PlotSetting")
+    background_color = models.CharField(max_length=100, blank=True)
+    setting_from = models.CharField(max_length=100, blank=True)
+    setting_to = models.CharField(max_length=100, blank=True)
+    label_text = models.CharField(max_length=100, blank=True)
+    label_color = models.CharField(max_length=100, blank=True)
+    y_position = models.CharField(max_length=100, blank=True)
+    
+    def __unicode__(self):
+        return self.label_text
+    
+class PlotLine(models.Model):
+    plot_set = models.ForeignKey("PlotSetting")
+    line_color = models.CharField(max_length=100, blank=True)
+    dash_style = models.CharField(max_length=100, blank=True, default='longdashdot')
+    value = models.CharField(max_length=100, blank=True)
+    width = models.CharField(max_length=100, blank=True)
+    
+    def __unicode__(self):
+        return self.value
+
+class PlotSetting(models.Model):
+    name = models.CharField(max_length=100, blank=True)
+    
+    @property
+    def band(self):
+        return PlotBand.objects.filter(plot_set=self)
+    
+    @property
+    def line(self):
+        return PlotLine.objects.filter(plot_set=self)
+            
+    def __unicode__(self):
+        return self.name
+
 class IndicatorTitle(models.Model):
     title = models.CharField(max_length=100)
     def __unicode__(self):
@@ -126,6 +162,7 @@ class SchoolDisplayDataYDetailSet(models.Model):
     display_type = models.CharField(max_length=20,choices=DISPLAY_TYPE_CHOICES)
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES,default='PERCENT')
     y_axis_title_text = models.CharField(max_length=200, blank=True, null=True)
+    plot_setting = models.ForeignKey("PlotSetting", blank=True, null=True)
 
     
     @property
@@ -489,6 +526,7 @@ class DistrictDisplayDataYDetailData(models.Model):
     def __unicode__(self):
         return "%s - %s"%(self.new_dimension_y_name, self.new_dimension_x_name)
 
+
 class DistrictDisplayDataYDetailSet(models.Model):
     detail = models.ForeignKey("DistrictDisplayDataYDetail", blank=True, null=True)
     name = models.CharField(max_length=100, blank=True)
@@ -497,7 +535,7 @@ class DistrictDisplayDataYDetailSet(models.Model):
     display_type = models.CharField(max_length=20,choices=DISPLAY_TYPE_CHOICES)
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES,default='PERCENT')
     y_axis_title_text = models.CharField(max_length=200, blank=True, null=True)
-
+    plot_setting = models.ForeignKey("PlotSetting", blank=True, null=True)
 
     @property
     def detail_data(self):
@@ -882,7 +920,7 @@ class StateDisplayDataYDetailSet(models.Model):
     display_type = models.CharField(max_length=20,choices=DISPLAY_TYPE_CHOICES)
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES,default='PERCENT')
     y_axis_title_text = models.CharField(max_length=200, blank=True, null=True)
-
+    plot_setting = models.ForeignKey("PlotSetting", blank=True, null=True)
     
     @property
     def detail_data(self):
