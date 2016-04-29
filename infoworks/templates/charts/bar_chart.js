@@ -4,7 +4,7 @@
 
 	<script type="text/javascript">
 	{% for i in detail_set %}
-	    {% if i.set_name.display_type == 'BAR-CHART' %}
+	    {% if i.set_name.display_type == 'BAR-CHART' or i.set_name.display_type == 'BAR-CHART-ONLY' %}
 		$(function () {
 			categories = [{% for key, values in i.data.items %}{% if forloop.first %}{% for j in values.names %}'{{j}}',{% endfor %}{% endif %}{% endfor %}]
 			
