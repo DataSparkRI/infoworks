@@ -11,6 +11,7 @@ PlotSetting, PlotLine, PlotBand
 from data.models import SchoolOverTime, DistrictOverTime, StateOverTime, \
 SchoolOverTimeSelect, DistrictOverTimeSelect, StateOverTimeSelect, \
 SchoolOverTimeElement, DistrictOverTimeElement, StateOverTimeElement
+from data.tasks import CopySchoolIndicatorData, CopyStateIndicatorData, CopyDistrictIndicatorData
 
 from django.contrib import messages
 
@@ -19,6 +20,14 @@ from django.contrib import messages
 admin.site.register(IndicatorTitle)
 
 ##### state #########
+def copy_state_indicator(modeladmin, request, queryset):
+    CopyStateIndicatorData.delay(queryset)
+    try:
+        messages.add_message(request, messages.INFO, "Copy Indicator Data add to celery tasks.")
+    except:
+        pass
+copy_state_indicator.short_description = "Copy selected Indicator setting (please select one)"
+
 def write_default_state_indicator_set(modeladmin, request, queryset):
     for q in queryset:
         StateIndicatorSet.objects.get_or_create(title='Student Achievement' ,state=q, order=1)
@@ -148,9 +157,19 @@ class StateIndicatorAdmin(admin.ModelAdmin):
     list_display = ('state_indicator_set','title','created','modified')
     raw_id_fields = ('state_indicator_set',)
     inlines = [StateDisplayDataInline, StateDisplayDataYInline, StateIndicatorDataSetInline]
+    actions = [copy_state_indicator]
+    
 admin.site.register(StateIndicator, StateIndicatorAdmin)
 
 ###### district ########
+def copy_district_indicator(modeladmin, request, queryset):
+    CopyDistrictIndicatorData.delay(queryset)
+    try:
+        messages.add_message(request, messages.INFO, "Copy Indicator Data add to celery tasks.")
+    except:
+        pass
+copy_district_indicator.short_description = "Copy selected Indicator setting (please select one)"
+
 def write_default_district_indicator_set(modeladmin, request, queryset):
     for q in queryset:
         DistrictIndicatorSet.objects.get_or_create(title='Student Achievement' ,district=q, order=1)
@@ -277,6 +296,8 @@ class DistrictIndicatorAdmin(admin.ModelAdmin):
     list_display = ('district_indicator_set','title','created','modified')
     raw_id_fields = ('district_indicator_set',)
     inlines = [DistrictDisplayDataInline, DistrictDisplayDataYInline, DistrictIndicatorDataSetInline]
+    actions = [copy_district_indicator]
+
 admin.site.register(DistrictIndicator, DistrictIndicatorAdmin)
 
 #class DistrictNumberOfStudentAndTeacherAdmin(admin.ModelAdmin):
@@ -284,6 +305,14 @@ admin.site.register(DistrictIndicator, DistrictIndicatorAdmin)
 #admin.site.register(DistrictNumberOfStudentAndTeacher, DistrictNumberOfStudentAndTeacherAdmin)
 
 ############ School #############
+def copy_school_indicator(modeladmin, request, queryset):
+    CopySchoolIndicatorData.delay(queryset)
+    try:
+        messages.add_message(request, messages.INFO, "Copy Indicator Data add to celery tasks.")
+    except:
+        pass
+copy_school_indicator.short_description = "Copy selected Indicator setting (please select one)"
+
 def write_default_school_indicator_set(modeladmin, request, queryset):
     for q in queryset:
         SchoolIndicatorSet.objects.get_or_create(title='Student Achievement' ,school=q, order=1)
@@ -400,6 +429,7 @@ class SchoolIndicatorAdmin(admin.ModelAdmin):
     list_display = ('school_indicator_set','title','created','modified')
     raw_id_fields = ('school_indicator_set',)
     inlines = [SchoolDisplayDataInline, SchoolDisplayDataYInline, SchoolIndicatorDataSetInline]
+    actions = [copy_school_indicator]
 admin.site.register(SchoolIndicator, SchoolIndicatorAdmin)
 
 
