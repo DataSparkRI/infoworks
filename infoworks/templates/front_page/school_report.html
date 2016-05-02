@@ -1,5 +1,9 @@
 {% extends "front_page/base.html" %}{% load staticfiles %}{% load config %}{% load humanize %}{% load cache %}
 
+{% block title %}
+{{school.school_name}} District - School and District data - RIDE InfoWorks
+{% endblock %}
+
 {% block body %}
      {% cache 35000 school request.path school.id %}
       <nav class="side-menu">
