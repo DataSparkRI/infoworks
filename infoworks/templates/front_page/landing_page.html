@@ -1,8 +1,12 @@
 {% extends "front_page/base.html" %}{% load staticfiles %}
 <!DOCTYPE html>
 
+{% block title %}
+Find Schools and Districts - RIDE InfoWorks
+{% endblock %}
+
 {% block body %}
-      <section class="container body">
+      <section class="container body">
           <div class="text-right">
             <span class="step-links">
                 {% if district.has_previous %}
