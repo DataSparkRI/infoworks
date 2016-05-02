@@ -7,17 +7,35 @@ DistrictDisplayDataYDetailData, DistrictDisplayDataYDetail, DistrictDisplayDataY
 SchoolDisplayDataYDetailData, SchoolDisplayDataYDetail, SchoolDisplayDataYDetailSet, \
 StateDisplayDataYDetail, StateDisplayDataYDetailData, StateDisplayDataYDetailSet, \
 CustomDimensionYName, CustomDimensionXName,DistrictIndicatorDetailDataSet,DistrictIndicatorData, \
-PlotSetting, PlotLine, PlotBand
+PlotSetting, PlotLine, PlotBand, SchoolDisplayDataSetting, SchoolDisplayDataYSetting, IndicatorTitle
 from data.models import SchoolOverTime, DistrictOverTime, StateOverTime, \
 SchoolOverTimeSelect, DistrictOverTimeSelect, StateOverTimeSelect, \
 SchoolOverTimeElement, DistrictOverTimeElement, StateOverTimeElement
-from data.tasks import CopySchoolIndicatorData, CopyStateIndicatorData, CopyDistrictIndicatorData
+from data.tasks import CopySchoolIndicatorData, CopyStateIndicatorData, CopyDistrictIndicatorData, CreateSchoolIndicatorSetting
 
 from django.contrib import messages
 
 #from data.form import StateDisplayDataYForm, DistrictDisplayDataYForm, SchoolDisplayDataYForm
+def create_school_indicator_setting(modeladmin, request, queryset):
+    CreateSchoolIndicatorSetting.delay(queryset)
+    try:
+        messages.add_message(request, messages.INFO, "Create School Indicator Setting add to celery tasks.")
+    except:
+        pass
+create_school_indicator_setting.short_description = "Create selected School Indicator setting"
 
-admin.site.register(IndicatorTitle)
+class SchoolDisplayDataSettingInline(admin.TabularInline):
+    model = SchoolDisplayDataSetting
+
+class SchoolDisplayDataYSettingInline(admin.TabularInline):
+    model = SchoolDisplayDataYSetting
+    raw_id_fields = ("display",)
+    
+class IndicatorTitleAdmin(admin.ModelAdmin):
+    inlines =[SchoolDisplayDataSettingInline, SchoolDisplayDataYSettingInline]
+    actions = [create_school_indicator_setting]
+    
+admin.site.register(IndicatorTitle, IndicatorTitleAdmin)
 
 ##### state #########
 def copy_state_indicator(modeladmin, request, queryset):

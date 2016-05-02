@@ -18,3 +18,8 @@ def CopySchoolIndicatorData(queryset):
     message = copy_school_indicator(queryset)
     return message
 
+@shared_task
+def CreateSchoolIndicatorSetting(queryset):
+    from data.actions.CreateSchoolIndicatorSetting import create_indicator
+    message = create_indicator(queryset)
+    return message

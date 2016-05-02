@@ -29,6 +29,27 @@ STATE_DISPLAY_TYPE_CHOICES = (
     ('DISTRICT','Show district page'),
     ('SCHOOL', 'Show school page')
 )
+
+GRADE_CHOICES = (
+    ('ALL','All'),
+    ('ELEMENTARY','Elementary School'),
+    ('MIDDLE','Middle School'),
+    ('HIGH','High School'),
+    ('GRADE_PK','Grade pk'),
+    ('GRADE_K','Grade k'),
+    ('GRADE_1', 'Grade 1'),
+    ('GRADE_2', 'Grade 2'),
+    ('GRADE_3', 'Grade 3'),
+    ('GRADE_4', 'Grade 4'),
+    ('GRADE_5', 'Grade 5'),
+    ('GRADE_6', 'Grade 6'),
+    ('GRADE_7', 'Grade 7'),
+    ('GRADE_8', 'Grade 8'),
+    ('GRADE_9', 'Grade 9'),
+    ('GRADE_10', 'Grade 10'),
+    ('GRADE_11', 'Grade 11'),
+    ('GRADE_12', 'Grade 12')
+)
 # Create your models here.
 class PlotBand(models.Model):
     plot_set = models.ForeignKey("PlotSetting")
@@ -70,6 +91,26 @@ class IndicatorTitle(models.Model):
     title = models.CharField(max_length=100)
     def __unicode__(self):
         return "%s"% self.title
+
+class SchoolDisplayDataSetting(models.Model):
+    title = models.ForeignKey("IndicatorTitle", blank=True, null=True)
+    display = models.ForeignKey("dataimport.DimensionFor")
+    display_name = models.CharField(max_length=100, blank=True)
+    order = models.IntegerField(default=1)
+    
+    def __unicode__(self):
+        return "%s - %s"% (self.title, self.display)
+
+class SchoolDisplayDataYSetting(models.Model):
+    title = models.ForeignKey("IndicatorTitle", blank=True, null=True)
+    grade_level = models.CharField(max_length=20,choices=GRADE_CHOICES)
+    display = models.ForeignKey("dataimport.DimensionName", blank=True, null=True)
+    display_name = models.CharField(max_length=100, blank=True)
+    order = models.IntegerField(default=1)
+    detail = models.ForeignKey("SchoolDisplayDataYDetail", blank=True, null=True)
+    
+    def __unicode__(self):
+        return "%s - %s"% (self.title, self.display)
 
 class SchoolYear(models.Model):
     school_year = models.CharField(max_length=100)

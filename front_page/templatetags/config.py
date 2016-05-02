@@ -22,12 +22,9 @@ def get_school_indicator_value(school, indicator, school_year, dimension_y):
 
 @register.simple_tag
 def get_school_history_value(school_indicator, dimension_y, dimension_x):
-    print school_indicator, dimension_y, dimension_x
     try:
         for school_year in SchoolYear.objects.all().order_by('-school_year'):
             try:
-                print school_indicator, school_year
-                print SchoolIndicatorDataSet.objects.filter(school_indicator=school_indicator, school_year__school_year=school_year)
                 school_indicator_dataset = SchoolIndicatorDataSet.objects.get(school_indicator=school_indicator, school_year__school_year=school_year)
                 data = school_indicator_dataset.get_objects(dimension_x, dimension_y)
             except:
