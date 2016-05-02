@@ -5,8 +5,11 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{%block title %}Infowork{% endblock %}</title>
+  <title>{%block title %}Rhode Island Education Data Reporting - RIDE InfoWorks{% endblock %}</title>
+ 
+  
   {% block css %}
+  <link href='http://infoworks.ride.ri.gov/favicon.ico' rel='shortcut icon' type='image/x-icon' />
   <!-- Bootstrap -->
   <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
   <link href="{% static "css/style.css" %}" rel="stylesheet">
@@ -34,7 +37,9 @@
                  <span class="icon-bar"></span>
                  <span class="icon-bar"></span>
                  </button>
-                 <a class="navbar-brand" href="/"><img src="{% static "img/infoworks.png" %}" alt="" style="height: 35px;"></a>
+                 <a class="navb{% block title_landing_page %}
+
+{% endblock %}ar-brand" href="/"><img src="{% static "img/infoworks.png" %}" alt="" style="height: 35px;"></a>
               </div>
               <!-- Collect the nav links, forms, and other content for toggling -->
               <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
