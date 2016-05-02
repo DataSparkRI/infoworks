@@ -5,7 +5,7 @@ SchoolIndicator, SchoolDisplayData, SchoolDisplayDataY
 def copy_district_indicator(queryset):
     
     def copy_district_display_data(q, district_indicator):
-        display_data = DistrictDisplayData.objects.filter(district_indicator = q)
+        display_data = DistrictDisplayData.objects.filter(district_indicator = q).order_by('order')
         DistrictDisplayData.objects.filter(district_indicator = district_indicator).delete()
         for data in display_data:
             DistrictDisplayData.objects.get_or_create(district_indicator = district_indicator,
@@ -14,7 +14,7 @@ def copy_district_indicator(queryset):
                                                       order = data.order)
         
     def copy_display_data_y(q, district_indicator):
-        display_data_y = DistrictDisplayDataY.objects.filter(district_indicator = q)
+        display_data_y = DistrictDisplayDataY.objects.filter(district_indicator = q).order_by('order')
         DistrictDisplayDataY.objects.filter(district_indicator = district_indicator).delete()
         for data in display_data_y:
             DistrictDisplayDataY.objects.get_or_create(district_indicator = district_indicator,
@@ -40,7 +40,7 @@ def copy_district_indicator(queryset):
 def copy_state_indicator(queryset):
     
     def copy_state_display_data(q, state_indicator):
-        display_data = StateDisplayData.objects.filter(state_indicator = q)
+        display_data = StateDisplayData.objects.filter(state_indicator = q).order_by('order')
         StateDisplayData.objects.filter(state_indicator = state_indicator).delete()
         for data in display_data:
             StateDisplayData.objects.get_or_create(state_indicator = state_indicator,
@@ -49,7 +49,7 @@ def copy_state_indicator(queryset):
                                                       order = data.order)
         
     def copy_display_data_y(q, state_indicator):
-        display_data_y = StateDisplayDataY.objects.filter(state_indicator = q)
+        display_data_y = StateDisplayDataY.objects.filter(state_indicator = q).order_by('order')
         StateDisplayDataY.objects.filter(state_indicator = state_indicator).delete()
         for data in display_data_y:
             StateDisplayDataY.objects.get_or_create(state_indicator = state_indicator,
@@ -75,7 +75,7 @@ def copy_state_indicator(queryset):
 def copy_school_indicator(queryset):
     
     def copy_school_display_data(q, school_indicator):
-        display_data = SchoolDisplayData.objects.filter(school_indicator = q)
+        display_data = SchoolDisplayData.objects.filter(school_indicator = q).order_by('order')
         SchoolDisplayData.objects.filter(school_indicator = school_indicator).delete()
         for data in display_data:
             SchoolDisplayData.objects.get_or_create(school_indicator = school_indicator,
@@ -84,7 +84,7 @@ def copy_school_indicator(queryset):
                                                       order = data.order)
         
     def copy_display_data_y(q, school_indicator):
-        display_data_y = SchoolDisplayDataY.objects.filter(school_indicator = q)
+        display_data_y = SchoolDisplayDataY.objects.filter(school_indicator = q).order_by('order')
         SchoolDisplayDataY.objects.filter(school_indicator = school_indicator).delete()
         for data in display_data_y:
             SchoolDisplayDataY.objects.get_or_create(school_indicator = school_indicator,
