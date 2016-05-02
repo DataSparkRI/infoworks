@@ -1,5 +1,9 @@
 {% extends "front_page/base.html" %}{% load staticfiles %}{% load config %}{% load humanize %}{% load cache %}
 
+{% block title %}
+Rhode Island - Statewide data - RIDE InfoWorks
+{% endblock %}
+
 {% block body %}
       {% cache 35000 state request.path state.id %}
       <nav class="side-menu">
