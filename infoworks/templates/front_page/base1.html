@@ -6,7 +6,7 @@
     var myApp = angular.module('myApp',[]).config(function($interpolateProvider) {
         $interpolateProvider.startSymbol('{[{');
         $interpolateProvider.endSymbol('}]}');
-    });
+    });
       
 
     myApp.controller('tableCtrl', ['$scope', '$http', function($scope, $http) {
