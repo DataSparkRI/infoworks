@@ -130,8 +130,7 @@
 												<td>{{data.key_value|intcomma}}{% if data.data_type == 'PERCENT' %}%{% endif %}</td>
 											{% else %}
 												{% if k == 'Details' %}
-													{% if indicatordata.dimension_y.detail %}<td><a href="{% url 'school_detail' school.slug j.id row.school_indicator_dataset.school_year indicatordata.dimension_y.detail.slug %}">{{indicatordata.dimension_y.detail}}</a></td>{% else %}<td></td>{% endif %}
-												{% else %}
+													{% if indicatordata.dimension_y.detail %}<td>{% url 'school_detail' school.slug j.id row.school_indicator_dataset.school_year indicatordata.dimension_y.detail.slug as the_url %}{% if the_url %}<a href="{{the_url}}">{{indicatordata.dimension_y.detail}}</a>{% else %}{% endif %}</td>{% else %}<td></td>{% endif %}												{% else %}
 											    	{% get_school_value j row.school_indicator_dataset.school_year.school_year data_name k.display.name as data%}
 													<td>{{data.key_value|intcomma}}{% if data.data_type == 'PERCENT' %}%{% endif %}</td>
 												{% endif %}
