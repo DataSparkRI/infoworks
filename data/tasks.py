@@ -23,3 +23,9 @@ def CreateSchoolIndicatorSetting(queryset):
     from data.actions.CreateSchoolIndicatorSetting import create_indicator
     message = create_indicator(queryset)
     return message
+
+@shared_task
+def CreateDistrictIndicatorSetting(queryset):
+    from data.actions.CreateDistrictIndicatorSetting import create_indicator
+    message = create_indicator(queryset)
+    return message

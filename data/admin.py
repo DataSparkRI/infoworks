@@ -7,11 +7,12 @@ DistrictDisplayDataYDetailData, DistrictDisplayDataYDetail, DistrictDisplayDataY
 SchoolDisplayDataYDetailData, SchoolDisplayDataYDetail, SchoolDisplayDataYDetailSet, \
 StateDisplayDataYDetail, StateDisplayDataYDetailData, StateDisplayDataYDetailSet, \
 CustomDimensionYName, CustomDimensionXName,DistrictIndicatorDetailDataSet,DistrictIndicatorData, \
-PlotSetting, PlotLine, PlotBand, SchoolDisplayDataSetting, SchoolDisplayDataYSetting, IndicatorTitle
+PlotSetting, PlotLine, PlotBand, SchoolDisplayDataSetting, SchoolDisplayDataYSetting, IndicatorTitle, \
+DistrictDisplayDataSetting, DistrictDisplayDataYSetting
 from data.models import SchoolOverTime, DistrictOverTime, StateOverTime, \
 SchoolOverTimeSelect, DistrictOverTimeSelect, StateOverTimeSelect, \
 SchoolOverTimeElement, DistrictOverTimeElement, StateOverTimeElement
-from data.tasks import CopySchoolIndicatorData, CopyStateIndicatorData, CopyDistrictIndicatorData, CreateSchoolIndicatorSetting
+from data.tasks import CopySchoolIndicatorData, CopyStateIndicatorData, CopyDistrictIndicatorData, CreateSchoolIndicatorSetting, CreateDistrictIndicatorSetting
 
 from django.contrib import messages
 
@@ -24,6 +25,21 @@ def create_school_indicator_setting(modeladmin, request, queryset):
         pass
 create_school_indicator_setting.short_description = "Create selected School Indicator setting"
 
+def create_district_indicator_setting(modeladmin, request, queryset):
+    CreateDistrictIndicatorSetting.delay(queryset)
+    try:
+        messages.add_message(request, messages.INFO, "Create District Indicator Setting add to celery tasks.")
+    except:
+        pass
+create_district_indicator_setting.short_description = "Create selected District Indicator setting"
+
+class DistrictDisplayDataSettingInline(admin.TabularInline):
+    model = DistrictDisplayDataSetting
+
+class DistrictDisplayDataYSettingInline(admin.TabularInline):
+    model = DistrictDisplayDataYSetting
+    raw_id_fields = ("display",)
+
 class SchoolDisplayDataSettingInline(admin.TabularInline):
     model = SchoolDisplayDataSetting
 
@@ -32,8 +48,8 @@ class SchoolDisplayDataYSettingInline(admin.TabularInline):
     raw_id_fields = ("display",)
     
 class IndicatorTitleAdmin(admin.ModelAdmin):
-    inlines =[SchoolDisplayDataSettingInline, SchoolDisplayDataYSettingInline]
-    actions = [create_school_indicator_setting]
+    inlines =[DistrictDisplayDataSettingInline, DistrictDisplayDataYSettingInline, SchoolDisplayDataSettingInline, SchoolDisplayDataYSettingInline]
+    actions = [create_district_indicator_setting, create_school_indicator_setting]
     
 admin.site.register(IndicatorTitle, IndicatorTitleAdmin)
 

@@ -92,6 +92,25 @@ class IndicatorTitle(models.Model):
     def __unicode__(self):
         return "%s"% self.title
 
+class DistrictDisplayDataSetting(models.Model):
+    title = models.ForeignKey("IndicatorTitle", blank=True, null=True)
+    display = models.ForeignKey("dataimport.DimensionFor")
+    display_name = models.CharField(max_length=100, blank=True)
+    order = models.IntegerField(default=1)
+    
+    def __unicode__(self):
+        return "%s - %s"% (self.title, self.display)
+
+class DistrictDisplayDataYSetting(models.Model):
+    title = models.ForeignKey("IndicatorTitle", blank=True, null=True)
+    display = models.ForeignKey("dataimport.DimensionName", blank=True, null=True)
+    display_name = models.CharField(max_length=100, blank=True)
+    order = models.IntegerField(default=1)
+    detail = models.ForeignKey("DistrictDisplayDataYDetail", blank=True, null=True)
+    
+    def __unicode__(self):
+        return "%s - %s"% (self.title, self.display)
+
 class SchoolDisplayDataSetting(models.Model):
     title = models.ForeignKey("IndicatorTitle", blank=True, null=True)
     display = models.ForeignKey("dataimport.DimensionFor")
