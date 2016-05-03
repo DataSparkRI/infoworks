@@ -117,6 +117,7 @@ function highcharts(data){
 				            title: {
 				                text: '<b>{{indicator.over_time.y_axis_title_text}}</b>'
 				            },
+				            {% if indicator.over_time.data_type == 'PERCENT' %}min: -100, max: 100,{% endif %}
 				            labels: {
 				                formatter: function () {
 				                    if(data_type=='PERCENT'){
@@ -137,7 +138,7 @@ function highcharts(data){
 				            stackLabels: {
 				                enabled: true,
 				                formatter:function() {
-				                	if (this.total < 0){if(data_type=='PERCENT')return "Total: "+(this.total*-1)+"%";
+				                	if (this.total < 0){if(data_type=='PERCENT')return "";
 				                	return "Total: "+this.total*-1;}
 				                	else{if(data_type=='PERCENT')return "Total: "+this.total+"%";
 				                	return "Total: "+this.total;}
@@ -148,18 +149,7 @@ function highcharts(data){
 				                }
 				            }
 				        },
-				        tooltip: {
-				            headerFormat: '<b>{point.x}</b><br/>',
-				            //pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
-				            formatter: function() {
-				            	if (this.point.y < 0){y=this.point.y*-1}
-				            	else{y=this.point.y}
-				            	if (this.point.stackTotal < 0){stackTotal=this.point.stackTotal*-1}
-				            	else{stackTotal=this.point.stackTotal}
-				            	
-				            	return this.series.name +": "+y+"<br />Total: "+stackTotal;
-    						}
-				        },
+				        tooltip: { enabled: false },
 				        plotOptions: {
 				            column: {
 				                stacking: 'normal',

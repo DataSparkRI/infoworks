@@ -87,17 +87,7 @@
 				                }
 				            }
 		        },
-		        tooltip: {
-		            headerFormat: '<b>{point.x}</b><br/>',
-		            pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}',
-		            formatter: function() {
-				            	if (this.point.y < 0){y=this.point.y*-1}
-				            	else{y=this.point.y}
-				            	if (this.point.stackTotal < 0){stackTotal=this.point.stackTotal*-1}
-				            	else{stackTotal=this.point.stackTotal}
-				            	return this.series.name +": "+y;
-    				}
-		        },
+				tooltip: { enabled: false },
 				plotOptions: {
 		            {% if i.set_name.display_type == 'HORZ-BAR-CHART' or i.set_name.display_type == 'HORZ-BAR-CHART-ONLY'%}					
 					series: {
