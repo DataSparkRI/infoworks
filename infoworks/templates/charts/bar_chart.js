@@ -90,9 +90,26 @@
 				tooltip: { enabled: false },
 				plotOptions: {
 		            {% if i.set_name.display_type == 'HORZ-BAR-CHART' or i.set_name.display_type == 'HORZ-BAR-CHART-ONLY'%}					
-					series: {
-                    	stacking: 'normal'
-                    },
+	                series: {
+	                    stacking: 'normal',
+	                    dataLabels: {
+		                    enabled: true,
+		                    formatter:function() {
+				                    data_type = '{{i.set_name.data_type}}';
+							        if (this.y < 0){var pcnt = this.y*-1;}
+							        else{var pcnt = this.y;}
+							        if(data_type=='PERCENT'){
+							             if (pcnt < 9)
+							                 return "";
+							             else
+							                 return pcnt+'%';
+							         }
+							         else
+							             return pcnt;
+							},
+		                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+	                	}
+	                },
 					{% endif %}
 				    column: {
 				            stacking: 'normal',

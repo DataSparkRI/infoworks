@@ -608,6 +608,15 @@ class DistrictDisplayDataYDetailSet(models.Model):
     def __unicode__(self):
         return "%s - %s"%(self.detail, self.name)
 
+class DistrictSummery(models.Model):
+    detail = models.ForeignKey("DistrictDisplayDataYDetail", blank=True, null=True)
+    order = models.IntegerField(default=1)
+    display = models.ForeignKey("dataimport.DimensionName", blank=True, null=True)
+    display_name = models.CharField(max_length=100, blank=True)
+    
+    def __unicode__(self):
+        return "%s - %s"%(self.detail, self.display)
+
 class DistrictDisplayDataYDetail(models.Model):
     name = models.CharField(max_length=100, blank=True)
     slug = models.SlugField(max_length=100, unique=True,db_index=True, blank=True)
@@ -994,6 +1003,15 @@ class StateDisplayDataYDetailSet(models.Model):
     def __unicode__(self):
         return "%s - %s"%(self.detail, self.name)
 
+class StateSummery(models.Model):
+    detail = models.ForeignKey("StateDisplayDataYDetail", blank=True, null=True)
+    order = models.IntegerField(default=1)
+    display = models.ForeignKey("dataimport.DimensionName", blank=True, null=True)
+    display_name = models.CharField(max_length=100, blank=True)
+    
+    def __unicode__(self):
+        return "%s - %s"%(self.detail, self.display)
+
 class StateDisplayDataYDetail(models.Model):
     name = models.CharField(max_length=100, blank=True)
     slug = models.SlugField(max_length=100, unique=True,db_index=True, blank=True)
@@ -1007,9 +1025,14 @@ class StateDisplayDataYDetail(models.Model):
     @property
     def detail_set(self):
         return StateDisplayDataYDetailSet.objects.filter(detail=self).order_by('order')
+    
+    @property
+    def summary(self):
+        return StateSummery.objects.filter(detail=self).order_by('order')
 
     def __unicode__(self):
         return self.name
+
 
 class StateDisplayDataY(models.Model):
     state_indicator = models.ForeignKey("StateIndicator", blank=True, null=True)

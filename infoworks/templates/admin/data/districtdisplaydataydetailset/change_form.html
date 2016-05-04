@@ -8,7 +8,7 @@
 </div>
 <script>
 function getFirstIncrease(){
-	a = document.getElementById("id_schooldisplaydataydetaildata_set-0-dimension_y_name");
+	a = document.getElementById("id_districtdisplaydataydetaildata_set-0-dimension_y_name");
 	value_old = parseInt(a.getAttribute('value'));
 	value_new = parseInt(a.value);
 	different = value_new - value_old;
@@ -21,7 +21,7 @@ function increaseValue(){
 	var counter = 0;
 	var condition = true;
 	while (condition){
-		id = "id_schooldisplaydataydetaildata_set-"+counter+"-dimension_y_name";
+		id = "id_districtdisplaydataydetaildata_set-"+counter+"-dimension_y_name";
 
 		if (document.getElementById(id).getAttribute('value') != null){
 			condition = true;
@@ -35,4 +35,3 @@ function increaseValue(){
 </script>
 
 {% endblock %}
-

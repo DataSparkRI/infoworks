@@ -7,32 +7,58 @@
 
 {% block body %}
 	{% if type == "SCHOOL" %}
-		<div class="container body" ng-app = "mainApp" ng-controller = "tableCtrl">			
-		<h1>{{detail}}{% if request.user.is_active and request.user.is_staff %} <a href="/admin/data/districtdisplaydataydetail/{{detail.id}}/change/" target="_blank"><i class="fa fa-pencil"></i></a>{% endif %}</h1>
+	<div class="container body" ng-app = "mainApp" ng-controller = "tableCtrl">
+		<h1>{{detail}}{% if request.user.is_active and request.user.is_staff %} <a href="/admin/data/statedisplaydataydetail/{{detail.id}}/change/" target="_blank"><i class="fa fa-pencil"></i></a>{% endif %}</h1>
+        <h2>{{school_year}} </h2>
         <div class="dropdown">
 		  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{detail}}
 		  <span class="caret"></span></button>
 		  <ul class="dropdown-menu">
 		  	{% for display_detail in indicator.displaydatay_have_detail %}
-		    <li><a href="{% url 'district_detail' indicator.district_indicator_set.district.slug indicator.id school_year.school_year display_detail.detail.slug %}">{{display_detail.detail.name}}</a></li>
+		    <li><a href="{% url 'state_detail' indicator.state_indicator_set.state.slug indicator.id school_year.school_year display_detail.detail.slug %}">{{display_detail.detail.name}}</a></li>
 		    {% endfor %}
 		  </ul>
 		</div>		
-		<div class="col-md-6 text-left">{{district.district_name}} {{y.0.display}}</div>
-		<div class="col-md-6 text-right">{% get_district_indicator_value district indicator school_year y.0.display.name as value %}{{value.key_value}}</div>
-		
+
+		  <table class="table table-hover">
+		    <thead>
+		      <tr>
+		        <th></th>
+				{% for column in detail.summary %}
+					<th style="text-align: right;">{{column.display_name}}</th>
+				{% endfor %}
+		      </tr>
+		    </thead>
+		    <tbody>
+		      <tr>
+		        <td>{{state.state_name}}</td>
+				{% for column in detail.summary %}
+					<td style="text-align: right;">{% get_state_indicator_value state indicator school_year column.display.name as value %}
+					{% if value.key_value == ' ' %}no data{% elif value.key_value == '' %}no data{% elif value.key_value == '-1'%}too a few data{% elif value.data_type == 'NUMERIC' %}{{value.key_value}}{% elif value.data_type == 'RATIO' %}1:{{value.key_value}}{% elif value.data_type == 'PERCENT' %}{{value.key_value}}%{% else %}{{value.key_value}}{% endif %}
+					</td>
+				{% endfor %}
+		      </tr>
+		    </tbody>
+		  </table>
+
 		<table class="table table-hover" id="table" class="sortable-theme-bootstrap" data-sortable>
 			<thead> 
 					<tr><th>District Name</th>
 					<th>School Name</th>
-					<th style="text-align: right;">{{school_year}} {{y.0.display}}</th>
+					{% for column in detail.summary %}
+					<th style="text-align: right;">{{column.display_name}}</th>
+					{% endfor %}
 					</tr>
 	 		</thead>
 			<tbody>
 					<tr data-ng-repeat="row in data.data">
-					<th scope="row" ng-if="row.value != ''">{[{row.district}]}</th>
-					<td ng-if="row.value != ''">{[{row.school}]}</td>
-					<td ng-if="row.value != ''" style="text-align: right;">{[{row.value}]}</td>
+					{% for column in detail.summary %}
+					{% if forloop.counter == 1 %}
+					<th scope="row" ng-if="row.value{{column.id}} != ''">{[{row.district}]}</th>
+					<td ng-if="row.value{{column.id}} != ''">{[{row.school}]}</td>
+					{% endif %}
+					<td ng-if="row.value{{column.id}} != ''" style="text-align: right;">{[{row.value{{column.id}}}]}</td>
+					{% endfor %}
 					</tr>
 			</tbody>
 		</table>
@@ -57,10 +83,12 @@
          mainApp.controller('tableCtrl', function($scope) {
             $scope.data = {
                data:[
-				{% for school in district.schools%}
+				{% for district in state.districts %}{% for school in district.schools%}
                   {district:'{{district.district_name}}',school:'{{school.school_name}}',
-                      value: {% get_school_indicator_value school indicator school_year y.0.display.name as value%}{% if value.data_type == 'NUMERIC' %}{{value.key_value}}{% elif value.data_type == 'PERCENT' %}'{{value.key_value}}%'{% else %}'{{value.key_value}}'{% endif %} },
-				{% endfor %}
+                  	{% for column in detail.summary %}
+                   	value{{column.id}}: {% get_school_indicator_value school indicator school_year column.display.name as value %}{% if value.key_value == ' ' %}''{% elif value.key_value == '-1'%}'too a few data'{% elif value.data_type == 'NUMERIC' %}{{value.key_value}}{% elif value.data_type == 'RATIO' %}'1:{{value.key_value}}'{% elif value.data_type == 'PERCENT' %}'{{value.key_value}}%'{% else %}'{{value.key_value}}'{% endif %},
+					{% endfor %}},
+				{% endfor %}{% endfor %}
                ]
             };
          });
