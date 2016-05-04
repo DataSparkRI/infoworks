@@ -32,7 +32,7 @@
                                   {% for key, values in i.data.items %}
                                   <tr><th scope="row">{{values.dimension_y.name}}</th>
                                       {% for row in values.data %}
-                                      <td>{% if row.key_value == "-1" %}too few data{% elif row.key_value %}{% if row.data_type == 'NUMERIC' %}{{row.key_value|intcomma}}{% elif row.data_type == 'PERCENT' %}{{row.key_value}}%{%else%}{{row.key_value}}{% endif %}{% else %}no data{% endif %}</td>
+                                      <td>{% if row.key_value == "-1" %}too few data{% elif row.key_value == "" %}no data{% elif row.key_value == " " %}no data{% elif row.key_value %}{% if row.data_type == 'NUMERIC' %}{{row.key_value|intcomma}}{% elif row.data_type == 'RATIO' %}1:{{row.key_value}}{% elif row.data_type == 'PERCENT' %}{{row.key_value}}%{%else%}{{row.key_value}}{% endif %}{% else %}no data{% endif %}</td>
                                       {% endfor %}
                                   </tr>
                                   {% endfor %}

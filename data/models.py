@@ -10,6 +10,7 @@ import csv
 DATA_TYPE_CHOICES = (
     ('NUMERIC', 'numeric'),
     ('PERCENT','percent'),
+    ('RATIO','ratio'),
     ('STRING', 'string')
 )
 

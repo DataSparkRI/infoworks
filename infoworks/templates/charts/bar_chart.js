@@ -118,9 +118,9 @@
 				            }
 				    }
 				},
-                        series: [{% for key, values in i.data.items %}{name:'{{values.dimension_y.name}}',{% if values.dimension_y.color_hex %}color: '{{values.dimension_y.color_hex}}',{% endif %}
-                        {% if values.dimension_y.is_positive %}data:[{% for row in values.data %}{% if row.key_value %}{% if row.key_value == '-1' %}null, {% elif row.key_value == ' ' %}null, {% elif row.key_value == '' %}null, {% else %}{{row.key_value}},{% endif %}{% else %}null,{% endif %}{% endfor %}]}
-                        {%else%}data:[{% for row in values.data %}{% if row.key_value %}{% if row.key_value == '-1' %}null, {% elif row.key_value == ' ' %}null, {% elif row.key_value == '' %}null, {% else %}-{{row.key_value}},{% endif %}{% else %}null,{% endif %}{% endfor %}]}{% endif %},{% endfor %}]
+                        series: [{% for key, values in i.data.items %}{name:'{{values.dimension_y.name}}',{% if values.dimension_y.color_hex %}color: '{{values.dimension_y.color_hex}}', {% endif %}
+                        {% if values.dimension_y.is_positive %}index:{{forloop.counter}},data:[{% for row in values.data %}{% if row.key_value %}{% if row.key_value == '-1' %}null, {% elif row.key_value == ' ' %}null, {% elif row.key_value == '' %}null, {% else %}{{row.key_value}},{% endif %}{% else %}null,{% endif %}{% endfor %}]}
+                        {%else%}index:{{forloop.revcounter}},data:[{% for row in values.data %}{% if row.key_value %}{% if row.key_value == '-1' %}null, {% elif row.key_value == ' ' %}null, {% elif row.key_value == '' %}null, {% else %}-{{row.key_value}},{% endif %}{% else %}null,{% endif %}{% endfor %}]}{% endif %},{% endfor %}]
 		    });
 		});
 	{% endif %}
