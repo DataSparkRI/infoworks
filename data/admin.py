@@ -8,7 +8,7 @@ SchoolDisplayDataYDetailData, SchoolDisplayDataYDetail, SchoolDisplayDataYDetail
 StateDisplayDataYDetail, StateDisplayDataYDetailData, StateDisplayDataYDetailSet, \
 CustomDimensionYName, CustomDimensionXName,DistrictIndicatorDetailDataSet,DistrictIndicatorData, \
 PlotSetting, PlotLine, PlotBand, SchoolDisplayDataSetting, SchoolDisplayDataYSetting, IndicatorTitle, \
-DistrictDisplayDataSetting, DistrictDisplayDataYSetting
+DistrictDisplayDataSetting, DistrictDisplayDataYSetting, StateSummery, DistrictSummery
 from data.models import SchoolOverTime, DistrictOverTime, StateOverTime, \
 SchoolOverTimeSelect, DistrictOverTimeSelect, StateOverTimeSelect, \
 SchoolOverTimeElement, DistrictOverTimeElement, StateOverTimeElement
@@ -162,12 +162,16 @@ class StateOverTimeElementInline(admin.TabularInline):
     model = StateOverTimeElement
     raw_id_fields = ("dimension_name",)
 
+class StateSummeryInline(admin.TabularInline):
+    model = StateSummery
+    raw_id_fields = ("display",)
+
 class StateOverTimeAdmin(admin.ModelAdmin):
     inlines = [StateOverTimeSelectInline,StateOverTimeElementInline]
 admin.site.register(StateOverTime, StateOverTimeAdmin)
 
 class StateDisplayDataYDetailAdmin(admin.ModelAdmin):
-    inlines = [StateDisplayDataYDetailSetInline]
+    inlines = [StateDisplayDataYDetailSetInline,StateSummeryInline]
 admin.site.register(StateDisplayDataYDetail, StateDisplayDataYDetailAdmin)
 
 class StateDisplayDataYDetailSetAdmin(admin.ModelAdmin):
@@ -297,12 +301,16 @@ class DistrictOverTimeElementInline(admin.TabularInline):
     model = DistrictOverTimeElement
     raw_id_fields = ("dimension_name",)
 
+class DistrictSummeryInline(admin.TabularInline):
+    model = DistrictSummery
+    raw_id_fields = ("display",)
+
 class DistrictOverTimeAdmin(admin.ModelAdmin):
     inlines = [DistrictOverTimeSelectInline,DistrictOverTimeElementInline]
 admin.site.register(DistrictOverTime, DistrictOverTimeAdmin)
 
 class DistrictDisplayDataYDetailAdmin(admin.ModelAdmin):
-    inlines = [DistrictDisplayDataYDetailSetInline]
+    inlines = [DistrictDisplayDataYDetailSetInline,DistrictSummeryInline]
 admin.site.register(DistrictDisplayDataYDetail, DistrictDisplayDataYDetailAdmin)
 
 class DistrictDisplayDataYDetailSetAdmin(admin.ModelAdmin):
