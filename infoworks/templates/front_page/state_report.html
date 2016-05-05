@@ -43,12 +43,13 @@
 			      {% if state.number_of_teacher %}<p class="btn btn-red" style="cursor: text;">{{state.number_of_teacher|intcomma}} Teachers</p>{% endif %}
 			      {% if state.number_of_school %}<p class="btn btn-red" style="cursor: text;">{{state.number_of_school|intcomma}} Schools</p>{% endif %}
             <h5></h5>
-            <a class="btn btn-primary" role="button" href="/state/{{state.slug}}/history">Historical Data</a>
+            <a class="btn btn-primary" class="col-md-5 hidden-xs"role="button" href="/state/{{state.slug}}/history">Historical Data</a>
             <h5></h5>
             <a class="btn btn-primary" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-  View details on Student and School counts in Rhode Island</a>
+View details on Student and </br /> &nbsp School counts in Rhode Island</a>
           </div>
-          <div class="col-md-5 hidden-xs">
+      
+          <div class="col-md-5 hidden-x">
             <img src="{% static "img/rocket.png" %}" class="rocket animated bounce">
           </div>
 		{% include "front_page/state_report_summary.html" %}
