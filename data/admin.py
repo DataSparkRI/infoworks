@@ -8,7 +8,7 @@ SchoolDisplayDataYDetailData, SchoolDisplayDataYDetail, SchoolDisplayDataYDetail
 StateDisplayDataYDetail, StateDisplayDataYDetailData, StateDisplayDataYDetailSet, \
 CustomDimensionYName, CustomDimensionXName,DistrictIndicatorDetailDataSet,DistrictIndicatorData, \
 PlotSetting, PlotLine, PlotBand, SchoolDisplayDataSetting, SchoolDisplayDataYSetting, IndicatorTitle, \
-DistrictDisplayDataSetting, DistrictDisplayDataYSetting, StateSummery, DistrictSummery
+DistrictDisplayDataSetting, DistrictDisplayDataYSetting, StateSummery, DistrictSummery, CustomValue
 from data.models import SchoolOverTime, DistrictOverTime, StateOverTime, \
 SchoolOverTimeSelect, DistrictOverTimeSelect, StateOverTimeSelect, \
 SchoolOverTimeElement, DistrictOverTimeElement, StateOverTimeElement
@@ -47,8 +47,11 @@ class SchoolDisplayDataYSettingInline(admin.TabularInline):
     model = SchoolDisplayDataYSetting
     raw_id_fields = ("display",)
     
+class CustomValueInline(admin.TabularInline):
+    model = CustomValue
+    
 class IndicatorTitleAdmin(admin.ModelAdmin):
-    inlines =[DistrictDisplayDataSettingInline, DistrictDisplayDataYSettingInline, SchoolDisplayDataSettingInline, SchoolDisplayDataYSettingInline]
+    inlines =[CustomValueInline,DistrictDisplayDataSettingInline, DistrictDisplayDataYSettingInline, SchoolDisplayDataSettingInline, SchoolDisplayDataYSettingInline]
     actions = [create_district_indicator_setting, create_school_indicator_setting]
     
 admin.site.register(IndicatorTitle, IndicatorTitleAdmin)

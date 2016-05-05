@@ -51,6 +51,26 @@ GRADE_CHOICES = (
     ('GRADE_11', 'Grade 11'),
     ('GRADE_12', 'Grade 12')
 )
+
+CV_DATA_TYPE_CHOICES = (
+        ('NUMERIC','Numeric'),
+        ('NUMERIC_COMMA','Numeric with comma'),
+        ('PERCENT','Percent'),
+        ('RATIO','Ratio'),
+        ('DOLLARS', 'Dollars'),
+        ('DOLLARS_COMMA', 'Dollars with comma')
+    )
+    
+OPERATOR_CHOICES = (
+        ('>','>'),
+        ('>=','>='),
+        ('<','<'),
+        ('<=','<='),
+        ('=','='),
+        ('!=','!='),
+    )
+
+
 # Create your models here.
 class PlotBand(models.Model):
     plot_set = models.ForeignKey("PlotSetting")
@@ -88,10 +108,28 @@ class PlotSetting(models.Model):
     def __unicode__(self):
         return self.name
 
+
 class IndicatorTitle(models.Model):
     title = models.CharField(max_length=100)
+    rounding_decimal_place = models.IntegerField(blank=True, null=True,default=0)
+    data_type = models.CharField(max_length=20,choices=CV_DATA_TYPE_CHOICES,blank=True)
+    
+    @property
+    def custom_value(self):
+        return CustomValue.objects.filter(title=self).order_by('order')
+    
     def __unicode__(self):
         return "%s"% self.title
+
+class CustomValue(models.Model):
+    title = models.ForeignKey("IndicatorTitle", blank=True, null=True)
+    operator = models.CharField(max_length=20,choices=OPERATOR_CHOICES)
+    value = models.CharField(max_length=100, blank=True)
+    display_value = models.CharField(max_length=100, blank=True)
+    order = models.IntegerField(default=1)
+    
+    def __unicode__(self):
+        return "%s - %s"% (self.title, self.value)
 
 class DistrictDisplayDataSetting(models.Model):
     title = models.ForeignKey("IndicatorTitle", blank=True, null=True)

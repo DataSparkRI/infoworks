@@ -13,6 +13,115 @@ def get_config(config_name):
         return None
 
 @register.simple_tag
+def get_display(data):
+    
+    def get_data_type(value, data_type):
+        if data_type == 'NUMERIC':
+            return value
+        elif data_type == 'NUMERIC_COMMA':
+            return format(value, ',d')
+        elif data_type == 'PERCENT':
+            return str(value)+'%'
+        elif data_type == 'RATIO':
+            return '1:'+str(value)
+        elif data_type == 'DOLLARS':
+            return '$'+str(value)
+        elif data_type == 'DOLLARS_COMMA':
+            return '$'+str(format(value, ',d'))
+        else:
+            return str(value)    
+    
+    try:
+        indicator = data.school_indicator_dataset.school_indicator
+    except:
+        try:
+            indicator = data.district_indicator_dataset.district_indicator
+        except:
+            try:
+                indicator = data.state_indicator_dataset.state_indicator
+            except:
+                return "no data"
+    
+    if indicator.title.custom_value.count() == 0:
+        if data.key_value == '-1':
+            return "too a few data"
+        elif data.key_value == '' or data.key_value == ' ':
+            return 'no data'
+        elif data.data_type == 'NUMERIC':
+            split = data.key_value.split('.')
+            if len(split) == 1:
+                return '{0:,.0f}'.format(float(data.key_value))
+            else:
+                type = '{0:,.'+str(len(split[1]))+'f}'
+                return type.format(float(data.key_value))
+        elif data.data_type == 'STRING':
+            return data.key_value
+        elif data.data_type == 'PERCENT':
+            return data.key_value+'%'
+        elif data.data_type == 'RATIO':
+            return '1:'+data.key_value
+        else:
+            return data.key_value
+            
+    rounding_decimal_place = indicator.title.rounding_decimal_place
+    if rounding_decimal_place == None:
+        rounding_decimal_place = 0
+    value = data.key_value
+    if data.data_type == 'STRING':
+        value = data.key_value
+        for custom in indicator.title.custom_value:
+            if custom.operator == '=':
+                if value == float(custom.value) and (custom.display_value != None or custom.display_value != ''):
+                    return custom.display_value
+                else:
+                    return value
+            elif custom.operator == '!=':
+                if value != float(custom.value) and (custom.display_value != None or custom.display_value != ''):
+                    return custom.display_value
+                else:
+                    return value
+        
+    else:
+        if rounding_decimal_place > 0:
+            value = round(float(value),rounding_decimal_place)
+        elif rounding_decimal_place < 0:
+            value = int(round(float(value),rounding_decimal_place))
+        else:
+            value = data.key_value
+        for custom in indicator.title.custom_value:
+            if custom.operator == '>':
+                if float(value) > float(custom.value) and (custom.display_value != None or custom.display_value != ''):
+                    return custom.display_value
+
+            elif custom.operator == '>=':
+                if float(value) >= float(custom.value) and (custom.display_value != None or custom.display_value != ''):
+                    return custom.display_value
+               
+            elif custom.operator == '<':
+
+                if float(value) < float(custom.value) and (custom.display_value != None or custom.display_value != ''):
+                    return custom.display_value
+
+            elif custom.operator == '<=':
+                if float(value) <= float(custom.value) and (custom.display_value != None or custom.display_value != ''):
+                    return custom.display_value
+          
+            elif custom.operator == '=':
+                if float(value) == float(custom.value) and (custom.display_value != None or custom.display_value != ''):
+                    return custom.display_value
+              
+            elif custom.operator == '!=':
+                if float(value) != float(custom.value) and (custom.display_value != None or custom.display_value != ''):
+                    return custom.display_value
+             
+            else:
+                pass
+
+        if indicator.title.data_type != None or indicator.title.data_type != '':
+            return get_data_type(value, indicator.title.data_type)
+    return get_data_type(value, data.data_type)
+
+@register.simple_tag
 def get_school_indicator_value(school, indicator, school_year, dimension_y):
     try:
         school_indicator_dataset = SchoolIndicatorDataSet.objects.get(school_indicator__school_indicator_set__school=school, school_indicator__title=indicator.title, school_year__school_year=school_year)
