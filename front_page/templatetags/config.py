@@ -13,29 +13,37 @@ def get_config(config_name):
         return None
 
 @register.simple_tag
-def get_display(data):
+def get_data_type(value, data_type):
     
-    def get_data_type(value, data_type):
-        if data_type == 'NUMERIC':
+    if value == '-1':
+        return "too a few data"
+    elif value == '' or value == ' ':
+        return 'no data'
+
+    if data_type == 'NUMERIC':
+        return value
+    elif data_type == 'NUMERIC_COMMA':
+        try:
+            return format(value, ',d')
+        except:
             return value
-        elif data_type == 'NUMERIC_COMMA':
-            try:
-                return format(value, ',d')
-            except:
-                return value
-        elif data_type == 'PERCENT':
-            return str(value)+'%'
-        elif data_type == 'RATIO':
-            return '1:'+str(value)
-        elif data_type == 'DOLLARS':
-            return '$'+str(value)
-        elif data_type == 'DOLLARS_COMMA':
-            try:
-                return '$' + '{0:,.2f}'.format(float(value))
-            except:
-                return value
-        else:
-            return str(value)    
+    elif data_type == 'PERCENT':
+        return str(value)+'%'
+    elif data_type == 'RATIO':
+        return '1:'+str(value)
+    elif data_type == 'DOLLARS':
+        return '$'+str(value)
+    elif data_type == 'DOLLARS_COMMA':
+        try:
+            return '$' + '{0:,.2f}'.format(float(value))
+        except:
+            return value
+    else:
+        return str(value)   
+
+
+@register.simple_tag
+def get_display(data):
     
     try:
         indicator = data.school_indicator_dataset.school_indicator

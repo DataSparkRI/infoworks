@@ -32,7 +32,7 @@
                                   {% for key, values in i.data.items %}
                                   <tr><th scope="row">{{key}}</th>
                                       {% for row in values.data %}
-                                      <td>{% get_display row %}</td>
+                                      <td>{% get_data_type row.key_value i.set_name.data_type%}</td>
                                       {% endfor %}
                                   </tr>
                                   {% endfor %}
