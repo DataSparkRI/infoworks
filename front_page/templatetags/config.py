@@ -42,7 +42,13 @@ def get_display(data):
             except:
                 return "no data"
     
-    if indicator.title.custom_value.count() == 0:
+    print indicator
+    print indicator.title.custom_value.count() == 0
+    print (indicator.title.data_type == None or indicator.title.data_type == '')
+    print indicator.title.rounding_decimal_place == 0
+    print "============"
+    
+    if indicator.title.custom_value.count() == 0 and (indicator.title.data_type == None or indicator.title.data_type == '') and indicator.title.rounding_decimal_place == 0:
         if data.key_value == '-1':
             return "too a few data"
         elif data.key_value == '' or data.key_value == ' ':
