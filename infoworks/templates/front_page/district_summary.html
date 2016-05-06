@@ -86,7 +86,7 @@
 				{% for district in state.districts %}{% for school in district.schools%}
                   {district:'{{district.district_name}}',school:'{{school.school_name}}',
                   	{% for column in detail.summary %}
-                   	value{{column.id}}: {% get_school_indicator_value school indicator school_year column.display.name as value %}'{% get_display value %}',
+                   	value{{column.id}}: {% get_district_indicator_value district indicator school_year column.display.name as value %}{% get_display value as display %}'{{display|safe}}',
 					{% endfor %}},
 				{% endfor %}{% endfor %}
                ]
