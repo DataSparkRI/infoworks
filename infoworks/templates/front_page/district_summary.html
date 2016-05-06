@@ -34,7 +34,7 @@
 		        <td>{{state.state_name}}</td>
 				{% for column in detail.summary %}
 					<td style="text-align: right;">{% get_state_indicator_value state indicator school_year column.display.name as value %}
-					{% if value.key_value == ' ' %}no data{% elif value.key_value == '' %}no data{% elif value.key_value == '-1'%}too a few data{% elif value.data_type == 'NUMERIC' %}{{value.key_value}}{% elif value.data_type == 'RATIO' %}1:{{value.key_value}}{% elif value.data_type == 'PERCENT' %}{{value.key_value}}%{% else %}{{value.key_value}}{% endif %}
+					{% get_display value %}
 					</td>
 				{% endfor %}
 		      </tr>
@@ -54,10 +54,10 @@
 					<tr data-ng-repeat="row in data.data">
 					{% for column in detail.summary %}
 					{% if forloop.counter == 1 %}
-					<th scope="row" ng-if="row.value{{column.id}} != ''">{[{row.district}]}</th>
-					<td ng-if="row.value{{column.id}} != ''">{[{row.school}]}</td>
+					<th scope="row" ng-if="row.value{{column.id}} != 'no data'">{[{row.district}]}</th>
+					<td ng-if="row.value{{column.id}} != 'no data'">{[{row.school}]}</td>
 					{% endif %}
-					<td ng-if="row.value{{column.id}} != ''" style="text-align: right;">{[{row.value{{column.id}}}]}</td>
+					<td ng-if="row.value{{column.id}} != 'no data'" style="text-align: right;">{[{row.value{{column.id}}}]}</td>
 					{% endfor %}
 					</tr>
 			</tbody>
@@ -86,7 +86,7 @@
 				{% for district in state.districts %}{% for school in district.schools%}
                   {district:'{{district.district_name}}',school:'{{school.school_name}}',
                   	{% for column in detail.summary %}
-                   	value{{column.id}}: {% get_school_indicator_value school indicator school_year column.display.name as value %}{% if value.key_value == ' ' %}''{% elif value.key_value == '-1'%}'too a few data'{% elif value.data_type == 'NUMERIC' %}{{value.key_value}}{% elif value.data_type == 'RATIO' %}'1:{{value.key_value}}'{% elif value.data_type == 'PERCENT' %}'{{value.key_value}}%'{% else %}'{{value.key_value}}'{% endif %},
+                   	value{{column.id}}: {% get_school_indicator_value school indicator school_year column.display.name as value %}'{% get_display value %}',
 					{% endfor %}},
 				{% endfor %}{% endfor %}
                ]
