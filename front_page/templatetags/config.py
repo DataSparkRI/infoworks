@@ -19,7 +19,10 @@ def get_display(data):
         if data_type == 'NUMERIC':
             return value
         elif data_type == 'NUMERIC_COMMA':
-            return format(value, ',d')
+            try:
+                return format(value, ',d')
+            except:
+                return value
         elif data_type == 'PERCENT':
             return str(value)+'%'
         elif data_type == 'RATIO':
@@ -27,7 +30,10 @@ def get_display(data):
         elif data_type == 'DOLLARS':
             return '$'+str(value)
         elif data_type == 'DOLLARS_COMMA':
-            return '$'+str(format(value, ',d'))
+            try:
+                return '$'+str(format(value, ',d'))
+            except:
+                return value
         else:
             return str(value)    
     
@@ -41,12 +47,6 @@ def get_display(data):
                 indicator = data.state_indicator_dataset.state_indicator
             except:
                 return "no data"
-    
-    print indicator
-    print indicator.title.custom_value.count() == 0
-    print (indicator.title.data_type == None or indicator.title.data_type == '')
-    print indicator.title.rounding_decimal_place == 0
-    print "============"
     
     if indicator.title.custom_value.count() == 0 and (indicator.title.data_type == None or indicator.title.data_type == '') and indicator.title.rounding_decimal_place == 0:
         if data.key_value == '-1':
