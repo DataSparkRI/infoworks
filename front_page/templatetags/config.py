@@ -31,7 +31,7 @@ def get_display(data):
             return '$'+str(value)
         elif data_type == 'DOLLARS_COMMA':
             try:
-                return '$'+str(format(value, ',d'))
+                return '$' + '{0:,.2f}'.format(float(value))
             except:
                 return value
         else:
