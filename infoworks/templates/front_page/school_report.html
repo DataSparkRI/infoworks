@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-     {% cache 35000 school request.path school.id %}
+     {% cache 35000 school request.path school.id request.user.is_staff %}
       <nav class="side-menu">
         <ul>
           <li class="hidden active">
