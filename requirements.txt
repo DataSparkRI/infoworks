@@ -8,3 +8,4 @@ python-memcached==1.57
 pep8
 pyflakes
 Pylint
+psycopg2==2.6.1
