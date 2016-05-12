@@ -16,7 +16,7 @@ def get_config(config_name):
 def get_data_type(value, data_type):
     
     if value == '-1':
-        return "too a few data"
+        return "too few data"
     elif value == '' or value == ' ':
         return 'no data'
 
