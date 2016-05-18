@@ -1,0 +1,37 @@
+{% extends "admin/change_form.html" %}
+{% block after_related_objects %}
+<div class="submit-row">
+   <input class="btn btn-primary default" type="submit" value="Save as new" name="_saveasnew">
+   <input type="button" onClick="getFirstIncrease()" value="Calculate from the first id">
+   <input type="text" value="0" id="increase" style="border:double; background:none;color:black;height: auto;cursor: initial;">
+   <input type="button" onClick="increaseValue()" value="Increase Dimension Y Id">
+</div>
+<script>
+function getFirstIncrease(){
+	a = document.getElementById("id_statedisplaydataydetaildata_set-0-dimension_y_name");
+	value_old = parseInt(a.getAttribute('value'));
+	value_new = parseInt(a.value);
+	different = value_new - value_old;
+	document.getElementById("increase").setAttribute('value',different);
+
+}
+
+function increaseValue(){
+	var increase = parseInt(document.getElementById("increase").value);
+	var counter = 0;
+	var condition = true;
+	while (condition){
+		id = "id_statedisplaydataydetaildata_set-"+counter+"-dimension_y_name";
+
+		if (document.getElementById(id).getAttribute('value') != null){
+			condition = true;
+			value = parseInt(document.getElementById(id).getAttribute('value'));
+			document.getElementById(id).setAttribute('value',(value+increase));
+		}
+		else condition = false;
+		counter = counter + 1;
+	}
+}
+</script>
+
+{% endblock %}
