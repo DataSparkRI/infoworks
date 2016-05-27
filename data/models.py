@@ -224,7 +224,9 @@ class SchoolOverTime(models.Model):
     name = models.CharField(max_length=200)
     y_axis_title_text = models.CharField(max_length=200, blank=True, null=True)
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES,default='NUMERIC')
-        
+    stack_label_positive = models.CharField(max_length=200, blank=True, null=True, default='Total:')
+    stack_label_negative = models.CharField(max_length=200, blank=True, null=True, default='Total:')
+    
     @property
     def selects(self):
         return SchoolOverTimeSelect.objects.filter(school_over_time=self).order_by('order')
@@ -596,7 +598,9 @@ class DistrictOverTime(models.Model):
     name = models.CharField(max_length=200)
     y_axis_title_text = models.CharField(max_length=200, blank=True, null=True)
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES,default='NUMERIC')
-    
+    stack_label_positive = models.CharField(max_length=200, blank=True, null=True, default='Total:')
+    stack_label_negative = models.CharField(max_length=200, blank=True, null=True, default='Total:')
+        
     @property
     def selects(self):
         return DistrictOverTimeSelect.objects.filter(district_over_time=self).order_by('order')
@@ -991,7 +995,10 @@ class StateOverTime(models.Model):
     name = models.CharField(max_length=200)
     y_axis_title_text = models.CharField(max_length=200, blank=True, null=True)
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES,default='NUMERIC')
-    
+    y_axis_title_text = models.CharField(max_length=200, blank=True, null=True)
+    stack_label_positive = models.CharField(max_length=200, blank=True, null=True, default='Total:')
+    stack_label_negative = models.CharField(max_length=200, blank=True, null=True, default='Total:')
+        
     @property
     def selects(self):
         return StateOverTimeSelect.objects.filter(state_over_time=self).order_by('order')
