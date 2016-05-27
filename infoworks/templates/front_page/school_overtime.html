@@ -75,7 +75,9 @@ function highcharts(data){
             		
             		for ( var j =0; j < data["data"][i]["row"].length; j++){
             			var value = parseFloat(data["data"][i]["row"][j]);
-            			if(positive)
+            			if (isNaN(value))
+                            obj["data"].push(null);
+            			else if(positive)
             				if (value == -1) obj["data"].push(null);
             				else obj["data"].push(value);
             			else
@@ -104,7 +106,7 @@ function highcharts(data){
             	$(function () {
 				    $('#highchart').highcharts({
 				        chart: {
-				            type: 'column'
+				            type: {% if indicator.over_time.chart_type == 'AREA-CHART' %}'area'{% elif indicator.over_time.chart_type == 'HORZ-BAR-CHART' %}'bar'{% elif indicator.over_time.chart_type == 'LINE-CHART' %}'line'{% else %}'column'{% endif %}
 				        },
 				        title: {
 				            text: '{{indicator.school_indicator_set.school.school_name}}'+title_text
@@ -125,12 +127,16 @@ function highcharts(data){
 				            {% if indicator.over_time.data_type == 'PERCENT' %}min: -100, max: 100,{% endif %}
 				            labels: {
 				                formatter: function () {
+				                	data_type = '{{indicator.over_time.data_type}}';
 				                    if(data_type=='PERCENT'){
 				                    if (this.axis.defaultLabelFormatter.call(this) < 0)
 				                    return (this.axis.defaultLabelFormatter.call(this)*-1)+'%';
 				                    else return this.axis.defaultLabelFormatter.call(this)+'%';}
-				                    else return this.axis.defaultLabelFormatter.call(this);
-				                }            
+				                    else {
+				                    if (this.axis.defaultLabelFormatter.call(this)[0] == '-'){
+				                    return (this.axis.defaultLabelFormatter.call(this).substring(1));}
+				                    else {return this.axis.defaultLabelFormatter.call(this);}}
+				                }
 				            },
 				            gridLineColor: '#197F07',
 					        gridLineWidth: 0,
