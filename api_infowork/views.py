@@ -10,7 +10,7 @@ from django.db.models import Count
 from django.shortcuts import redirect
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.cache import cache
-
+from front_page.models import Config
 '''
 https://infoworks-yangxu.c9users.io/api/?indicator_type=school&indicator_id=2&school_year=2015-2016
 https://infoworks-yangxu.c9users.io/api/?indicator_type=school&school_code=1104&indicator_title=SAT Exams (High School)&school_year=2014-2015
@@ -132,7 +132,10 @@ def api(request):
 def overtime(request):
     result = {}
     import ast
-    order_by = '-school_year__school_year'
+    try:
+        order_by = Config.objects.get(name = "over-time-school-year-order").value
+    except:
+        order_by = '-school_year__school_year'
     if request.method == 'POST':
         type = request.POST.get("type")
         slug = request.POST.get("slug")
