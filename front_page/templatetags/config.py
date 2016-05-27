@@ -58,7 +58,7 @@ def get_display(data):
     
     if indicator.title.custom_value.count() == 0 and (indicator.title.data_type == None or indicator.title.data_type == '') and indicator.title.rounding_decimal_place == 0:
         if data.key_value == '-1':
-            return "too a few data"
+            return "too few data"
         elif data.key_value == '' or data.key_value == ' ':
             return 'no data'
         elif data.data_type == 'NUMERIC':
