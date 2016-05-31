@@ -16,7 +16,8 @@
 		  <span class="caret"></span></button>
 		  <ul class="dropdown-menu">
 		  	{% for display_detail in indicator.displaydatay_have_detail %}
-		    <li><a href="{% url 'state_detail' indicator.state_indicator_set.state.slug indicator.id school_year.school_year display_detail.detail.slug %}">{{display_detail.detail.name}}</a></li>
+		  	{% get_state_history_value indicator display_detail.detail.summary.0.display.name 'Statewide' as data %}
+		    <li><a href="{% url 'state_detail' indicator.state_indicator_set.state.slug indicator.id data.school_year display_detail.detail.slug %}">{{display_detail.detail.name}}</a></li>
 		    {% endfor %}
 		  </ul>
 		</div>		
@@ -74,7 +75,8 @@
 		  <span class="caret"></span></button>
 		  <ul class="dropdown-menu">
 		  	{% for display_detail in indicator.displaydatay_have_detail %}
-		    <li><a href="{% url 'state_detail' indicator.state_indicator_set.state.slug indicator.id school_year.school_year display_detail.detail.slug %}">{{display_detail.detail.name}}</a></li>
+		  	{% get_state_history_value indicator display_detail.detail.summary.0.display.name 'Statewide' as data %}
+		    <li><a href="{% url 'state_detail' indicator.state_indicator_set.state.slug indicator.id data.school_year display_detail.detail.slug %}">{{display_detail.detail.name}}</a></li>
 		    {% endfor %}
 		  </ul>
 		</div>			

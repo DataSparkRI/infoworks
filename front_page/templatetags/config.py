@@ -193,7 +193,7 @@ def get_district_indicator_value(district, indicator, school_year, dimension_y):
         return None
 
 @register.simple_tag
-def get_district_history_value(district_indicator, dimension_y, dimension_x):
+def get_district_history_value(district_indicator, dimension_y, dimension_x='This District'):
     try:
         for school_year in SchoolYear.objects.all().order_by('-school_year'):
             try:
@@ -234,7 +234,7 @@ def get_state_indicator_value(state, indicator, school_year, dimension_y):
         return None
     
 @register.simple_tag
-def get_state_history_value(state_indicator, dimension_y, dimension_x):
+def get_state_history_value(state_indicator, dimension_y, dimension_x="Statewide"):
     try:
         for school_year in SchoolYear.objects.all().order_by('-school_year'):
             try:

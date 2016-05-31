@@ -677,6 +677,11 @@ class DistrictDisplayDataYDetail(models.Model):
     def detail_set(self):
         return DistrictDisplayDataYDetailSet.objects.filter(detail=self).order_by('order')
 
+
+    @property
+    def summary(self):
+        return DistrictSummery.objects.filter(detail=self).order_by('order')
+
     def __unicode__(self):
         return self.name
 

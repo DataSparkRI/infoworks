@@ -1,4 +1,4 @@
-{% extends "front_page/base.html" %}{% load staticfiles %}{% load config %}
+{% extends "front_page/base.html" %}{% load staticfiles %}{% load config %}{% load cache %}
 
 {% block css %}
 	<link rel="stylesheet" href="{% static "sortable-0.8.0/css/sortable-theme-bootstrap.css" %}" />
@@ -15,7 +15,7 @@
 		  <span class="caret"></span></button>
 		  <ul class="dropdown-menu">
 		  	{% for display_detail in indicator.displaydatay_have_detail %}
-		    <li><a href="{% url 'state_detail' indicator.state_indicator_set.state.slug indicator.id school_year.school_year display_detail.detail.slug %}">{{display_detail.detail.name}}</a></li>
+		    <li><a href="{% url 'district_detail' indicator.district_indicator_set.district.slug indicator.id school_year.school_year display_detail.detail.slug %}">{{display_detail.detail.name}}</a></li>
 		    {% endfor %}
 		  </ul>
 		</div>		
