@@ -175,6 +175,7 @@ admin.site.register(StateOverTime, StateOverTimeAdmin)
 
 class StateDisplayDataYDetailAdmin(admin.ModelAdmin):
     inlines = [StateDisplayDataYDetailSetInline,StateSummeryInline]
+    ordering = ('name',)
 admin.site.register(StateDisplayDataYDetail, StateDisplayDataYDetailAdmin)
 
 class StateDisplayDataYDetailSetAdmin(admin.ModelAdmin):
@@ -314,6 +315,8 @@ admin.site.register(DistrictOverTime, DistrictOverTimeAdmin)
 
 class DistrictDisplayDataYDetailAdmin(admin.ModelAdmin):
     inlines = [DistrictDisplayDataYDetailSetInline,DistrictSummeryInline]
+    ordering = ('name',)
+    
 admin.site.register(DistrictDisplayDataYDetail, DistrictDisplayDataYDetailAdmin)
 
 class DistrictDisplayDataYDetailSetAdmin(admin.ModelAdmin):
@@ -451,6 +454,7 @@ admin.site.register(SchoolOverTime, SchoolOverTimeAdmin)
 
 class SchoolDisplayDataYDetailAdmin(admin.ModelAdmin):
     inlines = [SchoolDisplayDataYDetailSetInline]
+    ordering = ('name',)
 admin.site.register(SchoolDisplayDataYDetail, SchoolDisplayDataYDetailAdmin)
 
 class SchoolDisplayDataYDetailSetAdmin(admin.ModelAdmin):
