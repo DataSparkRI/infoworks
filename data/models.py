@@ -331,6 +331,10 @@ class SchoolIndicatorData(models.Model):
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES)
     import_job = models.ForeignKey('dataimport.IndicatorFile', blank=True, null=True)
     
+    @property
+    def school_year(self):
+        return self.school_indicator_dataset.school_year.school_year
+    
     def __unicode__(self):
         return "%s - %s: %s"%(self.dimension_y, self.dimension_x, self.key_value)
  

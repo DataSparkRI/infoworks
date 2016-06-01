@@ -8,14 +8,15 @@
 {% block body %}
 	{% if type == "SCHOOL" %}
 	<div class="container body" ng-app = "mainApp" ng-controller = "tableCtrl">
-		<h1>{{detail}}{% if request.user.is_active and request.user.is_staff %} <a href="/admin/data/statedisplaydataydetail/{{detail.id}}/change/" target="_blank"><i class="fa fa-pencil"></i></a>{% endif %}</h1>
+		<h1>{{detail}}{% if request.user.is_active and request.user.is_staff %} <a href="/admin/data/districtdisplaydataydetail/{{detail.id}}/change/" target="_blank"><i class="fa fa-pencil"></i></a>{% endif %}</h1>
         <h2>{{school_year}} </h2>
         <div class="dropdown">
 		  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{detail}}
 		  <span class="caret"></span></button>
 		  <ul class="dropdown-menu">
 		  	{% for display_detail in indicator.displaydatay_have_detail %}
-		    <li><a href="{% url 'district_detail' indicator.district_indicator_set.district.slug indicator.id school_year.school_year display_detail.detail.slug %}">{{display_detail.detail.name}}</a></li>
+		  	{% get_district_history_value indicator display_detail.display.name as data %}
+		    <li><a href="{% url 'district_detail' indicator.district_indicator_set.district.slug indicator.id data.school_year display_detail.detail.slug %}">{{display_detail.detail.name}}</a></li>
 		    {% endfor %}
 		  </ul>
 		</div>		
@@ -31,9 +32,9 @@
 		    </thead>
 		    <tbody>
 		      <tr>
-		        <td>{{state.state_name}}</td>
+		        <td>{{district.district_name}}</td>
 				{% for column in detail.summary %}
-					<td style="text-align: right;">{% get_state_indicator_value state indicator school_year column.display.name as value %}
+					<td style="text-align: right;">{% get_district_indicator_value district indicator school_year column.display.name as value %}
 					{% get_display value %}
 					</td>
 				{% endfor %}
@@ -68,7 +69,7 @@
 {% endblock body %}
 
 {% block javascript %}
-    {% cache 35000 district request.path indicator.id school_year detail.slug %}
+    {% comment %}{% cache 35000 district request.path indicator.id school_year detail.slug %}{% endcomment %}
 
 	{{block.super}}
 	<script src="{% static "sortable-0.8.0/js/sortable.min.js" %}"></script>
@@ -83,12 +84,12 @@
          mainApp.controller('tableCtrl', function($scope) {
             $scope.data = {
                data:[
-				{% for district in state.districts %}{% for school in district.schools%}
+				{% for school in district.schools %}
                   {district:"{{district.district_name | safe}}",school:"{{school.school_name | safe}}",
                   	{% for column in detail.summary %}
                    	value{{column.id}}: {% get_district_indicator_value district indicator school_year column.display.name as value %}{% get_display value as display %}'{{display|safe}}',
 					{% endfor %}},
-				{% endfor %}{% endfor %}
+				{% endfor %}
                ]
             };
          });
@@ -96,6 +97,6 @@
          
          
     </script>
-    {% endcache %}
+    {% comment %}{% endcache %}{% endcomment %}
     
 {% endblock %}

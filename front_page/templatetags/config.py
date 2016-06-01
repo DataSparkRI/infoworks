@@ -144,7 +144,7 @@ def get_school_indicator_value(school, indicator, school_year, dimension_y):
         return None
 
 @register.simple_tag
-def get_school_history_value(school_indicator, dimension_y, dimension_x):
+def get_school_history_value(school_indicator, dimension_y, dimension_x='This School'):
     try:
         for school_year in SchoolYear.objects.all().order_by('-school_year'):
             try:
