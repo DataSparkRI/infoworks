@@ -21,7 +21,7 @@ DISPLAY_TYPE_CHOICES = (
     ('HORZ-BAR-CHART-ONLY','Horizontal Bar Chart Only'),
     ('LINE-CHART', 'Line Chart (under construction)'),
     ('AREA-CHART','Area Chart (under construction)'),
-    ('PIE-CHART', 'Pie Chart (under construction)'),
+    ('PIE-CHART', 'Pie Chart'),
     ('TABLE','Table'),
 )
 

@@ -140,112 +140,69 @@
                         {%else%}index:{{forloop.revcounter}},data:[{% for row in values.data %}{% if row.key_value %}{% if row.key_value == '-1' %}null, {% elif row.key_value == ' ' %}null, {% elif row.key_value == '' %}null, {% else %}-{{row.key_value}},{% endif %}{% else %}null,{% endif %}{% endfor %}]}{% endif %},{% endfor %}]
 		    });
 		});
+	{% elif i.set_name.display_type == 'PIE-CHART' or i.set_name.display_type == 'PIE-CHART-ONLY' %}
+	$(function () {
+	function clone(obj) {
+    	if (null == obj || "object" != typeof obj) return obj;
+    	var copy = obj.constructor();
+    	for (var attr in obj) {
+        	if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+    	}
+    	return copy;
+	}
+	
+	categories = [{% for key, values in i.data.items %}{% if forloop.first %}{% for j in values.names %}'{{j}}',{% endfor %}{% endif %}{% endfor %}]
+    data_series = [{% for key, values in i.data.items %}{name:'{{values.dimension_y.name}}',{% if values.dimension_y.color_hex %}color: '{{values.dimension_y.color_hex}}', {% endif %}
+                        index:{{forloop.counter}},data:[{% for row in values.data %}{% if row.key_value %}{% if row.key_value == '-1' %}null, {% elif row.key_value == ' ' %}null, {% elif row.key_value == '' %}null, {% else %}{{row.key_value}},{% endif %}{% else %}null,{% endif %}{% endfor %}]}
+                        ,{% endfor %}]
+    
+    series = []
+    for (i = 0; i< categories.length; i++){
+    	data = [];
+    	for (j = 0; j <data_series.length; j++){
+    		var tmp = clone(data_series[j]);
+    		tmp.y = tmp.data[i];
+    		data.push(tmp);
+    	}
+    	series.push({
+    		name:categories[i],
+    		colorByPoint: true,
+    		data: data
+    	})
+    	
+    }
+    $('#'+'{{i.set_name.display_type}}'+'{{forloop.counter}}').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: '{{i.set_name.title}}'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    }
+                }
+            }
+        },
+series: series
+
+    });
+});
 	{% endif %}
 	{% endfor %}
 	
 	</script>
 
-    {% comment %}
-    <script type="text/javascript">
-      $(function() {
-//        var title = $('#barchart').attr("value")
-        {% for i in detail_set %}
-          var category = [];
-          var series = [];
-          var stack_index = [0,1,3,2];
-          var legend_index = [0,1,2,3];
-          var selector = '#'+'{{i.set_name.display_type}}'+'{{forloop.counter}}';
-          console.log(selector);
-          var title = $(selector).attr("value");
-          console.log(title);
-          var tname = '{{i.set_name.title}}';
-//          console.log("tname"+tname);
-          if (tname == title) {
-            var len = '{{i.data.items|length}}';
-          var mid = parseInt(len/2);
-          var count = len;
-  //        console.log(mid);
-          {% for key, values in i.data.items %}
-            var series_name = '{{key}}';
-  //          console.log(key);
-            {% if forloop.first %}
-              {% for j in values.names %}
-                  var cat = '{{j}}';
-                  category.push(cat);
-  //                console.log(category);
-              {% endfor %}
-            {% endif %}
-            
-            var series_data = [];
-            
-            {% for row in values.data %}
-              var data = '{{row.key_value}}';
-              
-              if (count > mid) {
-                  series_data.push(Number(data));
-              } else {
-                  var neg = -Math.abs(Number(data));
-                  series_data.push(neg);
-              }
-            {% endfor %}
-            
-            var data_point = {'name': series_name, 'data': series_data, 'index':stack_index[len-count], 'legendIndex':legend_index[len-count]};
-//            console.log(data_point);
-            series.push(data_point);
-            count--;
-          {% endfor %}
-          
-          }
-        
-        for (i in series) {
-          console.log(series[i].name);
-          console.log(series[i].data);
-        }
-//        console.log(category);
-       
-        $(selector).highcharts({
-          chart: {
-            type: 'column'
-          },
-          title: {
-            text: 'Nayatt School'
-          },
-          xAxis: {
-            categories: category
-          },
-          yAxis: {
-            min: -100,
-            max: 100,
-            reversedStack: false,
-            title: {
-              text: '% Proficient'
-            }
-          },
-          legend: {
-            reversed: false,
-            align: 'right',
-            layout: 'vertical',
-            verticalAlign: 'middle'
-          },
-          plotOptions: {
-            column: {
-              stacking: 'normal',
-              dataLabels: {
-                enabled: true,
-        				formatter: function() {
-                	return Math.abs(this.y);
-                },
-                color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
-                style: {
-                  textShadow: '0 0 3px black'
-                }
-              }
-            }
-          },
-          series: series
-  
-        });
-        {% endfor %}
-      });
-  </script>
-  {% endcomment %}
