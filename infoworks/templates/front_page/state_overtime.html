@@ -39,6 +39,14 @@ var data = [{% for element in indicator.over_time.elements %}"{{element.dimensio
 var negative =[{% for element in indicator.over_time.elements %}{% if element.is_positive %}{%else%}"{{element.dimension_name.name}}",{% endif %}{% endfor %}];
 var data_type = '{{indicator.over_time.data_type}}';
 
+function clone(obj) {
+    if (null == obj || "object" != typeof obj) return obj;
+    var copy = obj.constructor();
+    for (var attr in obj) {
+        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+    }
+    return copy;
+}
 function getName(){
 	var result = "";
 	{% for select in indicator.over_time.selects %}
@@ -97,7 +105,98 @@ function highcharts(data){
 				  	}
             		series.push(obj);
             	}
+            	{% if indicator.over_time.chart_type == 'PIE-CHART' %}
+            	series = [];
+            	template1 = {
+				            type: 'pie',
+				            name: 'Browser share',
+				            center: ["10%","50%"],
+				            size: 100,
+				            dataLabels: {
+								enabled: false
+							},
+							showInLegend: true,
+				            data: []
+				        }
+				 template2 = {
+				            type: 'pie',
+				            name: 'Browser share',
+				            center: ["10%","50%"],
+				            size: 100,
+				            dataLabels: {
+								enabled: false
+							},
+				            data: []
+				        }
+				base = 100 / data.school_year.length / 2;
+            	for(var i = 0; i<data.school_year.length; i++){
+            	    center = 100 / data.school_year.length * (i+1) - base;
+            	    
+            	    if (i==0) {template = template1}
+            		else {template = template2}
+            		template = clone(template);
+            		template.name = data.school_year[i];
+            		template.center = [center+"%", "50%"];
+            		template.data = [];
+            		for(var j = 0; j<data.data.length; j++){
+            		    console.log([data.data[j].name, data.data[j].row[i]]);
+            		    template.data.push([data.data[j].name, parseInt(data.data[j].row[i])]);
+            		}
+            		console.log(template);
+            		series.push(template);
+            	}
             	
+            	
+            	$(function () {
+				    $('#highchart').highcharts({
+				        chart: {
+				            plotBackgroundColor: null,
+				            plotBorderWidth: 1,//null,
+				            plotShadow: false,
+				        },
+				        title: {
+				            text: '{{indicator.district_indicator_set.district.district_name}}'+title_text
+				        },
+				        tooltip: {
+				            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+				        },
+				        
+				        plotOptions: {
+				            pie: {
+				                allowPointSelect: true,
+				                cursor: 'pointer'
+				            }
+				        },
+				        series: series
+				    },function(chart) {
+				            
+				        $(chart.series[0].data).each(function(i, e) {
+				            e.legendItem.on('click', function(event) {
+				                var legendItem=e.name;
+				                
+				                event.stopPropagation();
+				                
+				                $(chart.series).each(function(j,f){
+				                       $(this.data).each(function(k,z){
+				                           if(z.name==legendItem)
+				                           {
+				                               if(z.visible)
+				                               {
+				                                   z.setVisible(false);
+				                               }
+				                               else
+				                               {
+				                                   z.setVisible(true);
+				                               }
+				                           }
+				                       });
+				                });
+				                
+				            });
+				        });
+				    });
+				});
+            	{% else %}            	
             	$(function () {
 				    $('#highchart').highcharts({
 				        chart: {
@@ -180,6 +279,7 @@ function highcharts(data){
 				        series: series
 				    });
 				});
+				{% endif %}
 
 }
 
