@@ -98,9 +98,9 @@ table.floatThead-table {
 					<tr data-ng-repeat="row in data.data">
 					{% for column in detail.summary %}
 					{% if forloop.counter == 1 %}
-					<th scope="row" ng-if="row.value{{column.id}} != 'no data'">{[{row.district}]}</th>
+					<th scope="row">{[{row.district}]}</th>
 					{% endif %}
-					<td ng-if="row.value{{column.id}} != 'no data'" style="text-align: right;">{[{row.value{{column.id}}}]}</td>
+					<td style="text-align: right;">{[{row.value{{column.id}}}]}</td>
 					{% endfor %}
 					</tr>
 			</tbody>
@@ -147,7 +147,13 @@ table.floatThead-table {
             };
          });
          {% elif type == "DISTRICT" %}
-         
+         var data = [{% for district in state.districts %}
+                  {district:'{{district.district_name | safe}}',
+                  	{% for column in detail.summary %}
+                   	value{{column.id}}: {% get_district_indicator_value district indicator school_year column.display.name as value %}{% get_display value as display %}'{{display|safe}}',
+					{% endfor %}},
+				{% endfor %}]
+         data = remove_no_data(data);
          var mainApp = angular.module('mainApp',[]).config(function($interpolateProvider) {
 					        $interpolateProvider.startSymbol('{[{');
 					        $interpolateProvider.endSymbol('}]}');
@@ -155,14 +161,7 @@ table.floatThead-table {
          
          mainApp.controller('tableCtrl', function($scope) {
             $scope.data = {
-               data:[
-				{% for district in state.districts %}
-                  {district:'{{district.district_name | safe}}',
-                  	{% for column in detail.summary %}
-                   	value{{column.id}}: {% get_district_indicator_value district indicator school_year column.display.name as value %}{% get_display value as display %}'{{display|safe}}',
-					{% endfor %}},
-				{% endfor %}
-               ]
+               data:data
             };
          });
          {% endif %}
