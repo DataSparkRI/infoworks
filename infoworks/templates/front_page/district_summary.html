@@ -1,8 +1,18 @@
 {% extends "front_page/base.html" %}{% load staticfiles %}{% load config %}{% load cache %}
 
 {% block css %}
-	<link rel="stylesheet" href="{% static "sortable-0.8.0/css/sortable-theme-bootstrap.css" %}" />
+	<link rel="stylesheet" href="{% static "css/jquery.dataTables.min.css" %}" />
 	{{block.super}}
+<style id="jsbin-css">
+body{
+    padding-top:50px;
+}
+table.floatThead-table {
+    border-top: none;
+    border-bottom: none;
+    background-color: #fff;
+}
+</style>
 {% endblock css %}
 
 {% block body %}
@@ -19,46 +29,34 @@
 		    <li><a href="{% url 'district_detail' indicator.district_indicator_set.district.slug indicator.id data.school_year display_detail.detail.slug %}">{{display_detail.detail.name}}</a></li>
 		    {% endfor %}
 		  </ul>
-		</div>		
-
-		  <table class="table table-hover">
-		    <thead>
-		      <tr>
-		        <th></th>
-				{% for column in detail.summary %}
-					<th style="text-align: right;">{{column.display_name}}</th>
-				{% endfor %}
-		      </tr>
-		    </thead>
-		    <tbody>
-		      <tr>
-		        <td>{{district.district_name}}</td>
-				{% for column in detail.summary %}
-					<td style="text-align: right;">{% get_district_indicator_value district indicator school_year column.display.name as value %}
-					{% get_display value %}
-					</td>
-				{% endfor %}
-		      </tr>
-		    </tbody>
-		  </table>
-
-		<table class="table table-hover" id="table" class="sortable-theme-bootstrap" data-sortable>
-			<thead> 
-					<tr><th>District Name</th>
+		</div>				
+		
+		<table class="table table-hover table-striped sticky-header" id="table" cellspacing="0" class="display sortable-theme-bootstrap" data-sortable>
+			<thead>
+				<tr><th>District Name</th>
 					<th>School Name</th>
 					{% for column in detail.summary %}
 					<th style="text-align: right;">{{column.display_name}}</th>
 					{% endfor %}
-					</tr>
+				</tr>
+		      <tr>
+		        <th>{{district.district_name}}</th>
+		        <th></th>
+				{% for column in detail.summary %}
+					<th style="text-align: right;">{% get_district_indicator_value district indicator school_year column.display.name as value %}
+					{% get_display value %}
+					</th>
+				{% endfor %}
+		      </tr>
 	 		</thead>
 			<tbody>
 					<tr data-ng-repeat="row in data.data">
 					{% for column in detail.summary %}
 					{% if forloop.counter == 1 %}
-					<th scope="row" ng-if="row.value{{column.id}} != 'no data'">{[{row.district}]}</th>
-					<td ng-if="row.value{{column.id}} != 'no data'">{[{row.school}]}</td>
+					<th scope="row">{[{row.district}]}</th>
+					<td>{[{row.school}]}</td>
 					{% endif %}
-					<td ng-if="row.value{{column.id}} != 'no data'" style="text-align: right;">{[{row.value{{column.id}}}]}</td>
+					<td style="text-align: right;">{[{row.value{{column.id}}}]}</td>
 					{% endfor %}
 					</tr>
 			</tbody>
@@ -72,30 +70,67 @@
     {% comment %}{% cache 35000 district request.path indicator.id school_year detail.slug %}{% endcomment %}
 
 	{{block.super}}
-	<script src="{% static "sortable-0.8.0/js/sortable.min.js" %}"></script>
+	<script src="{% static "js/jquery.dataTables.min.js" %}"></script>
+	<script src="{% static "js/floatThead.js" %}"></script>
 	<script src = "{% static "angular-1.3.14/angular.min.js" %}"></script>
     <script>
+         function remove_no_data(data){
+            var result = [];
+            for (var i=0; i<data.length; i++){
+            	if({% for column in detail.summary %}{% if forloop.first %}data[i].value{{column.id}} !='no data' {% else%}&& data[i].value{{column.id}} !='no data' {% endif %}{% endfor %}){
+            	    result.push(data[i]);
+            	}
+            }
+            return result;
+         }
     	 {% if type == "SCHOOL" %}
          var mainApp = angular.module('mainApp',[]).config(function($interpolateProvider) {
 					        $interpolateProvider.startSymbol('{[{');
 					        $interpolateProvider.endSymbol('}]}');
 					    });
-         
-         mainApp.controller('tableCtrl', function($scope) {
-            $scope.data = {
-               data:[
-				{% for school in district.schools %}
+         var data = [{% for school in district.schools %}
                   {district:"{{district.district_name | safe}}",school:"{{school.school_name | safe}}",
                   	{% for column in detail.summary %}
                    	value{{column.id}}: {% get_district_indicator_value district indicator school_year column.display.name as value %}{% get_display value as display %}'{{display|safe}}',
 					{% endfor %}},
-				{% endfor %}
-               ]
+				{% endfor %}];
+		console.log(data);
+         data = remove_no_data(data);
+         
+         mainApp.controller('tableCtrl', function($scope) {
+            $scope.data = {
+               data: data
             };
          });
          {% endif %}
+    jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+    "percent-pre": function ( a ) {
+        if (a == "&lt;1%"){return parseFloat( '0.99999999' ); }
+        var x = (a == "-") ? 0 : a.replace( /%/, "" );
+        return parseFloat( x );
+    },
+ 
+    "percent-asc": function ( a, b ) {
+        return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+    },
+ 
+    "percent-desc": function ( a, b ) {
+        return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+    }
+	} );
          
          
+    $(document).ready(function(){
+        $(".sticky-header").floatThead({scrollingTop:80});
+        $('#table').DataTable({
+        	"paging":   false,
+        	"columnDefs": [
+        	{% for column in detail.summary %}
+                {% if column.sorting_plug %}{ "type": "{{column.sorting_plug}}", targets: {{ forloop.counter }}+1 }{% endif %}
+            {% endfor %}
+            ]
+        });
+    });         
     </script>
     {% comment %}{% endcache %}{% endcomment %}
     

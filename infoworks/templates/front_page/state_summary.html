@@ -1,7 +1,7 @@
 {% extends "front_page/base.html" %}{% load staticfiles %}{% load config %}{% load cache %}
 
 {% block css %}
-	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
+	<link rel="stylesheet" href="{% static "css/jquery.dataTables.min.css" %}" />
 	{{block.super}}
 <style id="jsbin-css">
 body{
@@ -114,7 +114,7 @@ table.floatThead-table {
 
 	{{block.super}}
 
-	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+	<script src="{% static "js/jquery.dataTables.min.js" %}"></script>
 	<script src="{% static "js/floatThead.js" %}"></script>
 	<script src = "{% static "angular-1.3.14/angular.min.js" %}"></script>
     <script>
