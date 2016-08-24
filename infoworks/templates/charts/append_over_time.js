@@ -222,7 +222,7 @@ function highcharts(data){
 				        tooltip: { enabled: false },
 				        plotOptions: {
 				            column: {
-				                stacking: 'normal',
+				                {% if indicator.over_time.chart_type != 'GROUPED-COLUMN' %}stacking: 'normal',{% endif %}
 				                dataLabels: {
 				                    enabled: true,
 				                    
