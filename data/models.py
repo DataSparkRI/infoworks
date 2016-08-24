@@ -670,6 +670,7 @@ class DistrictSummery(models.Model):
     order = models.IntegerField(default=1)
     display = models.ForeignKey("dataimport.DimensionName", blank=True, null=True)
     display_name = models.CharField(max_length=100, blank=True)
+    sorting_plug = models.CharField(max_length=100, blank=True, help_text="https://datatables.net/plug-ins/sorting/")
     
     def __unicode__(self):
         return "%s - %s"%(self.detail, self.display)
@@ -1078,6 +1079,7 @@ class StateSummery(models.Model):
     order = models.IntegerField(default=1)
     display = models.ForeignKey("dataimport.DimensionName", blank=True, null=True)
     display_name = models.CharField(max_length=100, blank=True)
+    sorting_plug = models.CharField(max_length=100, blank=True, help_text="https://datatables.net/plug-ins/sorting/")
     
     def __unicode__(self):
         return "%s - %s"%(self.detail, self.display)

@@ -168,13 +168,32 @@ table.floatThead-table {
          {% endif %}
          
          
-         
+    jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+    "percent-pre": function ( a ) {
+        if (a == "&lt;1%"){return parseFloat( '0.99999999' ); }
+        var x = (a == "-") ? 0 : a.replace( /%/, "" );
+        return parseFloat( x );
+    },
+ 
+    "percent-asc": function ( a, b ) {
+        return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+    },
+ 
+    "percent-desc": function ( a, b ) {
+        return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+    }
+	} );
          
          
     $(document).ready(function(){
         $(".sticky-header").floatThead({scrollingTop:80});
         $('#table').DataTable({
-        	"paging":   false
+        	"paging":   false,
+        	"columnDefs": [
+        	{% for column in detail.summary %}
+                {% if column.sorting_plug %}{ "type": "{{column.sorting_plug}}", targets: {{ forloop.counter }}+1 }{% endif %}
+            {% endfor %}
+            ]
         });
     });
     </script>
