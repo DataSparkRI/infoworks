@@ -70,6 +70,9 @@ OPERATOR_CHOICES = (
         ('!=','!='),
     )
 
+OVER_TIME_TYPE = (("REFRESH_OVER_TIME","Refresh chart and table, when user select new data."),
+                  ("APPEND_OVER_TIME","Append to chart and table, when user select new data.")
+                  )
 
 # Create your models here.
 class PlotBand(models.Model):
@@ -226,7 +229,10 @@ class SchoolOverTime(models.Model):
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES,default='NUMERIC')
     stack_label_positive = models.CharField(max_length=200, blank=True, null=True, default='Total:')
     stack_label_negative = models.CharField(max_length=200, blank=True, null=True, default='Total:')
+    stack_min = models.CharField(max_length=200, blank=True, null=True)
+    stack_max = models.CharField(max_length=200, blank=True, null=True)
     chart_type = models.CharField(max_length=50,choices=DISPLAY_TYPE_CHOICES,default='BAR-CHART')
+    over_time_type = models.CharField(max_length=17,choices=OVER_TIME_TYPE,default='REFRESH_OVER_TIME')
     
     @property
     def selects(self):
@@ -605,7 +611,10 @@ class DistrictOverTime(models.Model):
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES,default='NUMERIC')
     stack_label_positive = models.CharField(max_length=200, blank=True, null=True, default='Total:')
     stack_label_negative = models.CharField(max_length=200, blank=True, null=True, default='Total:')
+    stack_min = models.CharField(max_length=200, blank=True, null=True)
+    stack_max = models.CharField(max_length=200, blank=True, null=True)
     chart_type = models.CharField(max_length=50,choices=DISPLAY_TYPE_CHOICES,default='BAR-CHART')
+    over_time_type = models.CharField(max_length=17,choices=OVER_TIME_TYPE,default='REFRESH_OVER_TIME')
     
     @property
     def selects(self):
@@ -1009,7 +1018,11 @@ class StateOverTime(models.Model):
     y_axis_title_text = models.CharField(max_length=200, blank=True, null=True)
     stack_label_positive = models.CharField(max_length=200, blank=True, null=True, default='Total:')
     stack_label_negative = models.CharField(max_length=200, blank=True, null=True, default='Total:')
+    stack_min = models.CharField(max_length=200, blank=True, null=True)
+    stack_max = models.CharField(max_length=200, blank=True, null=True)
     chart_type = models.CharField(max_length=50,choices=DISPLAY_TYPE_CHOICES,default='BAR-CHART')
+    over_time_type = models.CharField(max_length=17,choices=OVER_TIME_TYPE,default='REFRESH_OVER_TIME')
+
     
     @property
     def selects(self):
