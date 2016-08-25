@@ -20,7 +20,7 @@ table.floatThead-table {
 	<div class="container body" ng-app = "mainApp" ng-controller = "tableCtrl">
 		<h1>{{detail}}{% if request.user.is_active and request.user.is_staff %} <a href="/admin/data/districtdisplaydataydetail/{{detail.id}}/change/" target="_blank"><i class="fa fa-pencil"></i></a>{% endif %}</h1>
         <h2>{{school_year}} </h2>
-        <div class="dropdown">
+        <div class="dropdown" id="dropdown_btn">
 		  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{detail}}
 		  <span class="caret"></span></button>
 		  <ul class="dropdown-menu" id="dropdown_menu">
@@ -143,6 +143,7 @@ table.floatThead-table {
 	    listForRemove.push($(this));
 	});
 	$(listForRemove).each(function () { $(this).remove(); });
+	if($('#dropdown_menu li').length <= 1){$('#dropdown_btn').remove();}
     </script>
     {% comment %}{% endcache %}{% endcomment %}
     
