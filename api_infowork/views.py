@@ -1,7 +1,12 @@
 from django.shortcuts import render
+from django.shortcuts import render_to_response
+from django.http import HttpResponse
+from django.template import RequestContext
+
 from django.http import JsonResponse
 from data.models import StateIndicator, DistrictIndicator, DistrictIndicatorData, SchoolIndicator, SchoolIndicatorData, SchoolYear, IndicatorTitle
 from data.models import State, District, School
+from data.models import StateDisplayDataYDetailSet, DistrictDisplayDataYDetailSet, SchoolDisplayDataYDetailSet
 from data.models import SchoolYear
 # Create your views here.
 import json
@@ -11,6 +16,10 @@ from django.shortcuts import redirect
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.cache import cache
 from front_page.models import Config
+
+from django.http import HttpResponse
+from django.template import loader
+
 '''
 https://infoworks-yangxu.c9users.io/api/?indicator_type=school&indicator_id=2&school_year=2015-2016
 https://infoworks-yangxu.c9users.io/api/?indicator_type=school&school_code=1104&indicator_title=SAT Exams (High School)&school_year=2014-2015
@@ -45,6 +54,46 @@ def clean_memcached(request):
     from django.core.cache import cache
     cache.clear()
     return redirect(request.META["HTTP_REFERER"])
+
+def highchart_js(request, type, indicator_id, school_year, detail_slug, detail_id):
+    name = request.GET.get('name', 'highchart')
+    if type=='state':
+        indicator = StateIndicator.objects.get(id=indicator_id)
+        school_year = SchoolYear.objects.get(school_year=school_year)
+        detail = StateDisplayDataYDetailSet.objects.get(id=detail_id)
+    elif type=='district':
+        indicator = DistrictIndicator.objects.get(id=indicator_id)
+        school_year = SchoolYear.objects.get(school_year=school_year)
+        detail = DistrictDisplayDataYDetailSet.objects.get(id=detail_id)
+    elif type=='school':
+        indicator = SchoolIndicator.objects.get(id=indicator_id)
+        school_year = SchoolYear.objects.get(school_year=school_year)
+        detail = SchoolDisplayDataYDetailSet.objects.get(id=detail_id)
+    
+    if detail.display_type == 'PIE-CHART':
+        t = loader.get_template('charts/highchart_pie_chart.js')
+        series = {}
+        for row in detail.detail_data:
+            try:
+                series[row.new_dimension_x_name]['data'].append({"name": row.new_dimension_y_name.name,
+                                                               "y":{"x":row.dimension_x_name.name,"y":row.dimension_y_name.name}
+                                                               })
+            except:
+                series.update({row.new_dimension_x_name:{"name":row.new_dimension_x_name.name,
+                                                          "colorByPoint":"true",
+                                                          "data":[{"name": row.new_dimension_y_name.name,
+                                                                   "y":{"x":row.dimension_x_name.name,"y":row.dimension_y_name.name}
+                                                                }]
+                                                        }
+                            })
+        context={"name":name,
+                "type":type,
+                "series":series,
+                "detail":detail,
+                "indicator":indicator,
+                "school_year":school_year}
+        return HttpResponse(t.render(context, request), content_type='text/javascript')
+
 
 def api(request):
         if request.method == 'GET':

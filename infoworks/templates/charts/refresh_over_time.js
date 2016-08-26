@@ -124,7 +124,7 @@ function highcharts(data){
 				            text: '{{indicator.district_indicator_set.district.district_name}}'+title_text
 				        },
 				        tooltip: {
-				            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+				            pointFormat: '{series.name}: <b>{point.percentage:.0f}%</b>'
 				        },
 				        
 				        plotOptions: {

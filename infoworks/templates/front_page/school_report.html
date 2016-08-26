@@ -93,6 +93,7 @@
                 <div class="row">
                   <div class="col-md-{% if 'indicator-col-md-left'|get_config %}{{'indicator-col-md-left'|get_config}}{% else %}4{% endif %}">
                     <div class="media">
+                      {% if j.highchart %}<div id="highchart_{{j.id}}" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>{% endif %}
                       {% if request.user.is_active and request.user.is_staff %}
                       <div class="media-left">
                         <a href="/admin/data/schoolindicator/{{j.id}}">
@@ -163,3 +164,12 @@
       <!-- End: Schedule -->
       {% endcache %}
 {% endblock body %}
+
+{% block javascript %}
+{{block.super}}
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+{% for i in school.indicatorset %}{% for j in i.indicators %}
+{% if j.highchart %}<script src="{% url 'highchart_js' 'school' j.id j.dataset.0.school_year.school_year j.highchart.slug j.highchart.detail_set.0.id %}?name=highchart_{{j.id}}" type='text/javascript'></script>{% endif %}
+{% endfor %}{% endfor %}
+{% endblock %}

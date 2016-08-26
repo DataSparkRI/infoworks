@@ -493,6 +493,7 @@ class SchoolIndicator(models.Model):
     data_indicator = models.BooleanField(default=True)
     switch_highchart_xy = models.BooleanField(default=True)
     over_time = models.ForeignKey(SchoolOverTime, blank=True, null=True)
+    highchart = models.ForeignKey("SchoolDisplayDataYDetail", blank=True, null=True)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField(blank=True)
 
@@ -915,6 +916,7 @@ class DistrictIndicator(models.Model):
     data_indicator = models.BooleanField(default=True)
     switch_highchart_xy = models.BooleanField(default=True)
     over_time = models.ForeignKey(DistrictOverTime, blank=True, null=True)
+    highchart = models.ForeignKey("DistrictDisplayDataYDetail", blank=True, null=True)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField(blank=True)
 
@@ -1260,6 +1262,7 @@ class StateIndicator(models.Model):
     data_indicator = models.BooleanField(default=True)
     switch_highchart_xy = models.BooleanField(default=True)
     over_time = models.ForeignKey(StateOverTime, blank=True, null=True)
+    highchart = models.ForeignKey("StateDisplayDataYDetail", blank=True, null=True)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField(blank=True)
 
