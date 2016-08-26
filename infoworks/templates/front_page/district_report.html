@@ -112,13 +112,13 @@
 												{% get_district_history_value j data_name k.display.name as row %}
 												<td>{{row.district_indicator_dataset.school_year.school_year}}</td>
 												{% get_district_value j row.district_indicator_dataset.school_year.school_year data_name k.display.name as data%}
-												<td>{% get_display data %}</td>
+												<td>{{indicatordata.dimension_y.prefix}} {% get_display data %} {{indicatordata.dimension_y.suffix}}</td>
 											{% else %}
 												{% if k == 'Details' %}
 													{% if indicatordata.dimension_y.detail %}<td>{% url 'district_detail' district.slug j.id row.district_indicator_dataset.school_year indicatordata.dimension_y.detail.slug as the_url %}{% if the_url %}<a href="{{the_url}}">{{indicatordata.dimension_y.detail}}</a>{% else %}{% endif %}</td>{% else %}<td></td>{% endif %}
 												{% else %}
 											    	{% get_district_value j row.district_indicator_dataset.school_year.school_year data_name k.display.name as data%}
-													<td>{% get_display data %}</td>
+													<td>{{indicatordata.dimension_y.prefix}} {% get_display data %} {{indicatordata.dimension_y.suffix}}</td>
 												{% endif %}
 											{% endif %}
 										{% endfor %}

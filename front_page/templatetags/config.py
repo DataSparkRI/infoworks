@@ -98,8 +98,11 @@ def get_display(data):
     else:
         if rounding_decimal_place > 0:
             value = round(float(value),rounding_decimal_place)
-        elif rounding_decimal_place < 0:
-            value = int(round(float(value),rounding_decimal_place))
+        elif rounding_decimal_place <= 0:
+            try:
+               value = int(round(float(value),rounding_decimal_place))
+            except:
+                value = data.key_value
         else:
             value = data.key_value
         for custom in indicator.title.custom_value:

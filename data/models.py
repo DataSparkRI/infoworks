@@ -306,6 +306,8 @@ class SchoolDisplayDataY(models.Model):
     display_name = models.CharField(max_length=100, blank=True)
     order = models.IntegerField(default=1)
     detail = models.ForeignKey("SchoolDisplayDataYDetail", blank=True, null=True)
+    prefix = models.CharField(max_length=100, blank=True)
+    suffix = models.CharField(max_length=100, blank=True)
     
     def __unicode__(self):
         return "%s - %s"% (self.school_indicator, self.display)
@@ -707,7 +709,9 @@ class DistrictDisplayDataY(models.Model):
     display_name = models.CharField(max_length=100, blank=True)
     order = models.IntegerField(default=1)
     detail = models.ForeignKey("DistrictDisplayDataYDetail", blank=True, null=True)
-    
+    prefix = models.CharField(max_length=100, blank=True)
+    suffix = models.CharField(max_length=100, blank=True)
+        
     def __unicode__(self):
         return "%s - %s"% (self.district_indicator, self.display)
 
@@ -1115,6 +1119,8 @@ class StateDisplayDataY(models.Model):
     display_name = models.CharField(max_length=100, blank=True)
     order = models.IntegerField(default=1)
     detail = models.ForeignKey("StateDisplayDataYDetail", blank=True, null=True)
+    prefix = models.CharField(max_length=100, blank=True)
+    suffix = models.CharField(max_length=100, blank=True)
     
     def __unicode__(self):
         return "%s - %s"% (self.state_indicator, self.display)

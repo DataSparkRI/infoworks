@@ -122,7 +122,7 @@ View details on Student and </br /> &nbsp School counts in Rhode Island</a>
 												{% get_state_history_value j data_name k.display.name as row %}
 												<td>{{row.state_indicator_dataset.school_year.school_year}}</td>
 												{% get_state_value j row.state_indicator_dataset.school_year.school_year data_name k.display.name as data%}
-												<td>{% get_display data %}</td>
+												<td>{{indicatordata.dimension_y.prefix}} {% get_display data %} {{indicatordata.dimension_y.suffix}}</td>
 											{% else %}
 												{% if k == 'Details' %}
 													{% if indicatordata.dimension_y.detail %}<td>{% url 'state_detail' state.slug j.id row.state_indicator_dataset.school_year indicatordata.dimension_y.detail.slug as the_url %}{% if the_url %}<a href="{{the_url}}">{{indicatordata.dimension_y.detail}}</a>{% else %}{% endif %}</td>{% else %}<td></td>{% endif %}{% else %}
