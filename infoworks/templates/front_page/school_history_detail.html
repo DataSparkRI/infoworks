@@ -4,6 +4,7 @@
       <div class="container body">
       <h1>{{school.school_name}}</h1>
       <h2>{{indicator.title.title}} {{indicator_dataset.school_year.school_year}}</h2>
+      {% if indicator_dataset.description %}<h3>{{indicator_dataset.description}}</h3>{% endif %}
       <div id="table1" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
       
                         <table class="table table-hover">

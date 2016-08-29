@@ -2,6 +2,7 @@
 
 {% block css %}
 	<link rel="stylesheet" href="{% static "css/jquery.dataTables.min.css" %}" />
+	<link rel="stylesheet" href="https://cdn.datatables.net/plug-ins/1.10.12/features/searchHighlight/dataTables.searchHighlight.css" />
 	{{block.super}}
 <style id="jsbin-css">
 body{
@@ -117,6 +118,8 @@ table.floatThead-table {
 	<script src="{% static "js/jquery.dataTables.min.js" %}"></script>
 	<script src="{% static "js/floatThead.js" %}"></script>
 	<script src = "{% static "angular-1.3.14/angular.min.js" %}"></script>
+	<script src ="https://bartaz.github.io/sandbox.js/jquery.highlight.js"></script>
+	<script src ="https://cdn.datatables.net/plug-ins/1.10.12/features/searchHighlight/dataTables.searchHighlight.min.js"></script>
     <script>
          function remove_no_data(data){
             var result = [];
@@ -186,7 +189,7 @@ table.floatThead-table {
          
     $(document).ready(function(){
         $(".sticky-header").floatThead({scrollingTop:80});
-        $('#table').DataTable({
+        var table = $('#table').DataTable({
         	"paging":   false,
         	"columnDefs": [
         	{% for column in detail.summary %}
@@ -194,6 +197,12 @@ table.floatThead-table {
             {% endfor %}
             ]
         });
+        table.on( 'draw', function () {
+        	var body = $( table.table().body() );
+ 
+        	body.unhighlight();
+        	body.highlight( table.search() );  
+    	} );
         
     });
     

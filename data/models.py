@@ -351,6 +351,7 @@ class SchoolIndicatorData(models.Model):
 class SchoolIndicatorDataSet(models.Model):
     school_indicator = models.ForeignKey("SchoolIndicator", blank=True, null=True)
     school_year = models.ForeignKey(SchoolYear)
+    description = models.CharField(max_length=100, blank=True, null=True)
     csv_file = models.FileField(upload_to="School_Indicator_Data", blank=True, null=True)
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES,default='STRING')
     import_file = models.BooleanField(default=False) #If True start import file, then mark False after
@@ -790,6 +791,7 @@ class DistrictIndicatorData(models.Model):
 class DistrictIndicatorDataSet(models.Model):
     district_indicator = models.ForeignKey("DistrictIndicator", blank=True, null=True)
     school_year = models.ForeignKey(SchoolYear)
+    description = models.CharField(max_length=100, blank=True, null=True)
     csv_file = models.FileField(upload_to="District_Indicator_Data", blank=True, null=True)
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES,default='STRING')
     import_file = models.BooleanField(default=False) #If True start import file, then mark False after
@@ -1164,6 +1166,7 @@ class StateIndicatorData(models.Model):
 class StateIndicatorDataSet(models.Model):
     state_indicator = models.ForeignKey("StateIndicator", blank=True, null=True)
     school_year = models.ForeignKey(SchoolYear)
+    description = models.CharField(max_length=100, blank=True, null=True)   
     csv_file = models.FileField(upload_to="State_Indicator_Data", blank=True, null=True)
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES,default='STRING')
     import_file = models.BooleanField(default=False) #If True start import file, then mark False after

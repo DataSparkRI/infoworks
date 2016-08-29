@@ -78,12 +78,7 @@ View details on Student and </br /> &nbsp School counts in Rhode Island</a>
                 <div class="row">
                   <div class="col-md-{% if 'indicator-col-md-left'|get_config %}{{'indicator-col-md-left'|get_config}}{% else %}4{% endif %}">
                     <div class="media">
-
                     {% if j.highchart %}<div id="highchart_{{j.id}}" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>{% endif %}
-
-
-
-
                       {% if request.user.is_active and request.user.is_staff %}
                       <div class="media-left">
                         <a href="/admin/data/stateindicator/{{j.id}}" target="_blank">
@@ -93,7 +88,7 @@ View details on Student and </br /> &nbsp School counts in Rhode Island</a>
                       {% endif %}
                       <div class="media-body">
                         <h4 class="media-heading">{{j.short_title}}</h4>
-                        {% if j.dataset %}<h3 class="text-right">{{j.dataset.0.school_year.school_year}}</h3>{% endif %}
+                        {% if j.dataset %}<h3 class="text-right">{{j.dataset.0.school_year.school_year}}</h3>{% if j.dataset.0.description %}<h4>{{j.dataset.0.description}}</h4>{% endif %}{% endif %}
                         {% if j.over_time %}<a href = "{% url 'state_overtime' state.slug %}?category={{j.title.title}}"><h3>Over Time Data</h3></a>{% endif %}
                         <p>{{j.description|safe}}</p>
                       </div>
