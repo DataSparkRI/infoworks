@@ -1,5 +1,8 @@
 {% extends "front_page/base.html" %}{% load staticfiles %}{% load humanize %}{% load config %}
-
+{% block css %}
+	<link rel="stylesheet" href="{% static "css/jquery.dataTables.min.css" %}" />
+	{{block.super}}
+{% endblock css %}
 {% block body %}
       <div class="container body">
       <h1>{{indicator}}</h1>
@@ -24,7 +27,7 @@
                         {% else %}
 						{% endif %}
                         {% if i.set_name.display_type == 'BAR-CHART' or i.set_name.display_type == 'PIE-CHART' or i.set_name.display_type == 'HORZ-BAR-CHART' or i.set_name.display_type == 'TABLE' %}                        
-						<table class="table table-hover">
+						<table class="table table-hover" id='table_{{i.set_name.id}}'>
                           <thead> <tr><th></th>
                                       {% for key, values in i.data.items %}
                                       {% if forloop.first %}{% for j in values.names %}<th>{{j}}</th>{% endfor %}{% endif %}
@@ -48,6 +51,22 @@
 
 {% block javascript %}
     {{block.super}}
+    <script src="{% static "js/jquery.dataTables.min.js" %}"></script>
     {% include "charts/bar_chart.js" with detail_set=detail_set %}
+    <script src="{% static "js/datatable_sort.js" %}"></script>
+    
+    <script>
+    $(document).ready(function(){
+       {% for i in detail_set %}{% if i.set_name.display_type == 'BAR-CHART' or i.set_name.display_type == 'PIE-CHART' or i.set_name.display_type == 'HORZ-BAR-CHART' or i.set_name.display_type == 'TABLE' %}
+        $('#table_{{i.set_name.id}}').DataTable({
+        	"paging":   false, bFilter: false, bInfo: false,
+        	"columnDefs": [
+        	{% for key, values in i.data.items %}{% if forloop.first %}{% for j in values.names %}{% if j.sorting_plug %} {"type": '{{j.sorting_plug}}', targets: {{ forloop.counter }} },{% endif %}{% endfor %}{% endif %}{% endfor %}
+        	]
+        });
+        {% endif %}{% endfor %}
+    });
+    </script>
+
 
 {% endblock %}

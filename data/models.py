@@ -193,6 +193,7 @@ class CustomDimensionYName(models.Model):
         
 class CustomDimensionXName(models.Model):
     name = models.CharField(max_length=100)
+    sorting_plug = models.CharField(max_length=100,blank=True,null=True,help_text="https://datatables.net/plug-ins/sorting/")
     def __unicode__(self):
         return self.name
         
