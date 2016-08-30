@@ -22,7 +22,16 @@ function clone(obj) {
 }
 
 function highcharts(data){
-	var title_text = ""
+    for (var i = 0; i < data["data"].length; i++){
+        for (var j=0; j<data["data"][i]["row"].length; j++){
+            if (data["data"][i]["row"][j] !== null){
+               if (data["data"][i]["row"][j].indexOf('1:') !== -1){
+                 data["data"][i]["row"][j] = data["data"][i]["row"][j].replace('1:','');
+               }
+            }
+        }
+    }
+	var title_text = "";
 	{% for select in indicator.over_time.selects %}
 	title_text = title_text +" "+ $("#select{{select.id}} option:selected").text();
 	{% endfor %}
@@ -341,7 +350,7 @@ function highcharts(data){
             	
             
                 $scope.data = data;
-                highcharts(data);
+                
                 var headers=data["school_year"];
                 var rowHtml='<tr><th></th><th>'+headers.join('</th><th>')+'</th></tr>';
 				
@@ -370,7 +379,7 @@ function highcharts(data){
 				  		rowHtml +='<td>'+data_row.join('</td><td>')+'</td></tr>';
 				}
 				$('#table').html(rowHtml);
-                
+                highcharts(data);
             }).
             error(function(data, status, headers, config) {});
         });        
