@@ -14,7 +14,7 @@
 		        
 		      <tr data-ng-repeat="row in data.data">
 		        <td data-ng-repeat="col in row track by $index">
-		        	<div ng-if="col == true" class="text-center"><a ng-href="{{request.path}}/{[{data.dimension_x[$index]}]}?category={[{row[1]}]}"><i class="fa fa-check-circle"></i></a></div>
+		        	<div ng-if="col == true" class="text-center"><a ng-href="{{request.path}}{[{data.dimension_x[$index]}]}?category={[{row[1]}]}"><i class="fa fa-check-circle"></i></a></div>
 		        	<div ng-if="col != true">{[{col}]}</div>
 		        </td>
 		      </tr>
