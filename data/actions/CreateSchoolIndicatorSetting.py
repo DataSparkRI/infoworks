@@ -19,7 +19,9 @@ def add_school_display_data_setting_y(data, school_indicator):
 											display = data.display,
 											display_name = data.display_name,
 											order=data.order,
-											detail=data.detail)
+											detail=data.detail,
+											prefix=data.prefix,
+											suffix=data.suffix)
 
 def create_indicator(queryset):
 	for q in queryset:

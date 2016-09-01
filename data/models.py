@@ -150,6 +150,8 @@ class DistrictDisplayDataYSetting(models.Model):
     display_name = models.CharField(max_length=100, blank=True)
     order = models.IntegerField(default=1)
     detail = models.ForeignKey("DistrictDisplayDataYDetail", blank=True, null=True)
+    prefix = models.CharField(max_length=100, blank=True)
+    suffix = models.CharField(max_length=100, blank=True)
     
     def __unicode__(self):
         return "%s - %s"% (self.title, self.display)
@@ -170,6 +172,8 @@ class SchoolDisplayDataYSetting(models.Model):
     display_name = models.CharField(max_length=100, blank=True)
     order = models.IntegerField(default=1)
     detail = models.ForeignKey("SchoolDisplayDataYDetail", blank=True, null=True)
+    prefix = models.CharField(max_length=100, blank=True)
+    suffix = models.CharField(max_length=100, blank=True)
     
     def __unicode__(self):
         return "%s - %s"% (self.title, self.display)
