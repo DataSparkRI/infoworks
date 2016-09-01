@@ -229,8 +229,20 @@ class SchoolOverTimeElement(models.Model):
     def __unicode__(self):
         return "%s - %s"%(self.school_over_time.name, self.dimension_name.name)
 
-class SchoolOverTime(models.Model):
+class SchoolOverTimeSet(models.Model):
     name = models.CharField(max_length=200)
+    
+    @property
+    def overtimes(self):
+        return SchoolOverTime.objects.filter(school_overtime_set=self).order_by('order')
+    
+    def __unicode__(self):
+        return self.name
+
+class SchoolOverTime(models.Model):
+    school_overtime_set = models.ForeignKey(SchoolOverTimeSet, blank=True, null=True)
+    name = models.CharField(max_length=200)
+    order = models.IntegerField(default=1)
     y_axis_title_text = models.CharField(max_length=200, blank=True, null=True)
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES,default='NUMERIC')
     stack_label_positive = models.CharField(max_length=200, blank=True, null=True, default='Total:')
@@ -500,7 +512,7 @@ class SchoolIndicator(models.Model):
     description = RichTextField(blank=True)
     data_indicator = models.BooleanField(default=True)
     switch_highchart_xy = models.BooleanField(default=True)
-    over_time = models.ForeignKey(SchoolOverTime, blank=True, null=True)
+    over_time = models.ForeignKey(SchoolOverTimeSet, blank=True, null=True)
     highchart = models.ForeignKey("SchoolDisplayDataYDetail", blank=True, null=True)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField(blank=True)
@@ -615,8 +627,20 @@ class DistrictOverTimeElement(models.Model):
     def __unicode__(self):
         return "%s - %s"%(self.district_over_time.name, self.dimension_name.name)
 
-class DistrictOverTime(models.Model):
+class DistrictOverTimeSet(models.Model):
     name = models.CharField(max_length=200)
+    
+    @property
+    def overtimes(self):
+        return DistrictOverTime.objects.filter(district_overtime_set=self).order_by('order')
+    
+    def __unicode__(self):
+        return self.name
+
+class DistrictOverTime(models.Model):
+    district_overtime_set = models.ForeignKey(DistrictOverTimeSet, blank=True, null=True)
+    name = models.CharField(max_length=200)
+    order = models.IntegerField(default=1)
     y_axis_title_text = models.CharField(max_length=200, blank=True, null=True)
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES,default='NUMERIC')
     stack_label_positive = models.CharField(max_length=200, blank=True, null=True, default='Total:')
@@ -926,7 +950,7 @@ class DistrictIndicator(models.Model):
     description = RichTextField(blank=True)
     data_indicator = models.BooleanField(default=True)
     switch_highchart_xy = models.BooleanField(default=True)
-    over_time = models.ForeignKey(DistrictOverTime, blank=True, null=True)
+    over_time = models.ForeignKey(DistrictOverTimeSet, blank=True, null=True)
     highchart = models.ForeignKey("DistrictDisplayDataYDetail", blank=True, null=True)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField(blank=True)
@@ -1026,7 +1050,19 @@ class StateOverTimeElement(models.Model):
     def __unicode__(self):
         return "%s - %s"%(self.state_over_time.name, self.dimension_name.name)
 
+class StateOverTimeSet(models.Model):
+    name = models.CharField(max_length=200)
+    
+    @property
+    def overtimes(self):
+        return StateOverTime.objects.filter(state_overtime_set=self).order_by('order')
+    
+    def __unicode__(self):
+        return self.name
+
 class StateOverTime(models.Model):
+    state_overtime_set = models.ForeignKey(StateOverTimeSet, blank=True, null=True)
+    order = models.IntegerField(default=1)
     name = models.CharField(max_length=200)
     y_axis_title_text = models.CharField(max_length=200, blank=True, null=True)
     data_type = models.CharField(max_length=7,choices=DATA_TYPE_CHOICES,default='NUMERIC')
@@ -1275,7 +1311,7 @@ class StateIndicator(models.Model):
     description = RichTextField(blank=True)
     data_indicator = models.BooleanField(default=True)
     switch_highchart_xy = models.BooleanField(default=True)
-    over_time = models.ForeignKey(StateOverTime, blank=True, null=True)
+    over_time = models.ForeignKey(StateOverTimeSet, blank=True, null=True)
     highchart = models.ForeignKey("StateDisplayDataYDetail", blank=True, null=True)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField(blank=True)

@@ -1,23 +1,27 @@
 {% extends "front_page/base.html" %}{% load staticfiles %}
 {% block title %}{{indicator.school_indicator_set.school.school_name}} {{indicator.title}} Over Time{% endblock %}
+
+
 {% block body %}
-    <div class="container body" ng-app = "mainApp" ng-controller = "tableCtrl">
+    <div class="container body" ng-app = "mainApp">
+    {% for over_time in indicator.over_time.overtimes %}
+    <div ng-controller = "tableCtrl{{over_time.id}}">
     <h1>{{indicator.school_indicator_set.school.school_name}} Over Time</h1>
-      
-	{% for select in indicator.over_time.selects %}
+	{% for select in over_time.selects %}
 		<div class="col-md-2">{{select.lookup_table.display_name}}:</div>
-		<div class="col-md-10"><select class="form-control" id="select{{select.id}}" ng-model="select{{select.id}}" {% if select.lookup_table.elements.0 %}ng-init="select{{select.id}}='{{select.lookup_table.elements.0.system_code.code}}'"{% endif %} ng-change="change()">
+		<div class="col-md-10"><select class="form-control" id="select{{over_time.id}}_{{select.id}}" ng-model="select{{over_time.id}}_{{select.id}}" {% if select.lookup_table.elements.0 %}ng-init="select{{over_time.id}}_{{select.id}}='{{select.lookup_table.elements.0.system_code.code}}'"{% endif %} ng-change="change()">
 		  {% for lookup_element in select.lookup_table.elements %}
 		  <option {% if forloop.first %}selected="selected" {% endif %}value = "{{lookup_element.system_code.code}}">{% if lookup_element.system_code.display_name%}{{lookup_element.system_code.display_name}}{% else %}{{lookup_element.system_code.code}}{% endif %}</option>
 		  {% endfor %}
 		</select></div>
 	{% endfor %}
-		<div id="highchart" style="min-width: 310px; margin:0 auto"></div>
-		<table class="table table-hover" id="table" class="sortable-theme-bootstrap" data-sortable>
-
-		</table>
+		<div id="highchart{{over_time.id}}" style="min-width: 310px; margin:0 auto"></div>
+		<table class="table table-hover" id="table{{over_time.id}}" class="sortable-theme-bootstrap" data-sortable></table>
+      </div>
+      {% endfor %}
       </div>
 {% endblock %}
+
 
 {% block javascript %}
     {{block.super}}
@@ -29,22 +33,41 @@ String.prototype.endsWith = function (substring) {
   if(substring.length > this.length) return false;
   return this.substr(this.length - substring.length) === substring;
 };
-var lookup = {{% for element in indicator.over_time.elements %}
+{% for over_time in indicator.over_time.overtimes %}
+var lookup{{over_time.id}} = {{% for element in over_time.elements %}
 				{% if element.display_name %}"{{element.dimension_name.name}}":"{{element.display_name}}",
 				{% endif %}
 			  {% endfor %}}
-var color = {{% for element in indicator.over_time.elements %}
+var color{{over_time.id}} = {{% for element in over_time.elements %}
 				{% if element.color_hex %}"{{element.dimension_name.name}}":"{{element.color_hex}}",
 				{% endif %}{% endfor %}}
 
-var data = [{% for element in indicator.over_time.elements %}"{{element.dimension_name.name}}",{% endfor %}];
-var negative =[{% for element in indicator.over_time.elements %}{% if element.is_positive %}{%else%}"{{element.dimension_name.name}}",{% endif %}{% endfor %}];
-{% if indicator.over_time.over_time_type == 'APPEND_OVER_TIME' %}
-{% include "charts/append_over_time.js" with indicator=indicator %}
+var data{{over_time.id}} = [{% for element in over_time.elements %}"{{element.dimension_name.name}}",{% endfor %}];
+var negative{{over_time.id}} =[{% for element in over_time.elements %}{% if element.is_positive %}{%else%}"{{element.dimension_name.name}}",{% endif %}{% endfor %}];
+{% endfor %}
+
+var mainApp = angular.module('mainApp',[]).config(function($interpolateProvider) {
+					        $interpolateProvider.startSymbol('{[{');
+					        $interpolateProvider.endSymbol('}]}');
+			  });
+
+function clone(obj) {
+    if (null == obj || "object" != typeof obj) return obj;
+    var copy = obj.constructor();
+    for (var attr in obj) {
+        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+    }
+    return copy;
+}
+
+{% for over_time in indicator.over_time.overtimes %}
+{% if over_time.over_time_type == 'APPEND_OVER_TIME' %}
+{% include "charts/append_over_time.js" with indicator=indicator over_time=over_time %}
 {% endif %}
-{% if indicator.over_time.over_time_type == 'REFRESH_OVER_TIME' %}
-{% include "charts/refresh_over_time.js" with indicator=indicator %}
+{% if over_time.over_time_type == 'REFRESH_OVER_TIME' %}
+{% include "charts/refresh_over_time.js" with indicator=indicator over_time=over_time %}
 {% endif %}
+{% endfor %}
 </script>
 
 {% endblock %}

@@ -9,6 +9,7 @@ StateDisplayDataYDetail, StateDisplayDataYDetailData, StateDisplayDataYDetailSet
 CustomDimensionYName, CustomDimensionXName,DistrictIndicatorDetailDataSet,DistrictIndicatorData, \
 PlotSetting, PlotLine, PlotBand, SchoolDisplayDataSetting, SchoolDisplayDataYSetting, IndicatorTitle, \
 DistrictDisplayDataSetting, DistrictDisplayDataYSetting, StateSummery, DistrictSummery, CustomValue
+from data.models import StateOverTimeSet, DistrictOverTimeSet, SchoolOverTimeSet
 from data.models import SchoolOverTime, DistrictOverTime, StateOverTime, \
 SchoolOverTimeSelect, DistrictOverTimeSelect, StateOverTimeSelect, \
 SchoolOverTimeElement, DistrictOverTimeElement, StateOverTimeElement
@@ -171,6 +172,9 @@ class StateSummeryInline(admin.TabularInline):
 
 class StateOverTimeAdmin(admin.ModelAdmin):
     inlines = [StateOverTimeSelectInline,StateOverTimeElementInline]
+    list_display = ['name','state_overtime_set','chart_type','order']
+    list_editable = ('state_overtime_set','chart_type','order')
+    
 admin.site.register(StateOverTime, StateOverTimeAdmin)
 
 class StateDisplayDataYDetailAdmin(admin.ModelAdmin):
@@ -311,6 +315,9 @@ class DistrictSummeryInline(admin.TabularInline):
 
 class DistrictOverTimeAdmin(admin.ModelAdmin):
     inlines = [DistrictOverTimeSelectInline,DistrictOverTimeElementInline]
+    list_display = ['name','district_overtime_set','chart_type','order']
+    list_editable = ('district_overtime_set','chart_type','order')
+
 admin.site.register(DistrictOverTime, DistrictOverTimeAdmin)
 
 class DistrictDisplayDataYDetailAdmin(admin.ModelAdmin):
@@ -450,6 +457,9 @@ class SchoolOverTimeElementInline(admin.TabularInline):
 
 class SchoolOverTimeAdmin(admin.ModelAdmin):
     inlines = [SchoolOverTimeSelectInline,SchoolOverTimeElementInline]
+    list_display = ['name','school_overtime_set','chart_type','order']
+    list_editable = ('school_overtime_set','chart_type','order')
+
 admin.site.register(SchoolOverTime, SchoolOverTimeAdmin)
 
 class SchoolDisplayDataYDetailAdmin(admin.ModelAdmin):
@@ -490,7 +500,9 @@ class CustomDimensionYNameAdmin(admin.ModelAdmin):
     ordering = ('-is_positive','name',)
 admin.site.register(CustomDimensionYName, CustomDimensionYNameAdmin)
 admin.site.register(DetailDataSetTitle)
-
+admin.site.register(StateOverTimeSet)
+admin.site.register(DistrictOverTimeSet)
+admin.site.register(SchoolOverTimeSet)
 class PlotSettingAdmin(admin.ModelAdmin):
     inlines = [PlotLineInline, PlotBandInline]
     

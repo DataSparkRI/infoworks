@@ -1,4 +1,4 @@
-var data_type = '{{indicator.over_time.data_type}}';
+var data_type{{over_time.id}} = '{{indicator.over_time.data_type}}';
 var title_text = "";
 var series = [];
 var current_color = '';
@@ -14,21 +14,21 @@ function clone(obj) {
     }
     return copy;
 }
-function getName(){
+function getName{{over_time.id}}(){
 	var result = "";
 	{% for select in indicator.over_time.selects %}
 	result = result + document.getElementById("select{{select.id}}").value + " ";
 	{% endfor %}
 	dataset = [];
-	for (i=0; i < data.length; i++){
-		dataset.push(result + data[i]);
+	for (i=0; i < data{{over_time.id}}.length; i++){
+		dataset.push(result + data{{over_time.id}}[i]);
 	}
 	return dataset;
 }
-function highcharts(data){
+function highcharts{{over_time.id}}(data){
 	this.title_text='';
 	{% for select in indicator.over_time.selects %}
-	this.title_text = title_text +" "+ $("#select{{select.id}} option:selected").text();
+	this.title_text = title_text +" "+ $("#select{{over_time.id}}_{{select.id}} option:selected").text();
 	{% endfor %}
 		        //var series = []
             	for (var i = 0; i < data["data"].length;i++){
@@ -37,8 +37,8 @@ function highcharts(data){
             		obj["data"] = [];
             		
             		positive = true;
-				  	for (var j=0; j<negative.length; j++){
-						if (obj["name"].endsWith(negative[j])){
+				  	for (var j=0; j<negative{{over_time.id}}.length; j++){
+						if (obj["name"].endsWith(negative{{over_time.id}}[j])){
 			  				positive = false;
 			  			}
 			  		}
@@ -55,17 +55,17 @@ function highcharts(data){
             				else obj["data"].push(value*-1);
             		}
             		
-            		for (var key in lookup){
+            		for (var key in lookup{{over_time.id}}){
 				  		if (!lookup.hasOwnProperty(key)) continue;
 				  		if (data["data"][i]["name"].endsWith(key)){
-				  			obj["name"]=title_text+' '+lookup[key];
+				  			obj["name"]=title_text+' '+lookup{{over_time.id}}[key];
 				  		}
 				  	}
             		
-            		for (var key in color){
+            		for (var key in color{{over_time.id}}){
 				  		if (!lookup.hasOwnProperty(key)) continue;
 				  		if (data["data"][i]["name"].endsWith(key)){
-				  		    if (this.current_color=='') this.current_color = color[key];
+				  		    if (this.current_color=='') this.current_color = color{{over_time.id}}[key];
 				  		    else this.current_color = shadeColor1(this.current_color,10);
 				  			obj["color"]=this.current_color;
 				  		}
@@ -112,7 +112,7 @@ function highcharts(data){
             	}
             	
             	$(function () {
-				    $('#highchart').highcharts({
+				    $('#highchart{{over_time.id}}').highcharts({
 				        chart: {
 				            plotBackgroundColor: null,
 				            plotBorderWidth: 1,//null,
@@ -162,7 +162,7 @@ function highcharts(data){
 				});
             	{% else %}            	
             	$(function () {
-				    $('#highchart').highcharts({
+				    $('#highchart{{over_time.id}}').highcharts({
 				        chart: {
 				            type: {% if indicator.over_time.chart_type == 'AREA-CHART' %}'area'{% elif indicator.over_time.chart_type == 'HORZ-BAR-CHART' %}'bar'{% elif indicator.over_time.chart_type == 'LINE-CHART' %}'line'{% else %}'column'{% endif %}
 				        },
@@ -247,12 +247,9 @@ function highcharts(data){
 				{% endif %}
 
 }
-    var mainApp = angular.module('mainApp',[]).config(function($interpolateProvider) {
-					        $interpolateProvider.startSymbol('{[{');
-					        $interpolateProvider.endSymbol('}]}');
-					    });	
 
-    mainApp.controller('tableCtrl', ['$scope', '$http', function($scope, $http) {
+
+    mainApp.controller('tableCtrl{{over_time.id}}', ['$scope', '$http', function($scope, $http) {
 		
 		$scope.change = function() {
             $.ajax({method: 'POST', 
@@ -277,7 +274,7 @@ function highcharts(data){
             		}).
             success(function(data, status, headers, config) {
                 $scope.data = data;
-                highcharts(data);
+                highcharts{{over_time.id}}(data);
                  var headers=data["school_year"];
 				  var rowHtml='';//'<tr><th></th><th>'+headers.join('</th><th>')+'</th></tr>';
 				  
@@ -306,7 +303,7 @@ function highcharts(data){
 				  		}
 				  		rowHtml +='<td>'+data_row.join('</td><td>')+'</td></tr>';
 				  }
-				  $('#table tr:last').after(rowHtml);                
+				  $('#table{{over_time.id}} tr:last').after(rowHtml);                
             }).
             error(function(data, status, headers, config) {});
         };
@@ -334,7 +331,7 @@ function highcharts(data){
             		}).
             success(function(data, status, headers, config) {            
                 $scope.data = data;
-                highcharts(data);
+                highcharts{{over_time.id}}(data);
                 var headers=data["school_year"];
                 var rowHtml='<tr><th></th><th>'+headers.join('</th><th>')+'</th></tr>';
 				
@@ -362,7 +359,7 @@ function highcharts(data){
 				  		}
 				  		rowHtml +='<td>'+data_row.join('</td><td>')+'</td></tr>';
 				}
-				$('#table').html(rowHtml);
+				$('#table{{over_time.id}}').html(rowHtml);
             }).
             error(function(data, status, headers, config) {});
         });        

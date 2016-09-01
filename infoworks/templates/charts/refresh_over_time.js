@@ -1,27 +1,20 @@
-var data_type = '{{indicator.over_time.data_type}}';
 
-function getName(){
+var data_type{{over_time.id}} = '{{over_time.data_type}}';
+
+function getName{{over_time.id}}(){
 	var result = "";
-	{% for select in indicator.over_time.selects %}
-	result = result + document.getElementById("select{{select.id}}").value + " ";
+	{% for select in over_time.selects %}
+	result = result + document.getElementById("select{{over_time.id}}_{{select.id}}").value + " ";
 	{% endfor %}
 	dataset = [];
-	for (i=0; i < data.length; i++){
-		dataset.push(result + data[i]);
+	for (i=0; i < data{{over_time.id}}.length; i++){
+		dataset.push(result + data{{over_time.id}}[i]);
 	}
 	return dataset;
 }
 
-function clone(obj) {
-    if (null == obj || "object" != typeof obj) return obj;
-    var copy = obj.constructor();
-    for (var attr in obj) {
-        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
-    }
-    return copy;
-}
-
-function highcharts(data){
+function highcharts{{over_time.id}}(data){
+    console.log(data);
     for (var i = 0; i < data["data"].length; i++){
         for (var j=0; j<data["data"][i]["row"].length; j++){
             if (data["data"][i]["row"][j] !== null){
@@ -32,8 +25,8 @@ function highcharts(data){
         }
     }
 	var title_text = "";
-	{% for select in indicator.over_time.selects %}
-	title_text = title_text +" "+ $("#select{{select.id}} option:selected").text();
+	{% for select in over_time.selects %}
+	title_text = title_text +" "+ $("#select{{over_time.id}}_{{select.id}} option:selected").text();
 	{% endfor %}
 
 		        var series = []
@@ -45,8 +38,8 @@ function highcharts(data){
             		obj["data"] = [];
             		
             		positive = true;
-				  	for (var j=0; j<negative.length; j++){
-						if (obj["name"].endsWith(negative[j])){
+				  	for (var j=0; j<negative{{over_time.id}}.length; j++){
+						if (obj["name"].endsWith(negative{{over_time.id}}[j])){
 			  				positive = false;
 			  			}
 			  		}
@@ -63,24 +56,24 @@ function highcharts(data){
             				else obj["data"].push(value*-1);
             		}
             		
-            		for (var key in lookup){
-				  		if (!lookup.hasOwnProperty(key)) continue;
+            		for (var key in lookup{{over_time.id}}){
+				  		if (!lookup{{over_time.id}}.hasOwnProperty(key)) continue;
 				  		if (data["data"][i]["name"].endsWith(key)){
-				  			obj["name"]=lookup[key];
+				  			obj["name"]=lookup{{over_time.id}}[key];
 				  		}
 				  	}
             		
-            		for (var key in color){
-				  		if (!lookup.hasOwnProperty(key)) continue;
+            		for (var key in color{{over_time.id}}){
+				  		if (!lookup{{over_time.id}}.hasOwnProperty(key)) continue;
 				  		if (data["data"][i]["name"].endsWith(key)){
-				  			obj["color"]=color[key];
+				  			obj["color"]=color{{over_time.id}}[key];
 				  		}
 				  	}
             		
             		series.push(obj);
             	}
             	            	
-            	{% if indicator.over_time.chart_type == 'PIE-CHART' %}
+            	{% if over_time.chart_type == 'PIE-CHART' %}
             	series = [];
             	template1 = {
 				            type: 'pie',
@@ -123,7 +116,7 @@ function highcharts(data){
             	
             	
             	$(function () {
-				    $('#highchart').highcharts({
+				    $('#highchart{{over_time.id}}').highcharts({
 				        chart: {
 				            plotBackgroundColor: null,
 				            plotBorderWidth: 1,//null,
@@ -173,9 +166,9 @@ function highcharts(data){
 				});
             	{% else %}
             	$(function () {
-				    $('#highchart').highcharts({
+				    $('#highchart{{over_time.id}}').highcharts({
 				        chart: {
-				            type: {% if indicator.over_time.chart_type == 'AREA-CHART' %}'area'{% elif indicator.over_time.chart_type == 'HORZ-BAR-CHART' %}'bar'{% elif indicator.over_time.chart_type == 'LINE-CHART' %}'line'{% else %}'column'{% endif %}
+				            type: {% if over_time.chart_type == 'AREA-CHART' %}'area'{% elif over_time.chart_type == 'HORZ-BAR-CHART' %}'bar'{% elif over_time.chart_type == 'LINE-CHART' %}'line'{% else %}'column'{% endif %}
 				        },
 				        title: {
 				            text: '{{indicator.district_indicator_set.district.district_name}}'+title_text
@@ -191,14 +184,14 @@ function highcharts(data){
 				        },
 				        yAxis: {
 				            title: {
-				                text: '<b>{{indicator.over_time.y_axis_title_text}}</b>'
+				                text: '<b>{{over_time.y_axis_title_text}}</b>'
 				            },
-                            {% if indicator.over_time.stack_min %}min:{{indicator.over_time.stack_min}},{% endif %}
-                            {% if indicator.over_time.stack_max %}max:{{indicator.over_time.stack_max}},{% endif %}
+                            {% if over_time.stack_min %}min:{{over_time.stack_min}},{% endif %}
+                            {% if over_time.stack_max %}max:{{over_time.stack_max}},{% endif %}
 				            labels: {
 				                formatter: function () {
-				                	data_type = '{{indicator.over_time.data_type}}';
-				                    if(data_type=='PERCENT'){
+				                	data_type{{over_time.id}} = '{{over_time.data_type}}';
+				                    if(data_type{{over_time.id}}=='PERCENT'){
 				                    if (this.axis.defaultLabelFormatter.call(this) < 0)
 				                    return (this.axis.defaultLabelFormatter.call(this)*-1)+'%';
 				                    else return this.axis.defaultLabelFormatter.call(this)+'%';}
@@ -219,10 +212,10 @@ function highcharts(data){
 				            stackLabels: {
 				                enabled: true,
 				                formatter:function() {
-				                	if (this.total < 0){if(data_type=='PERCENT')return {% if indicator.over_time.stack_label_negative %}"{{indicator.over_time.stack_label_negative}} "+this.total+"%"{% else %}""{% endif %};
-				                	return {% if indicator.over_time.stack_label_negative %}"{{indicator.over_time.stack_label_negative}} "+this.total*-1{% else %}""{% endif %};}
-				                	else{if(data_type=='PERCENT')return {% if indicator.over_time.stack_label_positive %}"{{indicator.over_time.stack_label_positive}} "+this.total+"%"{% else %}""{% endif%};
-				                	return {% if indicator.over_time.stack_label_positive %}"{{indicator.over_time.stack_label_positive}} "+this.total{% else %}""{% endif %};}
+				                	if (this.total < 0){if(data_type{{over_time.id}}=='PERCENT')return {% if over_time.stack_label_negative %}"{{over_time.stack_label_negative}} "+this.total+"%"{% else %}""{% endif %};
+				                	return {% if over_time.stack_label_negative %}"{{over_time.stack_label_negative}} "+this.total*-1{% else %}""{% endif %};}
+				                	else{if(data_type{{over_time.id}}=='PERCENT')return {% if over_time.stack_label_positive %}"{{over_time.stack_label_positive}} "+this.total+"%"{% else %}""{% endif%};
+				                	return {% if over_time.stack_label_positive %}"{{over_time.stack_label_positive}} "+this.total{% else %}""{% endif %};}
 				                },
 				                style: {
 				                    fontWeight: 'bold',
@@ -233,14 +226,14 @@ function highcharts(data){
 				        tooltip: { enabled: false },
 				        plotOptions: {
 				            column: {
-				                {% if indicator.over_time.chart_type != 'GROUPED-COLUMN' %}stacking: 'normal',{% endif %}
+				                {% if over_time.chart_type != 'GROUPED-COLUMN' %}stacking: 'normal',{% endif %}
 				                dataLabels: {
 				                    enabled: true,
 				                    
 				                    formatter:function() {
 							                    if (this.y < 0){var pcnt = this.y*-1;}
 							                    else{var pcnt = this.y;}
-							                    if(data_type=='PERCENT')
+							                    if(data_type{{over_time.id}}=='PERCENT')
 							                    	return pcnt+'%';
 							                    else
 							                    	return pcnt;
@@ -259,13 +252,7 @@ function highcharts(data){
 
 }
 
-         var mainApp = angular.module('mainApp',[]).config(function($interpolateProvider) {
-					        $interpolateProvider.startSymbol('{[{');
-					        $interpolateProvider.endSymbol('}]}');
-					        
-					    });	
-
-    mainApp.controller('tableCtrl', ['$scope', '$http', function($scope, $http) {
+    mainApp.controller('tableCtrl{{over_time.id}}', ['$scope', '$http', function($scope, $http) {
 		
 		$scope.change = function() {
             $.ajax({method: 'POST', 
@@ -285,22 +272,22 @@ function highcharts(data){
             		{% endif %}
             		category:"{{indicator.title.title}}", 
             		school_year:[],
-            		dataset:JSON.stringify(getName())},
+            		dataset:JSON.stringify(getName{{over_time.id}}())},
             		headers: {'Content-Type': 'application/x-www-form-urlencoded'}
             		}).
             success(function(data, status, headers, config) {
                 $scope.data = data;
-                highcharts(data);
+                highcharts{{over_time.id}}(data);
                  var headers=data["school_year"];
 				  var rowHtml='<tr><th></th><th>'+headers.join('</th><th>')+'</th></tr>';
 				  
 				  for (var i =0; i<data["data"].length; i++){
 				  		name = data["data"][i]["name"];
-				  		for (var key in lookup){
-				  			if (!lookup.hasOwnProperty(key)) continue;
-				  			var obj = lookup[key];
+				  		for (var key in lookup{{over_time.id}}){
+				  			if (!lookup{{over_time.id}}.hasOwnProperty(key)) continue;
+				  			var obj = lookup{{over_time.id}}[key];
 				  			if (data["data"][i]["name"].endsWith(key)){
-				  				name = lookup[key];
+				  				name = lookup{{over_time.id}}[key];
 				  			}
 				  		}
 				  		
@@ -308,7 +295,7 @@ function highcharts(data){
 				  		data_row = []
 				  		for (var x=0; x<data["data"][i]["row"].length;x++){
 				  			var value = data["data"][i]["row"][x];
-							if (data_type=='PERCENT'){
+							if (data_type{{over_time.id}}=='PERCENT'){
 								if (value == -1) data_row.push("too few data");
 								else if (value == null || value == "") data_row.push("no data");
 								else data_row.push(value+"%");}
@@ -319,7 +306,7 @@ function highcharts(data){
 				  		}
 				  		rowHtml +='<td>'+data_row.join('</td><td>')+'</td></tr>';
 				  }
-				  $('#table').html(rowHtml);                
+				  $('#table{{over_time.id}}').html(rowHtml);                
             }).
             error(function(data, status, headers, config) {});
         };
@@ -343,7 +330,7 @@ function highcharts(data){
             		{% endif %}
             		category:"{{indicator.title.title}}", 
             		school_year:[],
-            		dataset:JSON.stringify(getName())},
+            		dataset:JSON.stringify(getName{{over_time.id}}())},
             		headers: {'Content-Type': 'application/x-www-form-urlencoded'}
             		}).
             success(function(data, status, headers, config) {
@@ -356,18 +343,18 @@ function highcharts(data){
 				
 				for (var i =0; i<data["data"].length; i++){
 						name = data["data"][i]["name"]
-						for (var key in lookup){
-				  			if (!lookup.hasOwnProperty(key)) continue;
-				  			var obj = lookup[key];
+						for (var key in lookup{{over_time.id}}){
+				  			if (!lookup{{over_time.id}}.hasOwnProperty(key)) continue;
+				  			var obj = lookup{{over_time.id}}[key];
 				  			if (data["data"][i]["name"].endsWith(key)){
-				  				name=lookup[key];
+				  				name=lookup{{over_time.id}}[key];
 				  			}
 				  		}
 				  		rowHtml+='<tr><td>'+name+'</td>';
 				  		data_row = []
 				  		for (var x=0; x<data["data"][i]["row"].length;x++){
 				  			var value = data["data"][i]["row"][x];
-							if (data_type=='PERCENT'){
+							if (data_type{{over_time.id}}=='PERCENT'){
 								if (value == -1) data_row.push("too few data");
 								else if (value == null) data_row.push("no data");
 								else data_row.push(value+"%");}
@@ -378,11 +365,10 @@ function highcharts(data){
 				  		}
 				  		rowHtml +='<td>'+data_row.join('</td><td>')+'</td></tr>';
 				}
-				$('#table').html(rowHtml);
-                highcharts(data);
+				$('#table{{over_time.id}}').html(rowHtml);
+                highcharts{{over_time.id}}(data);
             }).
             error(function(data, status, headers, config) {});
         });        
         
     }]);
-
