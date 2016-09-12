@@ -78,7 +78,7 @@ View details on Student and </br /> &nbsp School counts in Rhode Island</a>
                 <div class="row">
                   <div class="col-md-{% if 'indicator-col-md-left'|get_config %}{{'indicator-col-md-left'|get_config}}{% else %}4{% endif %}">
                     <div class="media">
-                    {% if j.highchart %}<div id="highchart_{{j.id}}" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>{% endif %}
+                    {% if j.highchart %}<div id="highchart_{{j.id}}" style="min-width: 210px; height: 400px; max-width: 600px; margin: 0 auto"></div>{% endif %}
                       {% if request.user.is_active and request.user.is_staff %}
                       <div class="media-left">
                         <a href="/admin/data/stateindicator/{{j.id}}" target="_blank">

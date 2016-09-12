@@ -18,8 +18,8 @@ $(function () {
                 allowPointSelect: true,
                 cursor: 'pointer',
                 dataLabels: {
-                    enabled: true,
-                    format: '<b>{point.name}</b>: {point.percentage:.0f} %',
+                    enabled: false,
+                    format: '<b>{point.name}</b>: {point.percentage:.0f} %%',
                     style: {
                         color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
                     }
