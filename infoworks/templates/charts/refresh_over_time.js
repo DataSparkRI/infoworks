@@ -209,6 +209,7 @@ function highcharts{{over_time.id}}(data){
 					            width: 3,
 					            value: 0
 					        }],
+					        {% if over_time.chart_type == 'AREA-CHART' %}{% else %}
 				            stackLabels: {
 				                enabled: true,
 				                formatter:function() {
@@ -222,14 +223,14 @@ function highcharts{{over_time.id}}(data){
 				                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
 				                }
 				            }
+				            {% endif%}
 				        },
 				        tooltip: { enabled: false },
 				        plotOptions: {
-				            column: {
+				            {% if over_time.chart_type == 'AREA-CHART' %}area{% else %}column{% endif %}: {
 				                {% if over_time.chart_type != 'GROUPED-COLUMN' %}stacking: 'normal',{% endif %}
 				                dataLabels: {
 				                    enabled: true,
-				                    
 				                    formatter:function() {
 							                    if (this.y < 0){var pcnt = this.y*-1;}
 							                    else{var pcnt = this.y;}
