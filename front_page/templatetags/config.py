@@ -78,8 +78,8 @@ def get_display(data):
             return data.key_value
             
     rounding_decimal_place = indicator.title.rounding_decimal_place
-    if rounding_decimal_place == None:
-        rounding_decimal_place = 0
+    #if rounding_decimal_place == None:
+    #    rounding_decimal_place = 0
     value = data.key_value
     if data.data_type == 'STRING':
         value = data.key_value
@@ -97,7 +97,10 @@ def get_display(data):
         
     else:
         if rounding_decimal_place > 0:
-            value = round(float(value),rounding_decimal_place)
+            try:
+               value = round(float(value),rounding_decimal_place)
+            except:
+                value = data.key_value
         elif rounding_decimal_place <= 0:
             try:
                value = int(round(float(value),rounding_decimal_place))
