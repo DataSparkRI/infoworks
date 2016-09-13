@@ -1,56 +1,66 @@
-{% extends "front_page/base.html" %}{% load staticfiles %}
+{% extends "front_page/base.html" %}{% load staticfiles %}{% load config %}
+
+
+{% block css %}
+	{{block.super}}
+<style id="jsbin-css">
+body{
+    padding-top:50px;
+}
+table.floatThead-table {
+    border-top: none;
+    border-bottom: none;
+    background-color: #fff;
+}
+</style>
+
+{% endblock css %}
+
 
 {% block body %}
-      <div class="container body" data-ng-app="myApp">
+      <div class="container body">
       	<h1>{{state.state_name}}</h1>
       	
-		  <div data-ng-controller="tableCtrl">		      
+		  <div>		      
 		      <h4>{{state.description | safe}}</h4>
 		    
-		    <table class="table table-hover table-bordered">
+		    <table class="table table-hover table-bordered sticky-header">
+		      <thead><tr>
+		          {% get_history_info 'state' state.slug as table %}
+		          {% for row in table.dimension_x %}
+		          <th>{{row}}</th>
+		          {% endfor %}
+		      </tr></thead>
+		      
+		      <tbody>
+		      {% for row in table.data %}
 		      <tr>
-		          <td data-ng-repeat="row in data.dimension_x">{[{row}]}</td>
-		      </tr>
-		        
-		      <tr data-ng-repeat="row in data.data">
-		        <td data-ng-repeat="col in row track by $index">
-		        	<div ng-if="col == true" class="text-center"><a ng-href="{{request.path}}{[{data.dimension_x[$index]}]}?category={[{row[1]}]}"><i class="fa fa-check-circle"></i></a></div>
-		        	<div ng-if="col != true">{[{col}]}</div>
+		        {% for data in row %}
+		        <td>
+		        	{% if data == None%}{% elif data == True %}
+		        	<a href="{{request.path}}{% get_history_info_year table.dimension_x forloop.counter %}?category={{row.1}}"><i class="fa fa-check-circle"></i></a>
+		        	{% else %}{{data}}{% endif %}
 		        </td>
+		        {% endfor %}
 		      </tr>
+		      {% endfor %}
+		      </tbody>
 		    </table>
-		  </div>      
+		  </div>
       </div>
 {% endblock %}
 
 {% block javascript %}
 {{block.super}}
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+	<script src="{% static "js/floatThead.js" %}"></script>
+
     <script type="text/javascript">
-    var myApp = angular.module('myApp',[]).config(function($interpolateProvider) {
-        $interpolateProvider.startSymbol('{[{');
-        $interpolateProvider.endSymbol('}]}');
+    
+
+    $(document).ready(function(){
+        $(".sticky-header").floatThead({scrollingTop:50,top: 'pageTop'});        
     });
-      
-    myApp.controller('tableCtrl', ['$scope', '$http', function($scope, $http) {
-        $scope.empty = function(value) {
-          if (angular.equals({}, value)) {
-            return true;
-          } else {
-            return false;
-          }
-        };
-        
-        $scope.$watch('search', function() {
-            console.log($scope.search);
-            $http({method: 'GET', url: '/api/search/data?type=state&get={{state.slug}}'}).
-            success(function(data, status, headers, config) {
-                $scope.data = data;
-                console.log(data);
-            }).
-            error(function(data, status, headers, config) {});
-        });
-    }]);
+
     </script>
     
 {% endblock javascript %}
