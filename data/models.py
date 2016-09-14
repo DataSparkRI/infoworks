@@ -557,6 +557,7 @@ class School(models.Model):
     district = models.ForeignKey("District", blank=True, null=True)
     school_code = models.CharField(max_length=100,unique=True)
     school_name = models.CharField(max_length=100)
+    short_name = models.CharField(max_length=100, blank=True, null=True)
     school_type = models.CharField(max_length=100)
     grade_type = models.CharField(max_length=100)
     principal = models.CharField(max_length=100, blank=True)

@@ -66,6 +66,7 @@ class StateField(models.Model):
         return "%s - %s"%(self.name, self.match_option)
 
 class StateFile(models.Model):
+    name = models.CharField(max_length=50, blank=True)
     school_year = models.ForeignKey(SchoolYear)
     file = models.FileField(upload_to="State_Information", blank=True, null=True)
     
@@ -86,7 +87,7 @@ class StateFile(models.Model):
                 pass
     
     def __unicode__(self):
-        return "%s"% self.school_year
+        return "%s"% self.name
 
 
 class DistrictField(models.Model):
@@ -117,6 +118,7 @@ class DistrictField(models.Model):
         return "%s - %s"%(self.name, self.match_option)
 
 class DistrictFile(models.Model):
+    name = models.CharField(max_length=50, blank=True)
     school_year = models.ForeignKey(SchoolYear)
     file = models.FileField(upload_to="District_Information", blank=True, null=True)
     
@@ -137,7 +139,7 @@ class DistrictFile(models.Model):
                 pass
     
     def __unicode__(self):
-        return "%s"% self.school_year
+        return "%s"% self.name
         
 class SchoolField(models.Model):
     school_file = models.ForeignKey('SchoolFile')
@@ -148,6 +150,7 @@ class SchoolField(models.Model):
                             ('PRINCIPAL', 'principal'),
                             ('SCHOOL_CODE', 'school_code (required)'),
                             ('SCHOOL_NAME', 'school_name'),
+                            ('SHORT_NAME', 'short_name'),
                             ('SCHOOL_TYPE', 'school_type'),
                             ('GRADE_TYPE', 'grade_type'),
                             ('ADDRESS', 'address'),
@@ -171,6 +174,7 @@ class SchoolField(models.Model):
         return "%s - %s"%(self.name, self.match_option)
 
 class SchoolFile(models.Model):
+    name = models.CharField(max_length=50, blank=True)
     school_year = models.ForeignKey(SchoolYear)
     file = models.FileField(upload_to="School_Information", blank=True, null=True)
     
@@ -191,7 +195,7 @@ class SchoolFile(models.Model):
                 pass
     
     def __unicode__(self):
-        return "%s"% self.school_year
+        return "%s"% self.name
 
 class DimensionName(models.Model):
     name = models.CharField(max_length=200, blank=True)

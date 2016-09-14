@@ -226,6 +226,7 @@ def import_or_update_school_information(modeladmin, request, queryset):
         district_code = get_or_none(fields, "DISTRICT_CODE")
         school_code = get_or_none(fields,"SCHOOL_CODE")
         school_name = get_or_none(fields,"SCHOOL_NAME")
+        short_name = get_or_none(fields, "SHORT_NAME")
         school_type = get_or_none(fields,"SCHOOL_TYPE")
         grade_type = get_or_none(fields,"GRADE_TYPE")
         
@@ -249,6 +250,7 @@ def import_or_update_school_information(modeladmin, request, queryset):
             district_code_index = get_index_or_none(headers, district_code)
             school_code_index = get_index_or_none(headers,school_code)
             school_name_index = get_index_or_none(headers,school_name)
+            short_name_index = get_index_or_none(headers, short_name)
             school_type_index = get_index_or_none(headers,school_type)
             grade_type_index = get_index_or_none(headers,grade_type)
             
@@ -267,12 +269,15 @@ def import_or_update_school_information(modeladmin, request, queryset):
             number_teacher_index = get_index_or_none(headers, number_teacher)
             
             for row in reader:
+                print row[school_code_index]
                 school, created = School.objects.get_or_create(
                     school_code=row[school_code_index]
                     )
-                if school_code_index != None:    
+                if school_name_index != None:
                     school.school_name = row[school_name_index]
                 #school.slug = row[school_code_index].lower()
+                if short_name != None:
+                    school.short_name = row[short_name_index]
                 if school_type_index != None:
                     school.school_type = row[school_type_index]
                 if address_index != None:
@@ -336,6 +341,8 @@ def import_or_update_school_information(modeladmin, request, queryset):
                             break
                             
                 school.save()
+                if school.slug == '': #No School Name
+                    school.delete()
     try:
         messages.add_message(request, messages.INFO, "Done")
     except:
