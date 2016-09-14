@@ -39,22 +39,23 @@ table.floatThead-table {
 					<th style="text-align: right;">{{column.display_name}}</th>
 					{% endfor %}
 				</tr>
-		      <tr>
-		        <th>{{district.district_name}}</th>
-		        <th></th>
-				{% for column in detail.summary %}
-					<th style="text-align: right;">{% get_district_indicator_value district indicator school_year column.display.name as value %}
-					{% get_display value %}
-					</th>
-				{% endfor %}
-		      </tr>
+				<tr>
+		            <th>{{state.state_name}}</th>
+		            <th class="hidden-sm hidden-xs"></th>
+		            <th class="visible-xs-* visible-ms-* hidden-md hidden-lg"></th>
+				    {% for column in detail.summary %}
+					<th style="text-align: right;">{% get_state_indicator_value state indicator school_year column.display.name as value %}
+					{% get_display value %}</th>
+				    {% endfor %}
+		        </tr>
 	 		</thead>
 			<tbody>
 					<tr data-ng-repeat="row in data.data">
 					{% for column in detail.summary %}
 					{% if forloop.counter == 1 %}
 					<th scope="row">{[{row.district}]}</th>
-					<td>{[{row.school}]}</td>
+					<td class="hidden-sm hidden-xs">{[{row.school}]}</td>
+					<td class="visible-xs-* visible-ms-* hidden-md hidden-lg">{[{row.school_short_name}]}</td>
 					{% endif %}
 					<td style="text-align: right;">{[{row.value{{column.id}}}]}</td>
 					{% endfor %}
@@ -89,7 +90,7 @@ table.floatThead-table {
 					        $interpolateProvider.endSymbol('}]}');
 					    });
          var data = [{% for school in district.schools %}
-                  {district:"{{district.district_name | safe}}",school:"{{school.school_name | safe}}",
+                  {district:"{{district.district_name | safe}}",school:"{{school.school_name | safe}}",school_short_name:"{{school.short_name}}",
                   	{% for column in detail.summary %}
                    	value{{column.id}}: {% get_district_indicator_value district indicator school_year column.display.name as value %}{% get_display value as display %}'{{display|safe}}',
 					{% endfor %}},
