@@ -315,21 +315,33 @@ def state(request):
 def landing_page(request):
     
     district = District.objects.filter(activate=True).order_by('district_name')
-    paginator = Paginator(district, 10) # Show 10 contacts per page
+    schools = School.objects.filter(activate=True, district__in=district).order_by('district__district_name','school_name')
+    school_type = request.GET.get('school_type')
+    
+    if school_type == 'elementary':
+        schools = schools.filter(elementary_school=True)
+    elif school_type == 'middle':
+        schools = schools.filter(middle_school=True)
+    elif school_type == 'high':
+        schools = schools.filter(high_school=True)
+    
+    paginator = Paginator(schools, 50) # Show 10 contacts per page
     
     page = request.GET.get('page')
     
     try:
-        district = paginator.page(page)
+        schools = paginator.page(page)
     except PageNotAnInteger:
         # If page is not an integer, deliver first page.
-        district = paginator.page(1)
+        schools = paginator.page(1)
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
-        district = paginator.page(paginator.num_pages)
+        schools = paginator.page(paginator.num_pages)
     
     
-    context = {"district": district}
+    context = {"schools": schools,
+               "school_type":school_type
+               }
     return render_to_response('front_page/landing_page.html', context, context_instance=RequestContext(request))
     
 def dictionary(request):

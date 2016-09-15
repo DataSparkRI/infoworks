@@ -68,7 +68,7 @@ table.floatThead-table {
 {% endblock body %}
 
 {% block javascript %}
-    {% comment %}{% cache 35000 district request.path indicator.id school_year detail.slug %}{% endcomment %}
+    {% cache 35000 district request.path indicator.id school_year detail.slug %}
 
 	{{block.super}}
 	<script src="{% static "js/jquery.dataTables.min.js" %}"></script>
@@ -146,6 +146,6 @@ table.floatThead-table {
 	$(listForRemove).each(function () { $(this).remove(); });
 	if($('#dropdown_menu li').length <= 1){$('#dropdown_btn').remove();}
     </script>
-    {% comment %}{% endcache %}{% endcomment %}
+    {% endcache %}
     
 {% endblock %}

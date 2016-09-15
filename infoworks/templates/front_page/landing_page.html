@@ -6,23 +6,32 @@ Find Schools and Districts - RIDE InfoWorks
 {% endblock %}
 
 {% block body %}
-      <section class="container body">
-          <div class="text-right">
-            <span class="step-links">
-                {% if district.has_previous %}
-                    <a href="?page={{ district.previous_page_number }}">previous</a>
+      <section class="container body">
+           <div class="text-left">
+              <div class="dropdown">
+                 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% if school_type %}{{school_type}} school{% else %}All{% endif %}
+                 <span class="caret"></span></button>
+                 <ul class="dropdown-menu">
+                    <li><a href="{{request.path}}">All</a></li>
+                    <li><a href="{{request.path}}?school_type=elementary">Elementary School</a></li>
+                    <li><a href="{{request.path}}?school_type=middle">Middle School</a></li>
+                    <li><a href="{{request.path}}?school_type=high">High School</a></li>
+                 </ul>
+              </div>
+           </div>
+           <div class="text-right">
+              <span class="step-links">
+                {% if schools.has_previous %}
+                    <a href="?page={{ schools.previous_page_number }}{% if school_type %}&school_type={{school_type}}{% endif %}">previous</a>
                 {% endif %}
-        
                 <span class="current">
-                    Page {{ district.number }} of {{ district.paginator.num_pages }}.
+                    Page {{ schools.number }} of {{ schools.paginator.num_pages }}.
                 </span>
-        
-                {% if district.has_next %}
-                    <a href="?page={{ district.next_page_number }}">next</a>
+                {% if schools.has_next %}
+                    <a href="?page={{ schools.next_page_number }}{% if school_type %}&school_type={{school_type}}{% endif %}">next</a>
                 {% endif %}
-            </span>
-        </div>
-          
+              </span>
+           </div>
           
            <table class="table table-hover">
                <thead>
@@ -33,9 +42,9 @@ Find Schools and Districts - RIDE InfoWorks
                   </tr>
                </thead>
                <tbody>
-                   {% for d in district %}{% for school in d.schools %}
+                   {% for school in schools %}
                   <tr>
-                     <th scope="row"><a href="{% url 'district' d.slug %}">{{d.district_name}}</a></th>
+                     <th scope="row"><a href="{% url 'district' school.district.slug %}">{{school.district.district_name}}</a></th>
                      <td><a href="{% url 'school' school.slug %}">{{school.school_name}}</a></td>
                      <td>
                         <p class="btn btn-red btn-xs" style="cursor: text;" {% if school.grade_pk == False %}disabled="disabled"{% endif %}>PK</p>
@@ -56,23 +65,23 @@ Find Schools and Districts - RIDE InfoWorks
                          
                      </td>
                   </tr>
-                    {% endfor %}{% endfor %}
+                    {% endfor %}
 
                </tbody>
             </table>
 
         <div class="pagination">
             <span class="step-links">
-                {% if district.has_previous %}
-                    <a href="?page={{ district.previous_page_number }}">previous</a>
+                {% if schools.has_previous %}
+                    <a href="?page={{ schools.previous_page_number }}{% if school_type %}&school_type={{school_type}}{% endif %}">previous</a>
                 {% endif %}
         
                 <span class="current">
-                    Page {{ district.number }} of {{ district.paginator.num_pages }}.
+                    Page {{ schools.number }} of {{ schools.paginator.num_pages }}.
                 </span>
         
-                {% if district.has_next %}
-                    <a href="?page={{ district.next_page_number }}">next</a>
+                {% if schools.has_next %}
+                    <a href="?page={{ schools.next_page_number }}{% if school_type %}&school_type={{school_type}}{% endif %}">next</a>
                 {% endif %}
             </span>
         </div>
