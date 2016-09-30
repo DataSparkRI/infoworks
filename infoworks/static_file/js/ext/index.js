@@ -1,5 +1,47 @@
 var chart = new InforChart ([], []);
 
+function clean_school(){
+	type = 'school';
+    district_code = Ext.getCmp('school_district').value;
+    school = Ext.getCmp('school');
+    indicator = Ext.getCmp('indicator');
+    school_year = Ext.getCmp('school_year');
+    school.setValue(null);
+    school_type = Ext.getCmp('school_type').value;
+    if (school_type==1)
+    	school_type='E';
+    else if (school_type==2) 
+    	school_type='M';
+    else if (school_type==3)
+        school_type='H';
+    else
+    	school_type=null;
+    if (school_type == null && district_code != null)
+        getData("/api/school","district_code="+district_code,school);
+    else if (school_type == null && district_code == null)
+    	getData("/api/school","",school);
+    else if (school_type != null && district_code == null)
+    	getData("/api/school","type="+school_type,school);
+    else
+    	getData("/api/school","type="+school_type+"&district_code="+district_code,school);
+    indicator.setValue(null);
+    indicator.getStore().loadData([]);
+    school_year.setValue(null);
+    school_year.getStore().loadData([]);
+}
+
+Ext.define('KitchenSink.view.tab.TabController', {
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.tab-view'
+});
+
+Ext.define('KitchenSink.view.tab.BasicTabs', {
+    extend: 'Ext.tab.Panel',
+    xtype: 'basic-tabs',
+    controller: 'tab-view',
+});
+
+
 Ext.require([
     'Ext.container.Viewport',
     'Ext.grid.Panel',
@@ -10,7 +52,53 @@ Ext.Loader.setConfig({
     disableCaching: false
 });
 Ext.onReady(function() {
-    
+	
+	Ext.define('Ext.form.field.ComboBoxReset', {
+	    extend: 'Ext.form.field.ComboBox',
+	    alias: 'widget.comboboxreset',
+	    triggers: {
+	        clear: {
+	            weight: 1,
+	            cls: Ext.baseCSSPrefix + 'form-clear-trigger',
+	            hidden: true,
+	            handler: 'onClearClick',
+	            scope: 'this'
+	        },
+	        picker: {
+	            weight: 2,
+	            handler: 'onTriggerClick',
+	            scope: 'this'
+	        }
+	    },
+
+	    onClearClick: function () {
+	        var me = this;
+
+	        if (me.disabled) {
+	            return;
+	        }
+
+	        me.clearValue();
+	        me.getTrigger('clear').hide();
+	        me.updateLayout();
+
+	        me.fireEvent('clear', me);
+	        clean_school();
+	    },
+
+	    updateValue: function() {
+	        var me = this,
+	            selectedRecords = me.valueCollection.getRange();
+
+	        me.callParent();
+
+	        if (selectedRecords.length > 0) {
+	            me.getTrigger('clear').show();
+	            me.updateLayout();
+	        }
+	    }
+	});
+	
     Ext.create('Ext.container.Viewport', {
         extend: 'Ext.panel.Panel',
         xtype: 'layout-border',
@@ -63,7 +151,26 @@ Ext.onReady(function() {
             minWidth: "30%",
             maxWidth: "40%",
             scrollable: true,
-            items: nav
+
+            extend: 'Ext.tab.Panel',
+            xtype: 'basic-tabs',
+            controller: 'tab-view',
+            
+
+            defaults: {
+                bodyPadding: 10,
+                autoScroll: true
+            },
+            items: [{
+                title: 'School',
+                items: school_nav
+            }, {
+                title: 'District',
+                items: district_nav
+            }, {
+                title: 'State',
+                items: []
+            }]
         },
         main
         ]

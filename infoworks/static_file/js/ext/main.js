@@ -1,10 +1,10 @@
 
-function default_main_store(){
+function default_main_store(type){
 	Ext.define('Data', {
 	    extend: 'Ext.data.Model',
 	    fields: [
 	       {name: 'id', type: 'string'},
-	       {name: 'school_indicator_dataset__school_year__school_year', type: 'string'},
+	       {name: type + '_indicator_dataset__school_year__school_year', type: 'string'},
 	       {name: 'dimension_x', type: 'string'},
 	       {name: 'dimension_y', type: 'string'},
 	       {name: 'key_value',  type: 'string'},
@@ -20,11 +20,11 @@ function default_main_store(){
     return store;
 }
 
-function default_main_column(){
+function default_main_column(type){
     return [
             {text : 'Dimension Y', width : "38%", sortable : true, dataIndex: 'dimension_y'},
             {text : 'Dimension X', width : "15%", sortable : true, dataIndex: 'dimension_x'},
-            {text : 'School Year', width : "15%", sortable : true, dataIndex: 'school_indicator_dataset__school_year__school_year'},
+            {text : 'School Year', width : "15%", sortable : true, dataIndex: type + '_indicator_dataset__school_year__school_year'},
             {text : 'Data Type', width : "15%", sortable : true, dataIndex: 'data_type'},
             {text : 'Value', width : "15%", sortable : true, dataIndex: 'key_value'}
         ];
@@ -82,7 +82,7 @@ main =  {title: 'Table',
                             method: 'GET',
                             scope: this,
                             disableCaching:false,
-                            params: "compare=school_year&indicatordata_ids="+param,
+                            params: "type="+type+"&compare=school_year&indicatordata_ids="+param,
                             success: function(resp) {
 
                                data = JSON.parse(resp.responseText)
@@ -133,7 +133,7 @@ main =  {title: 'Table',
                             method: 'GET',
                             scope: this,
                             disableCaching:false,
-                            params: "compare=school&indicatordata_ids="+param,
+                            params: "type="+type+"&compare=school_or_district&indicatordata_ids="+param,
                             success: function(resp) {
                                
                                data = JSON.parse(resp.responseText)
@@ -149,10 +149,10 @@ main =  {title: 'Table',
 								        data: data.data
 								});
                                
-								categories = cover_categories(data.columns);
-								series = cover_series(data.data);
-								chart = new InforChart (categories, series);
-								chart.showChart();
+								//categories = cover_categories(data.columns);
+								//series = cover_series(data.data);
+								//chart = new InforChart (categories, series);
+								//chart.showChart();
                                 table.reconfigure(new_store, data.columns);
                             }
                          });

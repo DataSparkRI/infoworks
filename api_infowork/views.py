@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from data.models import StateIndicator, DistrictIndicator, DistrictIndicatorData, SchoolIndicator, SchoolIndicatorData, SchoolYear, IndicatorTitle
 from data.models import State, District, School
 from data.models import StateDisplayDataYDetailSet, DistrictDisplayDataYDetailSet, SchoolDisplayDataYDetailSet
-from data.models import SchoolYear, SchoolIndicatorSet, SchoolIndicatorDataSet
+from data.models import SchoolYear, SchoolIndicatorSet, SchoolIndicatorDataSet, DistrictIndicatorSet, DistrictIndicatorDataSet
 # Create your views here.
 import json
 from django.core import serializers
@@ -320,6 +320,7 @@ def data(request):
 def school(request):
     type = request.GET.get("type")
     school_code = request.GET.get("school_code")
+    district_code = request.GET.get("district_code")
     if school_code == None:
         if type == "E":
            school = School.objects.filter(activate = True, elementary_school=True).order_by('school_name')
@@ -329,12 +330,41 @@ def school(request):
             school = School.objects.filter(activate = True, high_school = True).order_by('school_name')
         else:
             school = School.objects.filter(activate = True).order_by('school_name')
-        return JsonResponse(dict(genres=list(school.values('id', 'school_code', 'short_name', 'school_name'))))
+        if district_code != None:
+            district = District.objects.get(district_code=district_code)
+            school = school.filter(district=district).order_by('school_name')
+        return JsonResponse(dict(genres=list(school.values('id', 'district__district_code', 'school_code', 'short_name', 'school_name'))))
     else:
         school = School.objects.get(school_code=school_code)
         indicator_set = SchoolIndicatorSet.objects.filter(school=school)
         indicators = SchoolIndicator.objects.filter(school_indicator_set__in=indicator_set).order_by("title__title")
         return JsonResponse(dict(genres=list(indicators.values('id', 'school_indicator_set__title', 'title__title',))))
+
+def district(request):
+    district_code = request.GET.get("district_code")
+    if district_code == None:
+       districts = District.objects.filter(activate=True).order_by('district_name')
+       return JsonResponse(dict(genres=list(districts.values('id', 'us_state__state_code', 'district_code', 'district_name',))))
+    else:
+        district = District.objects.get(district_code=district_code)
+        indicator_set = DistrictIndicatorSet.objects.filter(district=district)
+        indicators = DistrictIndicator.objects.filter(district_indicator_set__in=indicator_set).order_by("title__title")
+        return JsonResponse(dict(genres=list(indicators.values('id', 'district_indicator_set__title', 'title__title',))))
+
+def district_indicator(request):
+    indicator_id = request.GET.get("indicator_id")
+    districtdataset_id = request.GET.get("districtdataset_id")
+    
+    if indicator_id != None:
+        indicator = DistrictIndicator.objects.get(id=indicator_id)
+        school_year = indicator.dataset
+        return JsonResponse(dict(genres=list(school_year.values('id','school_year__school_year'))))
+    elif districtdataset_id != None:
+        dataset = DistrictIndicatorDataSet.objects.get(id=districtdataset_id)
+        data = DistrictIndicatorData.objects.filter(district_indicator_dataset=dataset).exclude(key_value='--').order_by('dimension_y')
+        return JsonResponse(dict(genres=list(data.values('id','district_indicator_dataset__school_year__school_year','dimension_x','dimension_y','key_value','data_type'))))
+    else:
+        return JsonResponse(dict(genres=[]))
 
 def school_indicator(request):
     indicator_id = request.GET.get("indicator_id")
@@ -354,11 +384,16 @@ def school_indicator(request):
 def school_tabledata(request):
     indicatordata_ids = request.GET.get("indicatordata_ids")
     compare = request.GET.get("compare") # school or school_year
+    type = request.GET.get("type")
     ids = indicatordata_ids.split(',')
-    data = SchoolIndicatorData.objects.filter(id__in=ids)
 
     result = []
-    if compare == "school_year":
+    if type == "school":
+        data = SchoolIndicatorData.objects.filter(id__in=ids)
+    elif type == "district":
+        data = DistrictIndicatorData.objects.filter(id__in=ids)
+        
+    if type == "school" and compare == "school_year":
         fields = [{"name":"dimension_y","type":'string'}]
         columns = [{'text' : 'Dimension Y','flex' : 1, 'sortable' : True,'dataIndex': 'dimension_y'}]
 
@@ -384,8 +419,8 @@ def school_tabledata(request):
             return JsonResponse(dict(fields=fields, data=result, columns=columns))
     
         else:
-            return JsonResponse(dict(message="None data"))
-    elif compare == "school":
+            return JsonResponse(dict(fields=[], data=[], columns=[]))
+    elif type == "school" and compare == "school_or_district":
         fields = [{"name":"school_name","type":'string'},{"name":"school_year","type":'string'}]
         columns = [{'text' : 'School Name', 'flex' : 1, 'sortable' : True,'dataIndex': 'school_name'},
                    {'text' : 'School Year', 'width' : "15%", 'sortable' : True,'dataIndex': 'school_year'}]
@@ -415,6 +450,64 @@ def school_tabledata(request):
                 result.append(row)
             return JsonResponse(dict(fields=fields, data=result, columns=columns))
         else:
-            return JsonResponse(dict(message="None data"))
-    return JsonResponse(dict(message="None data"))
+            return JsonResponse(dict(fields=[], data=[], columns=[]))
+    elif type == "district" and compare == "school_year":
+        fields = [{"name":"dimension_y","type":'string'}]
+        columns = [{'text' : 'Dimension Y','flex' : 1, 'sortable' : True,'dataIndex': 'dimension_y'}]
+
+        if data.count() > 0:
+            indicator = data[0].district_indicator_dataset.district_indicator
+            school_years = indicator.dataset.values("school_year__school_year").order_by('school_year__school_year')
+            for school_year in school_years:
+                fields.append({"name":school_year['school_year__school_year'],"type":'string'})
+                columns.append({'text' : school_year['school_year__school_year'],'width' : "10%", 'sortable' : True,'dataIndex': school_year['school_year__school_year']})
+            for i in data:
+                row = [i.dimension_y]
+                for dataset in indicator.dataset.order_by('school_year__school_year'):
+                    
+                    try:
+                        key_value = DistrictIndicatorData.objects.filter(district_indicator_dataset=dataset,
+                                               dimension_y=i.dimension_y,
+                                               dimension_x=i.dimension_x,
+                                               data_type=i.data_type).first().key_value
+                        row.append(key_value)
+                    except:
+                        row.append(None)
+                result.append(row)
+            return JsonResponse(dict(fields=fields, data=result, columns=columns))
+    
+        else:
+            return JsonResponse(dict(fields=[], data=[], columns=[]))
+    elif type == "district" and compare == "school_or_district":
+        fields = [{"name":"district_name","type":'string'},{"name":"school_year","type":'string'}]
+        columns = [{'text' : 'District Name', 'flex' : 1, 'sortable' : True,'dataIndex': 'district_name'},
+                   {'text' : 'School Year', 'width' : "15%", 'sortable' : True,'dataIndex': 'school_year'}]
+
+        if data.count() > 0:
+            indicator = data[0].district_indicator_dataset.district_indicator
+            school_year = data[0].district_indicator_dataset.school_year
+            indicator_set = DistrictIndicatorSet.objects.filter(title = indicator.district_indicator_set.title)
+            indicators = DistrictIndicator.objects.filter(title=indicator.title, district_indicator_set__in=indicator_set).order_by('district_indicator_set__district__district_name')
+            for i in data:
+                fields.append({"name":i.dimension_y, "type":'string'})
+                columns.append({'text' : i.dimension_y,'width' : "10%", 'sortable' : True,'dataIndex': i.dimension_y})
+
+            for i in indicators:
+                row = [i.district_indicator_set.district.district_name, school_year.school_year]
+                for j in data:
+                    try:
+                        dataset = DistrictIndicatorDataSet.objects.get(school_year=school_year, district_indicator=i)
+
+                        key_value = DistrictIndicatorData.objects.filter(district_indicator_dataset=dataset,
+                                                                       dimension_y=j.dimension_y,
+                                                                       dimension_x=j.dimension_x,
+                                                                       data_type=j.data_type).first().key_value
+                        row.append(key_value)
+                    except:
+                        row.append(None)
+                result.append(row)
+            return JsonResponse(dict(fields=fields, data=result, columns=columns))
+        else:
+            return JsonResponse(dict(fields=[], data=[], columns=[]))
+    return JsonResponse(dict(fields=[], data=[], columns=[]))
     
