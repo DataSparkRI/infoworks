@@ -197,6 +197,8 @@ Ext.define('Ext.ux.ExportRecords', {
                var file_name = Ext.getCmp('school').lastMutatedValue + Ext.getCmp('indicator').lastMutatedValue + ".csv";
             else if (type == "district")
                 var file_name = Ext.getCmp('district').lastMutatedValue + Ext.getCmp('district_indicator').lastMutatedValue + ".csv";
+            else if (type == "state")
+                var file_name = "State" + Ext.getCmp('state_indicator').lastMutatedValue + ".csv";
             else
             	var file_name = "my_data.csv"
             link.setAttribute("download", file_name);

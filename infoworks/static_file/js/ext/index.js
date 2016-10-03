@@ -156,7 +156,6 @@ Ext.onReady(function() {
             xtype: 'basic-tabs',
             controller: 'tab-view',
             
-
             defaults: {
                 bodyPadding: 10,
                 autoScroll: true
@@ -169,7 +168,7 @@ Ext.onReady(function() {
                 items: district_nav
             }, {
                 title: 'State',
-                items: []
+                items: state_nav
             }]
         },
         main

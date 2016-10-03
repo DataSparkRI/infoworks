@@ -94,7 +94,6 @@ Ext.define('Navigation.store.District', {
 
 Ext.define('Navigation.model.Indicator', {
     extend: 'Ext.data.Model',
-
     fields: [
         {name: 'id',  type: 'int', convert: null},
         {name: 'school_indicator_set__title',   type: 'string'},
@@ -104,19 +103,14 @@ Ext.define('Navigation.model.Indicator', {
 
 Ext.define('Navigation.store.Indicator', {
     extend: 'Ext.data.ArrayStore',
-
     alias: 'store.indicator',
-
     model: 'Navigation.model.Indicator',
-    
     storeId: 'indicator',
-    
     data: []
 });
 
 Ext.define('Navigation.model.DistrictIndicator', {
     extend: 'Ext.data.Model',
-
     fields: [
         {name: 'id',  type: 'int', convert: null},
         {name: 'district_indicator_set__title',   type: 'string'},
@@ -126,60 +120,73 @@ Ext.define('Navigation.model.DistrictIndicator', {
 
 Ext.define('Navigation.store.DistrictIndicator', {
     extend: 'Ext.data.ArrayStore',
-
     alias: 'store.district_indicator',
-
     model: 'Navigation.model.DistrictIndicator',
-    
     storeId: 'district_indicator',
-    
     data: []
 });
 
+Ext.define('Navigation.model.StateIndicator', {
+    extend: 'Ext.data.Model',
+    fields: [
+        {name: 'id',  type: 'int', convert: null},
+        {name: 'state_indicator_set__title',   type: 'string'},
+        {name: 'title__title', type: 'string'}
+    ]
+});
+
+Ext.define('Navigation.store.StateIndicator', {
+    extend: 'Ext.data.ArrayStore',
+    alias: 'store.state_indicator',
+    model: 'Navigation.model.StateIndicator',
+    storeId: 'state_indicator',
+    autoLoad: 'true',
+    proxy: {
+        type: 'ajax',
+        url : '/api/state',
+        reader: {type: 'json', root: 'genres'}
+    }
+});
 
 /* School Year */
 Ext.define('Navigation.model.School_year', {
     extend: 'Ext.data.Model',
-
     fields: [
         {name: 'id',  type: 'int', convert: null},
         {name: 'school_year__school_year',   type: 'string'},
-
     ]
 });
 
 Ext.define('Navigation.store.School_year', {
     extend: 'Ext.data.ArrayStore',
-
     alias: 'store.school_year',
-
     model: 'Navigation.model.School_year',
-    
     storeId: 'school_year',
-    
     data: []
 });
 
 /* District School Year */
 Ext.define('Navigation.model.DistrictSchool_year', {
     extend: 'Ext.data.Model',
-
     fields: [
         {name: 'id',  type: 'int', convert: null},
         {name: 'school_year__school_year',   type: 'string'},
-
     ]
 });
 
 Ext.define('Navigation.store.DistrictSchool_year', {
     extend: 'Ext.data.ArrayStore',
-
     alias: 'store.district_school_year',
-
     model: 'Navigation.model.DistrictSchool_year',
-    
     storeId: 'district_school_year',
-    
+    data: []
+});
+
+Ext.define('Navigation.store.DistrictSchool_year', {
+    extend: 'Ext.data.ArrayStore',
+    alias: 'store.state_school_year',
+    model: 'Navigation.model.School_year',
+    storeId: 'state_school_year',
     data: []
 });
 
@@ -448,5 +455,74 @@ district_nav = [{
     ]
 }];
 
+state_nav = [{
+    xtype: 'fieldset',
+    title: 'District',
 
+    defaultType: 'textfield',
+    defaults: {
+        anchor: '100%'
+    },
+    scrollable: true,
+    items: [{
+                xtype: 'combobox',
+                fieldLabel: 'Indicator',
+                id: 'state_indicator',
+                store: {
+                    type: 'state_indicator'
+                },
+                valueField: 'id',
+                displayField: 'title__title',
+                typeAhead: true,
+                queryMode: 'local',
+                emptyText: 'Select a indicator...',
+                listeners: {
+                    select: function(combo, records, eOpts) {
+                    	type = 'state'
+                        console.log(records.data);
+                        //main = Ext.getCmp('main');
+                        school_year = Ext.getCmp('state_school_year');
+                        school_year.setValue(null);
+                        getData("/api/state_indicator", "indicator_id="+records.data.id, school_year);
+                        
+                    },
+                }
+            }
+    ]
+}, {
+    xtype: 'fieldset',
+    title: 'School Year',
+    defaultType: 'textfield',
+
+    defaults: {
+        anchor: '100%'
+    },
+    scrollable: true,
+    items: [{
+                xtype: 'combobox',
+                fieldLabel: 'School Year',
+                id: 'state_school_year',
+                store: {
+                    type: 'state_indicator'
+                },
+                valueField: 'id',
+                displayField: 'school_year__school_year',
+                typeAhead: true,
+                queryMode: 'local',
+                emptyText: 'Select a school year...',
+                listeners: {
+                    select: function(combo, records, eOpts) {
+                    	type = 'state';
+                        console.log(records.data);
+                        main = Ext.getCmp('main');
+                        main.reconfigure(default_main_store('state'), default_main_column('state'));
+                        getData("/api/state_indicator", "statedataset_id="+records.data.id, main);
+                        Ext.getCmp('compare_school_year').enable();
+                        Ext.getCmp('compare_school').enable();
+                        main.getSelectionModel().deselectAll();
+                    },
+                }
+            },
+    ]
+}];
 
