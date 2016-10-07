@@ -17,7 +17,7 @@
 
             <div class="col-md-9">
 
-                <div >
+                <div>
                     <div class="caption-full">
                         <h2>{{active.title}}</h2>
                         <h3>{{active.subtitle}}</h3>
@@ -27,12 +27,20 @@
                         <br>
                         {{active.content|safe}}
                     </div>
-
+                    {% for new in active.news %}
+                    <div class="caption-full" style="padding-top: 50px;">
+                            <h4><b>{{new.title}}</b></h4>
+                            <h4 class="text-right">{{new.subtitle}}</h4>
+                        <p>{{new.html_text |safe }}</p>
+                    </div>
+                    {% endfor %}
                 </div>
 
 
-
             </div>
+
+
+
 
         </div>
 

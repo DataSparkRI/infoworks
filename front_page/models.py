@@ -42,6 +42,9 @@ class About(models.Model):
             self.slug = slugify(self.title)
         super(About, self).save(*args, **kwargs)
     
+    def news(self):
+        return New.objects.filter(about=self).order_by('-order')
+    
     def __unicode__(self):
         return self.title
     
@@ -50,6 +53,7 @@ class New(models.Model):
     title = models.CharField(max_length=200)
     subtitle = models.CharField(max_length=200)
     html_text = models.TextField(blank=True)
+    order = models.IntegerField(default=1)
     
     def __unicode__(self):
         return self.title
