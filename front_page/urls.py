@@ -22,5 +22,7 @@ urlpatterns = [
     url(r'^state/(?P<slug>[\w-]+)/(?P<indicator_id>[\w-]+)/(?P<school_year>[\w-]+)/(?P<detail_slug>[\w-]+)/$', views.state_detail, name="state_detail"),
     url(r'^state/(?P<slug>[\w-]+)/overtime/$', views.state_overtime, name="state_overtime"),
     url(r'^understanding-data/dictionary/$',views.dictionary,name="dictionary"),
+    url(r'^about$', views.about, name="about"),
+    url(r'^about/(?P<slug>[\w-]+)/$', views.about_slug, name="about_slug_page"),
     ]
 

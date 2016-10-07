@@ -1,0 +1,42 @@
+{% extends "front_page/base.html" %}{% load staticfiles %}
+
+{% block body %}
+
+    <!-- Page Content -->
+    <div class="container" style="margin-top: 70px;">
+
+        <div class="row">
+
+            <div class="col-md-3">
+                <div class="list-group">
+                {% for about in abouts %}
+                    <a href="{% url 'about_slug_page' about.slug %}" class="list-group-item{% if about.slug == active.slug %} active{% endif %}">{{about.title}}</a>
+                {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-md-9">
+
+                <div >
+                    <div class="caption-full">
+                        <h2>{{active.title}}</h2>
+                        <h3>{{active.subtitle}}</h3>
+                        {% if active.image %}<img class="img-responsive" src="{{active.image.url}}" alt="">
+                        <h5>{{active.image_text}}</h5>
+                        {% endif %}
+                        <br>
+                        {{active.content|safe}}
+                    </div>
+
+                </div>
+
+
+
+            </div>
+
+        </div>
+
+    </div>
+    <!-- /.container -->
+
+{% endblock body%}

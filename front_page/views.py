@@ -12,11 +12,26 @@ from models import Dictionary, Category
 import collections
 from django.core import exceptions
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from front_page.models import About, New
 
 # Create your views here.
 def home(request):
     context = {}
     return render_to_response('front_page/home.html', context, context_instance=RequestContext(request))
+
+def about(request):
+    abouts = About.objects.filter(active=True).order_by('order')
+    active = About.objects.first()
+    context = {"abouts":abouts,
+               "active":active}
+    return render_to_response('front_page/about.html', context, context_instance=RequestContext(request))
+
+def about_slug(request, slug):
+    abouts = About.objects.filter(active=True).order_by('order')
+    active = About.objects.get(slug=slug)
+    context = {"abouts":abouts,
+               "active":active}
+    return render_to_response('front_page/about.html', context, context_instance=RequestContext(request))
 
 def search(request):
     context = {}

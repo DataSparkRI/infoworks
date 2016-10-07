@@ -457,7 +457,7 @@ district_nav = [{
 
 state_nav = [{
     xtype: 'fieldset',
-    title: 'District',
+    title: 'State',
 
     defaultType: 'textfield',
     defaults: {
