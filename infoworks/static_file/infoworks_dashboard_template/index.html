@@ -1,0 +1,364 @@
+<html>
+<head>
+<title>Barrington High School - RIDE InfoWorks - Rhode Island Education Data Reporting</title>
+<link  href='style.css' rel='stylesheet' type='text/css'>
+<script src="http://code.jquery.com/jquery-3.1.1.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
+<script src="charts.js"></script>
+
+<script>
+$(function () {
+    $('#student_demographics').highcharts({
+        chart: {type: 'pie', margin: [0,0,0,0], backgroundColor: 'transparent'},
+        legend: {align: 'right', itemStyle: {'color': 'white'}, enabled: true, layout: 'vertical'},
+        title: {text: null},
+        tooltip: {pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'},
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                animation: false,
+                cursor: 'pointer',
+                center: ['25%', '50%'],
+                dataLabels: {enabled: false},
+                showInLegend: true
+            }
+        },
+        series: [{
+            data: [{
+                name: 'Asian',
+                y: 6
+            }, {
+                name: 'Black',
+                y: 1
+            }, {
+                name: 'Hispanic',
+                y: 2
+            }, {
+                name: 'Multiracial',
+                y: 2
+            }, {
+                name: 'Native American',
+                y: 0
+            }, {
+                name: 'White',
+                y: 89
+            }]
+        }]
+    });
+});
+</script>
+</head>
+
+<body>
+    <div id="infoworks_header" class='header'><h1>InfoWorks header goes here</h1></div>
+    <div id="school_header" class='header'>
+        <div id="school_info">
+            <h1>Barrington High School</h1>
+            <div class='address'>220 Lincoln Avenue<br/>Barrington RI 02806</div>
+            <div class='phone'>401-247-3150</div>
+            <div class='website'><a href='http://www.barringtonhigh.org/'>http://www.barringtonhigh.org/</a></div>
+            <div class='principal'>Principal Joseph Hurley</div>
+            <div class='grades'>Grades 9-12</div>
+        </div>
+        <div id="teacher_info">
+            <div id='student_teacher_ratio'>
+                <div class='icons'>
+                    <div id="teacher_icon"><img src="images/teacher_icon.png"></div>
+                    <div id="student_icons">
+                        <img src="images/student_icon.png">
+                        <img src="images/student_icon.png">
+                        <img src="images/student_icon.png">
+                        <img src="images/student_icon.png">
+                        <img src="images/student_icon.png">
+                        <img src="images/student_icon.png">
+                        <img src="images/student_icon.png">
+                        <img src="images/student_icon.png">
+                    </div>
+                </div>
+
+                <div class='label'>1:8 Student/Teacher Ratio</div>
+            </div>
+
+            <ul class="errata">
+                <li>Students: 1,028
+                <li>All Teachers: 133
+                <li>Classroom Teachers: ??
+                <li>Teachers with Emergency Certification: 0%
+                <li>Clases Taught by Highly Qualified Teachers: 0%
+            </ul>
+        </div>
+
+        <div id="student_info">
+            <div id="student_demographics"></div>
+        </div>
+    </div>
+
+    <div id="dashboard">  
+        <div id="controls" class="controls">
+            <span class='school'>School</span>
+            <span class='district'>District</span>
+            <span class='state'>State</span>
+            <span class='national'>National</span>
+        </div>
+
+        <div id="SAT" class="dashboard_row">
+            <h1>SAT</h1>
+            <div class="data_as_of">Data for: 2014-2015</div>
+            <div class="tiles">
+                <div id='SAT_math_tile' class="tile">
+                    <!--span class="number">588</span>
+                    <span class="label">Math</span!-->
+                </div>
+                <div id='SAT_reading_tile' class="tile">
+                    <!--span class="number">573</span>
+                    <span class="label">Reading</span!-->
+                </div>
+                <div id='SAT_writing_tile'  class="tile">
+                    <!--span class="number">562</span>
+                    <span class="label">Writing</span!-->
+                </div>
+            </div>
+            <div class="details">
+                <div id="SAT_over_time_chart" class="over_time_chart"></div>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td></td>
+                            <th>2009-2010</th>
+                            <th>2010-2011</th>
+                            <th>2011-2012</th>
+                            <th>2012-2013</th>
+                            <th>2013-2014</th>
+                            <th>2014-2015</th>
+                        </tr>
+                        <tr>
+                            <td>Math</td>
+                            <td>488</td>
+                            <td>482</td>
+                            <td>480</td>
+                            <td>479</td>
+                            <td>484</td>
+                            <td>481</td>
+                        </tr>
+                        <tr>
+                            <td>Reading</td>
+                            <td>485</td>
+                            <td>482</td>
+                            <td>477</td>
+                            <td>478</td>
+                            <td>483</td>
+                            <td>480</td>
+                        </tr>
+                        <tr>
+                            <td>Writing</td>
+                            <td>478</td>
+                            <td>474</td>
+                            <td>470</td>
+                            <td>473</td>
+                            <td>471</td>
+                            <td>468</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="description">
+                    <p><a href='http://sat.collegeboard.org/about-tests' target=_blank>The College Board</a> creates and administers the Scholastic Aptitude Test (SAT), a college admission test that is not part of Rhode Island's assessment program. Students who so choose pay to take the test which examines in the areas of reading, writing and math. Most colleges require SAT scores as part of the application process. The College Board is a not-for-profit membership association of schools, colleges, universities, and other educational organizations.</p>
+
+                    <p>The data presented on InfoWorks display the average SAT scores in each tested area (Math, Reading, Writing) for high school students &mdash; typically juniors and seniors &mdash; who took the exam the prior academic year. A perfect SAT score on each individual test is 800 points.</p>
+
+                    <p>The College Board's website has the most recent <a href='http://research.collegeboard.org/' target=_blank>reports on each state's results</a>.</p>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="PARCC" class="dashboard_row">
+            <h1>PARCC</h1>
+            <div class="tiles">
+                <div class="data_as_of">Data for: 2015-2016</div>
+                <div id='PARCC_ELA9_tile' class="tile">
+                    <!--span class="number">81%</span>
+                    <span class="label">ELA/Literacy Grade 9</span-->
+                </div>
+                <div id='PARCC_ELA10_tile' class="tile">
+                    <!--span class="number">71%</span>
+                    <span class="label">ELA/Literacy Grade 10</span!-->
+                </div>
+                <div id='PARCC_algebra1_tile' class="tile">
+                    <!--span class="number">61%</span>
+                    <span class="label">Algebra 1</span!-->
+                </div>
+                <div id='PARCC_geometry_tile' class="tile">
+                    <!--span class="number">50%</span>
+                    <span class="label">Geometry</span!-->
+                </div>
+            </div>
+        </div>
+
+        <div id="NECAP" class="dashboard_row">
+            <h1>NECAP</h1>
+            <div class="tiles">
+                <div class="tile">
+                    <span class="number">79%</span>
+                    <span class="label">11th Grade Math</span>
+                </div>
+                <div class="tile">
+                    <span class="number">98%</span>
+                    <span class="label">11th Grade Reading</span>
+                </div>
+                <div class="tile">
+                    <span class="number">82%</span>
+                    <span class="label">11th Grade Writing</span>
+                </div>
+                <div class="tile">
+                    <span class="number">70%</span>
+                    <span class="label">11th Grade Science</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="AP" class="dashboard_row">
+            <h1>AP Exams</h1>
+            <div class="tiles">
+                <div class="tile">
+                    <span class="number">625</span>
+                    <span class="label"># of Exams Taken</span>
+                </div>
+                <div class="tile">
+                    <span class="number">292</span>
+                    <span class="label"># of Students Taking Exam</span>
+                </div>
+                <div class="tile">
+                    <span class="number">574</span>
+                    <span class="label">Exams Scored at Mastery</span>
+                </div>
+                <div class="tile">
+                    <span class="number">92%</span>
+                    <span class="label">% Scored at Mastery</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="student_services" class="dashboard_row">
+            <h1>Student Services</h1>
+            <div class="tiles">
+                <div class="tile">
+                    <span class="number">5%</span>
+                    <span class="label">Subsidized Lunch</span>
+                </div>
+                <div class="tile">
+                    <span class="number">1%</span>
+                    <span class="label">ESL/Bilingual Education</span>
+                </div>
+                <div class="tile">
+                    <span class="number">11%</span>
+                    <span class="label">Special Education Services</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="misc" class="dashboard_row">
+            <h1>Miscellaneous</h1>
+            <div class="tiles">
+                <div class="tile">
+                    <span class="number">96%</span>
+                    <span class="label">Attendance</span>
+                </div>
+                <div class="tile">
+                    <span class="number">6%</span>
+                    <span class="label">Chronic Absenteeism</span>
+                </div>
+                <div class="tile">
+                    <span class="number">96%</span>
+                    <span class="label">Stability Index</span>
+                </div>
+                <div class="tile">
+                    <span class="number">4%</span>
+                    <span class="label">Mobility Index</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="grad_rate4" class="dashboard_row">
+            <h1>Grad Rate (2011 Cohort)</h1>
+            <div class="tiles">
+                <div class="tile">
+                    <span class="number" style="font-size: 4em">95.7%</span>
+                    <span class="label">Graduated (4 years)</span>
+                </div>
+                <div class="tile">
+                    <span class="number">2.1%</span>
+                    <span class="label">Dropped Out</span>
+                </div>
+                <div class="tile">
+                    <span class="number">0.4%</span>
+                    <span class="label">Received GED</span>
+                </div>
+                <div class="tile">
+                    <span class="number">1.8%</span>
+                    <span class="label">Still in School</span>
+                </div>
+            </div>
+        </div>        
+
+        <div id="grad_rate5" class="dashboard_row">
+            <h1>Grad Rate (2010 Cohort)</h1>
+            <div class="tiles">
+                <div class="tile">
+                    <span class="number">94</span>
+                    <span class="label">Graduated (4 years)</span>
+                </div>
+                <div class="tile">
+                    <span class="number">0.8%</span>
+                    <span class="label">Graduated (5th year)</span>
+                </div>
+                <div class="tile">
+                    <span class="number"  style="font-size: 4em">94.8%</span>
+                    <span class="label">Graduated Within 5 years</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="Suspension" class="dashboard_row">
+            <h1>Suspension</h1>
+            <div class="tiles">
+                <div class="tile">
+                    <span class="number">3.3</span>
+                    <span class="label">Suspensions per 100</span>
+                </div>
+                <div class="tile">
+                    <span class="number">34</span>
+                    <span class="label">Total Infractions</span>
+                </div>
+            </div>
+        </div>
+</div>
+</body>
+
+<script>
+$("#SAT").click(function(){
+    $("#SAT .details, #SAT .tiles").slideToggle('fast', function(){
+        Highcharts.setOptions(column_chart);
+        var sat_overtime_chart = new Highcharts.Chart(sat_overtime_options);    
+    });
+})
+
+$("#controls .school").click(function(){
+    chart = $('#SAT_math_tile').highcharts();
+    chart.series[0].data[0].visible = false;
+    console.log ('set invisible');
+    console.log (chart.series[0].data[0].visible);
+
+    chart.series[0].data[0].y = 800;
+    console.log ('set y to 800');
+    console.log (chart.series[0].data[0].y);    
+
+    chart.series[0].data[0].update();
+    console.log ('updated');
+    chart.redraw();
+    console.log ('redrew');
+})
+
+</script>

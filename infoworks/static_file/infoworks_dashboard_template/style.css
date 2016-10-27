@@ -1,0 +1,257 @@
+body {
+    font-family: Arial, Helvetica, Geneva;
+    font-size: 16px;
+    padding: 0em 2em;
+}
+
+/* == HEADER == */
+
+.header {    
+    color: white;
+    left: 0;
+    margin: 0;
+    padding: 0em 2em;
+    position: fixed;
+    top: 0;
+    width: calc(100% - 4em);
+    z-index: 99;
+}
+
+#infoworks_header {
+    background-color: black;
+    top: 0;
+}
+
+/* == SCHOOL HEADER == */
+#school_header {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+
+    background-color: #66AAEE;
+    top: 3.75em;
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
+#school_info {
+    flex: 0 1 1;
+}
+
+#school_info h1 {
+    margin-bottom: 0px;
+}
+
+#school_info a {
+    color: white;
+}
+
+#teacher_info {    
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: flex-start;
+
+    flex: 0 3 2;
+}
+
+#student_teacher_ratio {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+}
+
+#student_teacher_ratio .icons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+#teacher_icon img {
+    height: 120px;
+    padding: 10px;
+}
+
+#student_icons {
+    padding-top: 10px;
+    max-width: 250px;
+}
+
+#student_icons img {
+    height: 40px;
+} 
+
+#student_teacher_ratio .label {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+#teacher_info .errata {   
+    align-self: flex-end;
+
+    font-size: 0.8em;
+}
+
+#student_info {
+    flex: 0 1 1;
+}
+
+#student_demographics {
+    height: 150px;
+    width: 300px;
+}
+
+/* == DASHBOARD == */
+
+#dashboard {
+    position: relative;
+    top: 16em;
+}
+
+#controls {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+}
+
+#controls span {
+    border: 1px solid black;
+    color: white;
+    font-weight: bold;
+    margin: 1em 1em 0em 1em;
+    padding: 1em;
+}
+
+#controls span.school {background-color: #7cb5ec;}
+#controls span.district {background-color: #434348; }
+#controls span.state {background-color: #90ed7d;}
+#controls span.national {background-color: #f7a35c;}
+
+.dashboard_row {
+    position: relative;
+    width: calc(100% - 1em);
+    margin-bottom: 1em;
+    padding-left: 1.2em;
+}
+
+.dashboard_row h1 {
+    background-color: red;
+    color: white;
+    direction: ltr; 
+    font-size: 1.2em;
+    height: 1.2em;
+    margin: 0;
+    padding: 0.4em 0em;
+    text-align: center;
+    transform: rotate(-90deg)  rotateX(180deg) rotateY(180deg) translatey(1.6em);
+    transform-origin: bottom left;
+    width: 250px;
+}
+
+.dashboard_row .data_as_of {
+    position: absolute;
+    color: #555555;
+    font-size: 0.8em;
+    font-style: italic;
+    top: 3.3em;
+    right: 0.3em;
+}
+
+.tiles {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+    align-items: center;
+
+    height: 250px;
+    background-color: #EEEEEE;
+    margin: 0;
+}
+
+.tile {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+    align-items: center;
+
+    border: 1px solid #555555;
+    height: 200px;
+    width: 200px;
+}
+
+#SAT .tile, #PARCC .tile {
+    border: none;
+}
+
+span.number {
+    align-self: center;
+    color: #555555;
+    flex-basis: 75%;
+    font-size: 5em;
+    font-weight: 500;
+    padding-top: 25%;
+}
+
+span.label {
+    background-color: #555555;
+    color: #EEEEEE;
+    text-align: center;
+    padding: 0.2em 0.1em 0.1em 0.1em;
+    vertical-align: bottom;
+    width: 100%;
+}
+
+h1 {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.dashboard_row .details {
+    background-color: #EEEEEE;
+    display: none;
+    margin-left: 0.4em;
+    padding-left: 1em;
+}
+
+.dashboard_row .details .over_time_chart {
+    padding: 2em 10%;
+    height: 500px;
+}
+
+.dashboard_row .details .description {
+    color: #555555;
+    font-size: 0.8em;
+    font-style: italic;
+    padding: 2em 10%;
+}
+
+.dashboard_row .details table {
+    width: 100%;
+    padding: 1em 10%;
+}
+
+td, th {
+    color: #555555;
+    padding: 0.3em 0.5em;
+    text-align: left;
+}
+
+th {
+    background-color: #555555;
+    color: #EEEEEE;
+    padding: 0.7em 0.5em 0.5em 0.5em;
+}
+
+tr td:first-child {
+    font-weight: bold;
+    text-align: right;
+}
+
+.hightcharts-title {
+    font-size: 0.9em !important;
+    color: red !important;
+}
